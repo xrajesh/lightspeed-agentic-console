@@ -2,6 +2,7 @@ import * as React from 'react';
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
 
 import { buildChatUrl } from '../config';
+import { parseSSEBlock } from '../utils/streaming';
 
 export type MessageSegment =
   | { type: 'text'; content: string }
@@ -33,6 +34,7 @@ export interface ChatConfig {
 }
 
 const STREAM_TIMEOUT_MS = 180000;
+const MAX_MESSAGES = 200;
 
 export function useChat(config: ChatConfig): UseChatReturn {
   const [messages, setMessages] = React.useState<ChatMessage[]>([]);
@@ -63,7 +65,10 @@ export function useChat(config: ChatConfig): UseChatReturn {
         isStreaming: true,
       };
 
-      setMessages((prev) => [...prev, userMsg, assistantMsg]);
+      setMessages((prev) => {
+        const next = [...prev, userMsg, assistantMsg];
+        return next.length > MAX_MESSAGES ? next.slice(-MAX_MESSAGES) : next;
+      });
       setIsLoading(true);
       setError(null);
 
@@ -116,23 +121,13 @@ export function useChat(config: ChatConfig): UseChatReturn {
             buffer = parts.pop() || '';
 
             for (const part of parts) {
-              if (!part.trim() || part.startsWith(':')) {
+              const event = parseSSEBlock(part);
+              if (!event) {
                 continue;
               }
 
-              const eventMatch = part.match(/^event:\s*(.+)$/m);
-              const dataMatch = part.match(/^data:\s*(.+)$/m);
-              if (!eventMatch || !dataMatch) {
-                continue;
-              }
-
-              const eventType = eventMatch[1].trim();
-              let data: Record<string, unknown>;
-              try {
-                data = JSON.parse(dataMatch[1].trim());
-              } catch {
-                continue;
-              }
+              const eventType = event.type;
+              const data = event.data;
 
               let segment: MessageSegment | null = null;
               let streamDone = false;

@@ -47,6 +47,23 @@ const SandboxLogViewer: React.FC<{
   const [status, setStatus] = React.useState<LogStatus>('searching');
   const [autoScroll, setAutoScroll] = React.useState(true);
   const preRef = React.useRef<HTMLPreElement>(null);
+  const logChunksRef = React.useRef<string[]>([]);
+  const flushTimerRef = React.useRef<ReturnType<typeof setTimeout>>();
+
+  const flushLogChunks = React.useCallback(() => {
+    const chunks = logChunksRef.current;
+    if (chunks.length === 0) return;
+    logChunksRef.current = [];
+    const joined = chunks.join('');
+    setLogs((prev) => {
+      const updated = prev + joined;
+      if (updated.length > MAX_LOG_LENGTH) {
+        const trimAt = updated.indexOf('\n', updated.length - MAX_LOG_LENGTH);
+        return trimAt > 0 ? updated.slice(trimAt + 1) : updated.slice(-MAX_LOG_LENGTH);
+      }
+      return updated;
+    });
+  }, []);
 
   const podWatch = React.useMemo(
     () => ({
@@ -122,15 +139,15 @@ const SandboxLogViewer: React.FC<{
             break;
           }
         }
-        setLogs((prev) => {
-          const updated = prev + chunk;
-          if (updated.length > MAX_LOG_LENGTH) {
-            const trimAt = updated.indexOf('\n', updated.length - MAX_LOG_LENGTH);
-            return trimAt > 0 ? updated.slice(trimAt + 1) : updated.slice(-MAX_LOG_LENGTH);
-          }
-          return updated;
-        });
+        logChunksRef.current.push(chunk);
+        if (!flushTimerRef.current) {
+          flushTimerRef.current = setTimeout(() => {
+            flushTimerRef.current = undefined;
+            flushLogChunks();
+          }, 200);
+        }
       }
+      flushLogChunks();
       return true; // Stream ended gracefully, may reconnect
     };
 
@@ -208,8 +225,13 @@ const SandboxLogViewer: React.FC<{
 
     return () => {
       abortController.abort();
+      if (flushTimerRef.current) {
+        clearTimeout(flushTimerRef.current);
+        flushTimerRef.current = undefined;
+      }
+      flushLogChunks();
     };
-  }, [podExists, podName, podNamespace, podPhase]);
+  }, [podExists, podName, podNamespace, podPhase, flushLogChunks]);
 
   React.useEffect(() => {
     if (autoScroll && preRef.current) {

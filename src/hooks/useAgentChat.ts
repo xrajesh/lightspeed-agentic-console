@@ -2,6 +2,7 @@ import * as React from 'react';
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
 
 import { AGENT_CHAT_URL } from '../config';
+import { parseSSELine, type SSELineState } from '../utils/streaming';
 import type { ChatMessage, MessageSegment } from './useChat';
 
 export type { MessageSegment, ChatMessage } from './useChat';
@@ -16,6 +17,8 @@ interface UseAgentChatResult {
 }
 
 const FLUSH_INTERVAL = 60; // Ms — debounce state updates for streaming feel
+
+const MAX_MESSAGES = 200;
 
 export interface AgentChatOptions {
   url?: string;
@@ -133,7 +136,10 @@ export const useAgentChat = (options?: AgentChatOptions): UseAgentChatResult => 
         isStreaming: true,
       };
 
-      setMessages((prev) => [...prev, userMsg, assistantMsg]);
+      setMessages((prev) => {
+        const next = [...prev, userMsg, assistantMsg];
+        return next.length > MAX_MESSAGES ? next.slice(-MAX_MESSAGES) : next;
+      });
       setIsStreaming(true);
       setError(null);
       pendingRef.current = [];
@@ -172,7 +178,7 @@ export const useAgentChat = (options?: AgentChatOptions): UseAgentChatResult => 
 
           const decoder = new TextDecoder();
           let buffer = '';
-          let eventType: string | null = null;
+          const sseState: SSELineState = { eventType: '' };
 
           let done = false;
           while (!done) {
@@ -185,18 +191,19 @@ export const useAgentChat = (options?: AgentChatOptions): UseAgentChatResult => 
 
             buffer += decoder.decode(value, { stream: true });
 
-            // Parse line-by-line like scrum does (not waiting for \n\n blocks)
             const lines = buffer.split('\n');
             buffer = lines.pop() ?? '';
 
             for (const line of lines) {
-              if (line.startsWith('event: ')) {
-                eventType = line.slice(7).trim();
-              } else if (line.startsWith('data: ') && eventType) {
-                try {
-                  const parsed = JSON.parse(line.slice(6));
+              const event = parseSSELine(line, sseState);
+              if (!event) {
+                continue;
+              }
 
-                  switch (eventType) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const parsed = event.data as any;
+              try {
+                  switch (event.type) {
                     case 'text':
                       schedulePending({ type: 'text', content: parsed.content });
                       break;
@@ -233,10 +240,8 @@ export const useAgentChat = (options?: AgentChatOptions): UseAgentChatResult => 
                       break;
                   }
                 } catch {
-                  // Skip unparseable
+                  // Skip unparseable event data
                 }
-                eventType = null;
-              }
             }
           }
         } catch (err) {

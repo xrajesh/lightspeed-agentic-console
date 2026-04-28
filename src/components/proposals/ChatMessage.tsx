@@ -1,15 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Label, Spinner } from '@patternfly/react-core';
-import DOMPurify from 'dompurify';
-import { marked } from 'marked';
+import { renderMarkdown } from '../../utils/markdown';
 import type { ChatMessage as ChatMessageType, MessageSegment } from '../../hooks/useChat';
 import DynamicComponent from './DynamicComponent';
-
-marked.setOptions({
-  breaks: true,
-  gfm: true,
-});
 
 interface ChatMessageProps {
   message: ChatMessageType;
@@ -17,7 +11,7 @@ interface ChatMessageProps {
 }
 
 export const MarkdownText: React.FC<{ content: string }> = ({ content }) => {
-  const html = React.useMemo(() => DOMPurify.sanitize(marked.parse(content) as string), [content]);
+  const html = React.useMemo(() => renderMarkdown(content), [content]);
   return <div className="ols-plugin__chat-text" dangerouslySetInnerHTML={{ __html: html }} />;
 };
 
