@@ -3,18 +3,25 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": "/example",
-      "component": { "$codeRef": "ExamplePage" }
+      "path": "/lightspeed/proposals",
+      "component": { "$codeRef": "ProposalListPage" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/lightspeed/proposals/:ns/:name",
+      "component": { "$codeRef": "ProposalDetailPage" }
     }
   },
   {
     "type": "console.navigation/href",
     "properties": {
-      "id": "example",
-      "name": "%plugin__console-plugin-template~Plugin example%",
-      "href": "/example",
+      "id": "lightspeedproposals",
+      "name": "%plugin__lightspeed-agentic-console-plugin~AI Hub%",
+      "href": "/lightspeed/proposals",
       "perspective": "admin",
-      "section": "home"
+      "section": "administration"
     }
   }
 ]

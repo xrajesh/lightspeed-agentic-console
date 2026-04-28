@@ -1,12 +1,12 @@
 {
-  "name": "console-plugin-template",
+  "name": "lightspeed-agentic-console-plugin",
   "version": "0.0.1",
-  "description": "Template project for OpenShift Console plugins",
+  "description": "OpenShift Lightspeed Agentic Console Plugin — proposals UI for AI-driven cluster operations",
   "private": true,
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openshift/console-plugin-template.git"
+    "url": "https://github.com/openshift/lightspeed-agentic-console.git"
   },
   "scripts": {
     "clean": "rm -rf dist",
@@ -29,9 +29,11 @@
     "@cypress/webpack-preprocessor": "^7.0.2",
     "@openshift-console/dynamic-plugin-sdk": "4.21-latest",
     "@openshift-console/dynamic-plugin-sdk-webpack": "4.21-latest",
+    "@patternfly/react-charts": "^8.4.1",
     "@patternfly/react-core": "^6.2.2",
     "@patternfly/react-icons": "^6.2.2",
     "@patternfly/react-table": "^6.2.2",
+    "@types/dompurify": "^3.2.0",
     "@types/node": "^22.0.0",
     "@types/react": "^17.0.37",
     "@types/react-router-dom": "^5.3.3",
@@ -40,6 +42,7 @@
     "css-loader": "^7.1.4",
     "cypress": "^15.11.0",
     "cypress-multi-reporters": "^2.0.5",
+    "dompurify": "^3.2.7",
     "eslint": "^9.7.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-cypress": "^6.1.0",
@@ -49,6 +52,7 @@
     "globals": "^17.4.0",
     "i18next": "^23.11.5",
     "i18next-parser": "^9.4.0",
+    "marked": "^17.0.5",
     "mocha": "^11.7.5",
     "mocha-junit-reporter": "^2.2.1",
     "mochawesome": "^7.1.4",
@@ -69,17 +73,19 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.1",
+    "victory": "^37.3.6",
     "webpack": "^5.100.0",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.3"
   },
   "consolePlugin": {
-    "name": "console-plugin-template",
+    "name": "lightspeed-agentic-console-plugin",
     "version": "0.0.1",
-    "displayName": "OpenShift Console Plugin Template",
-    "description": "Template project for OpenShift Console plugins. Edit package.json to change this message and the plugin name.",
+    "displayName": "OpenShift Lightspeed Agentic Console Plugin",
+    "description": "AI-driven proposals UI for OpenShift cluster operations",
     "exposedModules": {
-      "ExamplePage": "./components/ExamplePage"
+      "ProposalListPage": "./components/proposals/ProposalListPage",
+      "ProposalDetailPage": "./components/proposals/ProposalDetailPage"
     },
     "dependencies": {
       "@console/pluginAPI": "^4.21.0"

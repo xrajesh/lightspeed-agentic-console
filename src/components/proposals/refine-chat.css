@@ -1,0 +1,54 @@
+/* Refine chat — embedded full-screen chat style, scoped to avoid conflicts with proposal chat.css */
+
+.ols-plugin__refine-chat {
+  display: flex;
+  flex-direction: column;
+  background-color: canvas;
+  border: 1px solid var(--pf-t--global--border--color--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
+}
+
+/* Messages area — override proposal chat.css .ols-plugin__chat-messages */
+.ols-plugin__refine-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--xl);
+  width: 100%;
+}
+
+/* Use chat-page.css bordered-box message style */
+.ols-plugin__refine-chat .ols-plugin__chat-message {
+  display: block;
+  gap: initial;
+  margin-bottom: var(--pf-t--global--spacer--lg);
+  border: 1px solid var(--pf-t--global--border--color--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
+  padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--lg);
+  animation: ols-msg-enter 0.2s ease-out;
+}
+
+/* Input — sits at the bottom of the refine container */
+.ols-plugin__refine-chat .ols-plugin__chat-input-container {
+  padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--lg);
+  max-width: none;
+}
+
+/* Agent proposal content rendered inside the refine chat */
+.ols-plugin__refine-chat-proposal {
+  margin-bottom: var(--pf-t--global--spacer--lg);
+  padding-bottom: var(--pf-t--global--spacer--lg);
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+}
+
+.ols-plugin__refine-chat-approval {
+  margin-top: var(--pf-t--global--spacer--md);
+}
+
+.ols-plugin__refine-chat-no-sandbox {
+  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--lg);
+  color: var(--pf-t--global--text--color--subtle);
+  font-size: var(--pf-t--global--font--size--body--sm);
+  text-align: center;
+  border-top: 1px solid var(--pf-t--global--border--color--default);
+}
+

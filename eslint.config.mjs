@@ -23,6 +23,8 @@ export default tseslint.config(
       ...tseslint.configs.recommended.rules,
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     },
     languageOptions: {
       globals: globals.browser,

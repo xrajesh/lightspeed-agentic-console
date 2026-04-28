@@ -1,0 +1,28 @@
+.ols-plugin__sandbox-log-container {
+  border: 1px solid var(--pf-t--global--border--color--default);
+  border-radius: var(--pf-t--global--border--radius--small);
+  overflow: hidden;
+}
+
+.ols-plugin__sandbox-log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+  background-color: var(--pf-t--global--background--color--secondary--default);
+}
+
+.ols-plugin__sandbox-log-pre {
+  margin: 0;
+  padding: var(--pf-t--global--spacer--md);
+  max-height: 500px;
+  overflow-y: auto;
+  font-family: var(--pf-t--global--font--family--mono);
+  font-size: var(--pf-t--global--font--size--sm);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+  background-color: var(--pf-t--global--background--color--primary--default);
+  color: var(--pf-t--global--text--color--regular);
+}
