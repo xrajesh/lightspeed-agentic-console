@@ -2,10 +2,19 @@ import * as React from 'react';
 import { Alert, Card, CardBody, CodeBlock, CodeBlockCode } from '@patternfly/react-core';
 
 import type {
-  ActionPickerProps, CmoAlertDiagnosisProps, CmoMetricEvidenceProps,
-  CmoRemediationStepProps, CmoTriggerProposalProps, DynamicComponentProps,
-  EvidenceTableProps, ResourceDiffProps, RevisedProposalProps,
-  RevisedRbacProps, RevisedVerificationProps, StatusTimelineProps, VisualizationProps,
+  ActionPickerProps,
+  CmoAlertDiagnosisProps,
+  CmoMetricEvidenceProps,
+  CmoRemediationStepProps,
+  CmoTriggerProposalProps,
+  DynamicComponentProps,
+  EvidenceTableProps,
+  ResourceDiffProps,
+  RevisedProposalProps,
+  RevisedRbacProps,
+  RevisedVerificationProps,
+  StatusTimelineProps,
+  VisualizationProps,
 } from './types';
 
 import { Visualization } from './Visualization';
@@ -14,7 +23,12 @@ import { ActionPicker } from './ActionPicker';
 import { EvidenceTable } from './EvidenceTable';
 import { StatusTimeline } from './StatusTimeline';
 import { RevisedProposal, RevisedVerification, RevisedRbac } from './RevisedComponents';
-import { CmoAlertDiagnosis, CmoMetricEvidence, CmoRemediationStep, CmoTriggerProposal } from './CmoComponents';
+import {
+  CmoAlertDiagnosis,
+  CmoMetricEvidence,
+  CmoRemediationStep,
+  CmoTriggerProposal,
+} from './CmoComponents';
 
 const DynamicComponent: React.FC<DynamicComponentProps> = ({ type, props, onAction }) => {
   switch (type) {
@@ -38,10 +52,17 @@ const DynamicComponent: React.FC<DynamicComponentProps> = ({ type, props, onActi
       return <StatusTimeline data={props as unknown as StatusTimelineProps} />;
     case 'revised_proposal':
     case 'lightspeed_revised_proposal':
-      return <RevisedProposal data={props as unknown as RevisedProposalProps} onAction={onAction} />;
+      return (
+        <RevisedProposal data={props as unknown as RevisedProposalProps} onAction={onAction} />
+      );
     case 'revised_verification':
     case 'lightspeed_revised_verification':
-      return <RevisedVerification data={props as unknown as RevisedVerificationProps} onAction={onAction} />;
+      return (
+        <RevisedVerification
+          data={props as unknown as RevisedVerificationProps}
+          onAction={onAction}
+        />
+      );
     case 'revised_rbac':
     case 'lightspeed_revised_rbac':
       return <RevisedRbac data={props as unknown as RevisedRbacProps} onAction={onAction} />;
@@ -58,7 +79,9 @@ const DynamicComponent: React.FC<DynamicComponentProps> = ({ type, props, onActi
         <Card isCompact>
           <CardBody>
             <Alert isInline title={`Unknown component: ${type}`} variant="warning" />
-            <CodeBlock><CodeBlockCode>{JSON.stringify(props, null, 2)}</CodeBlockCode></CodeBlock>
+            <CodeBlock>
+              <CodeBlockCode>{JSON.stringify(props, null, 2)}</CodeBlockCode>
+            </CodeBlock>
           </CardBody>
         </Card>
       );

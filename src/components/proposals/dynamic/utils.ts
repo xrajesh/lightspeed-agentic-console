@@ -57,7 +57,9 @@ export const statusIcon = (status: string) => {
     case 'success':
       return React.createElement(CheckCircleIcon, { className: 'ols-plugin__chat-icon--success' });
     case 'danger':
-      return React.createElement(ExclamationCircleIcon, { className: 'ols-plugin__chat-icon--danger' });
+      return React.createElement(ExclamationCircleIcon, {
+        className: 'ols-plugin__chat-icon--danger',
+      });
     default:
       return React.createElement(InfoCircleIcon, { className: 'ols-plugin__chat-icon--info' });
   }
@@ -65,11 +67,18 @@ export const statusIcon = (status: string) => {
 
 export const severityColor = (severity: string): 'red' | 'orange' | 'blue' => {
   switch (severity) {
-    case 'blocker': return 'red';
-    case 'warning': return 'orange';
-    default: return 'blue';
+    case 'blocker':
+      return 'red';
+    case 'warning':
+      return 'orange';
+    default:
+      return 'blue';
   }
 };
 
 export const sanitizeK8sName = (s: string): string =>
-  s.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/-+$/, '');
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/-+$/, '');

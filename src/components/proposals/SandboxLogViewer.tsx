@@ -80,7 +80,7 @@ const SandboxLogViewer: React.FC<{
 
   React.useEffect(() => {
     if (!podExists) {
-      setStatus((prev) => (prev === 'streaming' || prev === 'ended') ? 'ended' : 'searching');
+      setStatus((prev) => (prev === 'streaming' || prev === 'ended' ? 'ended' : 'searching'));
     } else if (podPhase === 'Pending') {
       setStatus('waiting');
     }

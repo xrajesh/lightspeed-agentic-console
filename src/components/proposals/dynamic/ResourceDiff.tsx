@@ -1,6 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardBody, CardTitle, CodeBlock, CodeBlockCode, Label, Split, SplitItem } from '@patternfly/react-core';
+import {
+  Card,
+  CardBody,
+  CardTitle,
+  CodeBlock,
+  CodeBlockCode,
+  Label,
+  Split,
+  SplitItem,
+} from '@patternfly/react-core';
 import type { ResourceDiffProps } from './types';
 
 export const ResourceDiff: React.FC<{ data: ResourceDiffProps }> = ({ data }) => {
@@ -21,12 +30,20 @@ export const ResourceDiff: React.FC<{ data: ResourceDiffProps }> = ({ data }) =>
       <CardBody>
         <Split hasGutter>
           <SplitItem isFilled>
-            <div className="ols-plugin__chat-diff-label ols-plugin__chat-diff-label--before">{t('Before')}</div>
-            <CodeBlock><CodeBlockCode>{beforeStr}</CodeBlockCode></CodeBlock>
+            <div className="ols-plugin__chat-diff-label ols-plugin__chat-diff-label--before">
+              {t('Before')}
+            </div>
+            <CodeBlock>
+              <CodeBlockCode>{beforeStr}</CodeBlockCode>
+            </CodeBlock>
           </SplitItem>
           <SplitItem isFilled>
-            <div className="ols-plugin__chat-diff-label ols-plugin__chat-diff-label--after">{t('After')}</div>
-            <CodeBlock><CodeBlockCode>{afterStr}</CodeBlockCode></CodeBlock>
+            <div className="ols-plugin__chat-diff-label ols-plugin__chat-diff-label--after">
+              {t('After')}
+            </div>
+            <CodeBlock>
+              <CodeBlockCode>{afterStr}</CodeBlockCode>
+            </CodeBlock>
           </SplitItem>
         </Split>
       </CardBody>

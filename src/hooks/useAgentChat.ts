@@ -203,45 +203,45 @@ export const useAgentChat = (options?: AgentChatOptions): UseAgentChatResult => 
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const parsed = event.data as any;
               try {
-                  switch (event.type) {
-                    case 'text':
-                      schedulePending({ type: 'text', content: parsed.content });
-                      break;
-                    case 'thinking':
-                      schedulePending({ type: 'thinking', content: parsed.content });
-                      break;
-                    case 'tool_call':
-                      schedulePending({
-                        type: 'tool_call',
-                        name: parsed.name,
-                        input: parsed.input,
-                      });
-                      break;
-                    case 'tool_result':
-                      schedulePending({ type: 'tool_result', output: parsed.output });
-                      break;
-                    case 'ui_component':
-                      schedulePending({
-                        type: 'ui_component',
-                        componentType: parsed.type,
-                        props: parsed.props,
-                      });
-                      break;
-                    case 'done':
-                      if (parsed.conversationId) {
-                        conversationIdRef.current = parsed.conversationId;
-                      }
-                      break;
-                    case 'error':
-                      flushPending();
-                      setError(parsed.message);
-                      break;
-                    default:
-                      break;
-                  }
-                } catch {
-                  // Skip unparseable event data
+                switch (event.type) {
+                  case 'text':
+                    schedulePending({ type: 'text', content: parsed.content });
+                    break;
+                  case 'thinking':
+                    schedulePending({ type: 'thinking', content: parsed.content });
+                    break;
+                  case 'tool_call':
+                    schedulePending({
+                      type: 'tool_call',
+                      name: parsed.name,
+                      input: parsed.input,
+                    });
+                    break;
+                  case 'tool_result':
+                    schedulePending({ type: 'tool_result', output: parsed.output });
+                    break;
+                  case 'ui_component':
+                    schedulePending({
+                      type: 'ui_component',
+                      componentType: parsed.type,
+                      props: parsed.props,
+                    });
+                    break;
+                  case 'done':
+                    if (parsed.conversationId) {
+                      conversationIdRef.current = parsed.conversationId;
+                    }
+                    break;
+                  case 'error':
+                    flushPending();
+                    setError(parsed.message);
+                    break;
+                  default:
+                    break;
                 }
+              } catch {
+                // Skip unparseable event data
+              }
             }
           }
         } catch (err) {

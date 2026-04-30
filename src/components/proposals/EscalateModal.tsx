@@ -51,7 +51,6 @@ const EscalateModal: React.FC<{
             parentRef: proposal.metadata.name,
             request: `Escalate proposal ${proposal.metadata.name}: ${proposal.spec.request}`,
             targetNamespaces: proposal.spec.targetNamespaces,
-            templateRef: proposal.spec.templateRef,
             tools: proposal.spec.tools,
             analysis: proposal.spec.analysis,
             execution: proposal.spec.execution,

@@ -1,6 +1,19 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Button, Card, CardBody, CardTitle, CodeBlock, CodeBlockCode, Label, Split, SplitItem, Stack, StackItem } from '@patternfly/react-core';
+import {
+  Alert,
+  Button,
+  Card,
+  CardBody,
+  CardTitle,
+  CodeBlock,
+  CodeBlockCode,
+  Label,
+  Split,
+  SplitItem,
+  Stack,
+  StackItem,
+} from '@patternfly/react-core';
 import { getRiskColor } from '../../../models/proposal';
 import type { RevisedProposalProps, RevisedVerificationProps, RevisedRbacProps } from './types';
 import type { PermissionRule } from '../../../models/proposal';
@@ -15,7 +28,11 @@ export const RevisedProposal: React.FC<{
       <CardTitle>
         <Split>
           <SplitItem isFilled>{t('Revised Proposal')}</SplitItem>
-          <SplitItem><Label color={getRiskColor(data.risk)} isCompact>{t('{{risk}} risk', { risk: data.risk })}</Label></SplitItem>
+          <SplitItem>
+            <Label color={getRiskColor(data.risk)} isCompact>
+              {t('{{risk}} risk', { risk: data.risk })}
+            </Label>
+          </SplitItem>
         </Split>
       </CardTitle>
       <CardBody>
@@ -25,10 +42,15 @@ export const RevisedProposal: React.FC<{
             <strong className="ols-plugin__chat-revised-heading">{t('Actions:')}</strong>
             {data.actions.map((action, i) => (
               <div className="ols-plugin__chat-revised-action" key={i}>
-                <Label color="blue" isCompact>{action.type}</Label>{' '}{action.description}
+                <Label color="blue" isCompact>
+                  {action.type}
+                </Label>{' '}
+                {action.description}
                 {action.resource && (
                   <div className="ols-plugin__chat-revised-resource">
-                    {action.resource.kind}/{action.resource.namespace ? `${action.resource.namespace}/` : ''}{action.resource.name}
+                    {action.resource.kind}/
+                    {action.resource.namespace ? `${action.resource.namespace}/` : ''}
+                    {action.resource.name}
                   </div>
                 )}
               </div>
@@ -36,14 +58,35 @@ export const RevisedProposal: React.FC<{
           </StackItem>
           <StackItem>
             <Split hasGutter>
-              <SplitItem><span className="ols-plugin__chat-revised-meta">{t('Reversible:')} <strong>{data.reversible ? t('Yes') : t('No')}</strong></span></SplitItem>
-              {data.estimatedImpact && <SplitItem><span className="ols-plugin__chat-revised-meta">{t('Impact:')} <strong>{data.estimatedImpact}</strong></span></SplitItem>}
+              <SplitItem>
+                <span className="ols-plugin__chat-revised-meta">
+                  {t('Reversible:')} <strong>{data.reversible ? t('Yes') : t('No')}</strong>
+                </span>
+              </SplitItem>
+              {data.estimatedImpact && (
+                <SplitItem>
+                  <span className="ols-plugin__chat-revised-meta">
+                    {t('Impact:')} <strong>{data.estimatedImpact}</strong>
+                  </span>
+                </SplitItem>
+              )}
             </Split>
           </StackItem>
           {onAction && (
             <StackItem>
-              <Alert isInline isPlain title={t('This will replace the current proposal.')} variant="info" />
-              <Button className="ols-plugin__chat-apply-button" onClick={() => onAction('apply_proposal', { proposal: data })} variant="primary">{t('Apply as Proposal')}</Button>
+              <Alert
+                isInline
+                isPlain
+                title={t('This will replace the current proposal.')}
+                variant="info"
+              />
+              <Button
+                className="ols-plugin__chat-apply-button"
+                onClick={() => onAction('apply_proposal', { proposal: data })}
+                variant="primary"
+              >
+                {t('Apply as Proposal')}
+              </Button>
             </StackItem>
           )}
         </Stack>
@@ -67,9 +110,15 @@ export const RevisedVerification: React.FC<{
             <strong className="ols-plugin__chat-revised-heading">{t('Steps:')}</strong>
             {data.steps.map((step, i) => (
               <div className="ols-plugin__chat-revised-action" key={i}>
-                <Label color="blue" isCompact>{step.name}</Label>
-                <CodeBlock className="ols-plugin__chat-revised-code"><CodeBlockCode>{step.command}</CodeBlockCode></CodeBlock>
-                <span className="ols-plugin__chat-revised-meta">{t('Expected:')} <strong>{step.expected}</strong></span>
+                <Label color="blue" isCompact>
+                  {step.name}
+                </Label>
+                <CodeBlock className="ols-plugin__chat-revised-code">
+                  <CodeBlockCode>{step.command}</CodeBlockCode>
+                </CodeBlock>
+                <span className="ols-plugin__chat-revised-meta">
+                  {t('Expected:')} <strong>{step.expected}</strong>
+                </span>
               </div>
             ))}
           </StackItem>
@@ -78,13 +127,29 @@ export const RevisedVerification: React.FC<{
             {typeof data.rollbackPlan === 'string' ? (
               <p>{data.rollbackPlan}</p>
             ) : (
-              <><p>{data.rollbackPlan.description}</p><CodeBlock className="ols-plugin__chat-revised-code"><CodeBlockCode>{data.rollbackPlan.command}</CodeBlockCode></CodeBlock></>
+              <>
+                <p>{data.rollbackPlan.description}</p>
+                <CodeBlock className="ols-plugin__chat-revised-code">
+                  <CodeBlockCode>{data.rollbackPlan.command}</CodeBlockCode>
+                </CodeBlock>
+              </>
             )}
           </StackItem>
           {onAction && (
             <StackItem>
-              <Alert isInline isPlain title={t('This will update the verification plan on the proposal.')} variant="info" />
-              <Button className="ols-plugin__chat-apply-button" onClick={() => onAction('apply_verification', { verification: data })} variant="primary">{t('Apply Verification Plan')}</Button>
+              <Alert
+                isInline
+                isPlain
+                title={t('This will update the verification plan on the proposal.')}
+                variant="info"
+              />
+              <Button
+                className="ols-plugin__chat-apply-button"
+                onClick={() => onAction('apply_verification', { verification: data })}
+                variant="primary"
+              >
+                {t('Apply Verification Plan')}
+              </Button>
             </StackItem>
           )}
         </Stack>
@@ -103,8 +168,15 @@ export const RevisedRbac: React.FC<{
     rules.map((rule, i) => (
       <div className="ols-plugin__chat-revised-action" key={i}>
         <Split hasGutter>
-          <SplitItem><Label color="blue" isCompact>{scoped ? rule.namespace || '*' : t('cluster')}</Label></SplitItem>
-          <SplitItem isFilled><strong>{rule.resources.join(', ')}</strong><span className="ols-plugin__chat-revised-meta"> ({rule.verbs.join(', ')})</span></SplitItem>
+          <SplitItem>
+            <Label color="blue" isCompact>
+              {scoped ? rule.namespace || '*' : t('cluster')}
+            </Label>
+          </SplitItem>
+          <SplitItem isFilled>
+            <strong>{rule.resources.join(', ')}</strong>
+            <span className="ols-plugin__chat-revised-meta"> ({rule.verbs.join(', ')})</span>
+          </SplitItem>
         </Split>
         <div className="ols-plugin__chat-revised-meta">{rule.justification}</div>
       </div>
@@ -129,8 +201,19 @@ export const RevisedRbac: React.FC<{
           )}
           {onAction && (
             <StackItem>
-              <Alert isInline isPlain title={t('This will update the RBAC permissions on the proposal.')} variant="info" />
-              <Button className="ols-plugin__chat-apply-button" onClick={() => onAction('apply_rbac', { rbac: data })} variant="primary">{t('Apply RBAC Permissions')}</Button>
+              <Alert
+                isInline
+                isPlain
+                title={t('This will update the RBAC permissions on the proposal.')}
+                variant="info"
+              />
+              <Button
+                className="ols-plugin__chat-apply-button"
+                onClick={() => onAction('apply_rbac', { rbac: data })}
+                variant="primary"
+              >
+                {t('Apply RBAC Permissions')}
+              </Button>
             </StackItem>
           )}
         </Stack>

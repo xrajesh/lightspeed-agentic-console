@@ -26,10 +26,7 @@ export interface SSELineState {
   eventType: string;
 }
 
-export function parseSSELine(
-  line: string,
-  state: SSELineState,
-): StreamEvent | null {
+export function parseSSELine(line: string, state: SSELineState): StreamEvent | null {
   const trimmed = line.trim();
   if (!trimmed || trimmed.startsWith(':')) {
     return null;

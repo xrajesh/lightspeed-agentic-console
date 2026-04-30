@@ -2,8 +2,15 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
 import {
-  Chart, ChartArea, ChartAxis, ChartGroup, ChartLegend, ChartLine,
-  ChartStack, ChartThemeColor, ChartVoronoiContainer,
+  Chart,
+  ChartArea,
+  ChartAxis,
+  ChartGroup,
+  ChartLegend,
+  ChartLine,
+  ChartStack,
+  ChartThemeColor,
+  ChartVoronoiContainer,
 } from '@patternfly/react-charts/victory';
 import { QueryBrowser } from '@openshift-console/dynamic-plugin-sdk';
 
