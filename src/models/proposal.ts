@@ -96,9 +96,26 @@ export const VerificationResultGVK = {
   version: VerificationResultModel.apiVersion,
 };
 
+export const EscalationResultModel: K8sModel = {
+  apiGroup: 'agentic.openshift.io',
+  apiVersion: 'v1alpha1',
+  kind: 'EscalationResult',
+  plural: 'escalationresults',
+  abbr: 'ESR',
+  namespaced: true,
+  label: 'EscalationResult',
+  labelPlural: 'EscalationResults',
+};
+
+export const EscalationResultGVK = {
+  group: EscalationResultModel.apiGroup,
+  kind: EscalationResultModel.kind,
+  version: EscalationResultModel.apiVersion,
+};
+
 // ProposalApproval types
 
-export type ApprovalStageType = 'Analysis' | 'Execution' | 'Verification';
+export type ApprovalStageType = 'Analysis' | 'Execution' | 'Verification' | 'Escalation';
 
 export type AnalysisApproval = {
   agent?: string;
@@ -113,12 +130,17 @@ export type VerificationApproval = {
   agent?: string;
 };
 
+export type EscalationApproval = {
+  agent?: string;
+};
+
 export type ApprovalStage = {
   type: ApprovalStageType;
   denied?: boolean;
   analysis?: AnalysisApproval;
   execution?: ExecutionApproval;
   verification?: VerificationApproval;
+  escalation?: EscalationApproval;
 };
 
 export type ApprovalStageStatus = {
@@ -152,19 +174,13 @@ export type LightspeedProposalApproval = {
   status?: ProposalApprovalStatus;
 };
 
-export type EscalationTrigger =
-  | 'platform_bug'
-  | 'remediation_failed'
-  | 'workaround_applied'
-  | 'recurring_issue'
-  | 'manual';
-
 export type ProposalPhase =
   | 'Pending'
   | 'Analyzing'
   | 'Proposed'
   | 'Executing'
   | 'Verifying'
+  | 'Escalating'
   | 'Completed'
   | 'Failed'
   | 'Denied'
@@ -339,10 +355,17 @@ export type ProposalStatus = {
   conditions?: ProposalCondition[];
 };
 
+export type EscalationStepStatus = {
+  sandbox?: SandboxInfo;
+  conditions?: ProposalCondition[];
+  results?: StepResultRef[];
+};
+
 export type StepsStatus = {
   analysis?: AnalysisStepStatus;
   execution?: ExecutionStepStatus;
   verification?: VerificationStepStatus;
+  escalation?: EscalationStepStatus;
 };
 
 // Main CRD type
@@ -365,7 +388,6 @@ export type LightspeedProposal = {
     analysis?: ProposalStep;
     execution?: ProposalStep;
     verification?: ProposalStep;
-    parentRef?: string;
     maxAttempts?: number;
     revision?: number;
     revisionFeedback?: string;
@@ -424,6 +446,21 @@ export type VerificationResultCR = {
   failureReason?: string;
 };
 
+export type EscalationResultCR = {
+  apiVersion: string;
+  kind: string;
+  metadata: { name: string; namespace: string; creationTimestamp?: string };
+  proposalName: string;
+  attempt: number;
+  success: boolean;
+  summary?: string;
+  content?: string;
+  sandbox?: SandboxInfo;
+  startTime?: string;
+  completionTime?: string;
+  failureReason?: string;
+};
+
 // Display helpers
 
 export type PhaseDisplay = {
@@ -443,6 +480,8 @@ export const getPhaseDisplay = (phase?: ProposalPhase | string): PhaseDisplay =>
       return { color: 'purple', label: 'Executing' };
     case 'Verifying':
       return { color: 'orange', label: 'Verifying' };
+    case 'Escalating':
+      return { color: 'orange', label: 'Escalating' };
     case 'Completed':
       return { color: 'green', label: 'Completed' };
     case 'Failed':
@@ -470,6 +509,11 @@ export const derivePhaseFromConditions = (
   const denied = get('Denied');
   if (denied?.status === 'True') return 'Denied';
 
+  if (escalated) {
+    if (escalated.status === 'Unknown') return 'Escalating';
+    return 'Failed';
+  }
+
   const verified = get('Verified');
   if (verified) {
     if (verified.status === 'True') return 'Completed';
@@ -477,8 +521,6 @@ export const derivePhaseFromConditions = (
     switch (verified.reason) {
       case 'RetryingExecution':
         return 'Executing';
-      case 'RetriesExhausted':
-        return 'Analyzing';
       default:
         return 'Failed';
     }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   K8sResourceCommon,
   k8sPatch,
@@ -329,18 +329,6 @@ const OverviewTab: React.FC<{
                   <DescriptionListTerm>{t('Target Namespaces')}</DescriptionListTerm>
                   <DescriptionListDescription>
                     {proposal.spec.targetNamespaces.join(', ')}
-                  </DescriptionListDescription>
-                </DescriptionListGroup>
-              )}
-              {proposal.spec.parentRef && (
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t('Parent Proposal')}</DescriptionListTerm>
-                  <DescriptionListDescription>
-                    <Link
-                      to={`/lightspeed/proposals/${proposal.metadata.namespace}/${proposal.spec.parentRef}`}
-                    >
-                      {proposal.spec.parentRef}
-                    </Link>
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               )}
@@ -1836,6 +1824,7 @@ const ProposalDetailPage: React.FC = () => {
 
       {escalateOpen && (
         <EscalateModal
+          approval={approval}
           isOpen={escalateOpen}
           onClose={() => setEscalateOpen(false)}
           proposal={proposal}

@@ -45,6 +45,9 @@ export function stageNeedsApproval(
       return get('Analyzed')?.status === 'True' && !get('Executed');
     case 'Verification':
       return get('Executed')?.status === 'True' && !get('Verified');
+    case 'Escalation':
+      return get('Escalated')?.status === 'Unknown'
+        && !findStage(approval, 'Escalation');
     default:
       return false;
   }
@@ -73,6 +76,9 @@ export function buildApprovalPatch(
       break;
     case 'Verification':
       stage.verification = options?.agent ? { agent: options.agent } : {};
+      break;
+    case 'Escalation':
+      stage.escalation = options?.agent ? { agent: options.agent } : {};
       break;
   }
 

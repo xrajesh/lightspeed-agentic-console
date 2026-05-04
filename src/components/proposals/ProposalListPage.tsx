@@ -50,6 +50,7 @@ const filters: RowFilter<ProposalResource>[] = [
       { id: 'Analyzing', title: 'Analyzing' },
       { id: 'Executing', title: 'Executing' },
       { id: 'Verifying', title: 'Verifying' },
+      { id: 'Escalating', title: 'Escalating' },
       { id: 'Completed', title: 'Completed' },
       { id: 'Failed', title: 'Failed' },
       { id: 'Denied', title: 'Denied' },

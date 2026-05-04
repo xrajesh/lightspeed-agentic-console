@@ -45,6 +45,8 @@ const PhaseIcon: React.FC<{
       return (
         <ExclamationCircleIcon color="var(--pf-t--global--icon--color--severity--warning--default)" />
       );
+    case 'Escalating':
+      return <InProgressIcon color="var(--pf-t--global--icon--color--severity--warning--default)" />;
     default:
       return <HourglassStartIcon />;
   }
