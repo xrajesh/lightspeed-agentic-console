@@ -240,7 +240,6 @@ const ApprovalCard: React.FC<{
 };
 
 const SandboxDisplay: React.FC<{ label: string; sandbox?: SandboxInfo }> = ({ label, sandbox }) => {
-  const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
   if (!sandbox?.claimName) {
     return null;
   }
@@ -250,16 +249,6 @@ const SandboxDisplay: React.FC<{ label: string; sandbox?: SandboxInfo }> = ({ la
       <DescriptionListDescription>
         {sandbox.claimName}
         {sandbox.namespace && ` (${sandbox.namespace})`}
-        {sandbox.startedAt && (
-          <div className="ols-plugin__proposal-sandbox-info">
-            {t('Started')}: {new Date(sandbox.startedAt).toLocaleString()}
-          </div>
-        )}
-        {sandbox.completedAt && (
-          <div>
-            {t('Completed')}: {new Date(sandbox.completedAt).toLocaleString()}
-          </div>
-        )}
       </DescriptionListDescription>
     </DescriptionListGroup>
   );

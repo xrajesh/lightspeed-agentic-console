@@ -191,8 +191,6 @@ export type StepPhase = 'Pending' | 'Running' | 'Completed' | 'Failed' | 'Skippe
 export type SandboxInfo = {
   claimName?: string;
   namespace?: string;
-  startedAt?: string;
-  completedAt?: string;
 };
 
 export type ProposalCondition = {
