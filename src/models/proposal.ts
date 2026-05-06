@@ -381,6 +381,7 @@ export type LightspeedProposal = {
     name: string;
     namespace: string;
     creationTimestamp?: string;
+    generation?: number;
     labels?: Record<string, string>;
     annotations?: Record<string, string>;
     uid?: string;
