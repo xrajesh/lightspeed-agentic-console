@@ -202,6 +202,7 @@ export type ProposalCondition = {
   lastTransitionTime?: string;
   reason?: string;
   message?: string;
+  observedGeneration?: number;
 };
 
 export type StepResultRef = {
@@ -314,7 +315,6 @@ export type RemediationOption = {
 export type AnalysisStepStatus = {
   phase?: StepPhase;
   selectedOption?: number;
-  observedGeneration?: number;
   sandbox?: SandboxInfo;
   conditions?: ProposalCondition[];
   results?: StepResultRef[];
@@ -357,7 +357,6 @@ export type VerificationStepStatus = {
 };
 
 export type ProposalStatus = {
-  attempts?: number;
   steps?: StepsStatus;
   conditions?: ProposalCondition[];
 };
@@ -417,7 +416,6 @@ export type AnalysisResultCR = {
   metadata: { name: string; namespace: string; creationTimestamp?: string };
   spec: {
     proposalName: string;
-    attempt: number;
   };
   status?: {
     conditions?: ResultCondition[];
@@ -434,7 +432,6 @@ export type ExecutionResultCR = {
   metadata: { name: string; namespace: string; creationTimestamp?: string };
   spec: {
     proposalName: string;
-    attempt: number;
     retryIndex?: number;
   };
   status?: {
@@ -452,7 +449,6 @@ export type VerificationResultCR = {
   metadata: { name: string; namespace: string; creationTimestamp?: string };
   spec: {
     proposalName: string;
-    attempt: number;
     retryIndex?: number;
   };
   status?: {
@@ -470,7 +466,6 @@ export type EscalationResultCR = {
   metadata: { name: string; namespace: string; creationTimestamp?: string };
   spec: {
     proposalName: string;
-    attempt: number;
   };
   status?: {
     conditions?: ResultCondition[];

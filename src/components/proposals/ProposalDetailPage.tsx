@@ -326,14 +326,6 @@ const OverviewTab: React.FC<{
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               )}
-              {(proposal.status?.attempts ?? 0) > 1 && (
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t('Attempt')}</DescriptionListTerm>
-                  <DescriptionListDescription>
-                    {proposal.status?.attempts}
-                  </DescriptionListDescription>
-                </DescriptionListGroup>
-              )}
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('Created')}</DescriptionListTerm>
                 <DescriptionListDescription>
@@ -953,9 +945,12 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
   const sandboxNs = analysis?.sandbox?.namespace || 'openshift-lightspeed';
   const isAnalyzing = phase === 'Analyzing' || phase === 'Pending';
   const generation = proposal.metadata?.generation ?? 0;
+  const analyzedCondition = proposal.status?.conditions?.find(
+    (c: ProposalCondition) => c.type === 'Analyzed',
+  );
   const revisionPending =
     !!proposal.spec.revisionFeedback &&
-    generation > (analysis?.observedGeneration ?? 0);
+    generation > (analyzedCondition?.observedGeneration ?? 0);
 
   const [logsExpanded, setLogsExpanded] = useAutoCollapseLogs(hasAnalysis && !revisionPending);
 
@@ -1827,8 +1822,6 @@ const ProposalDetailPage: React.FC = () => {
   }
 
   const phase = getPhaseDisplay(currentPhase);
-  const attempt = proposal.status?.attempts ?? 0;
-
   const isCmoSource =
     proposal.metadata?.labels?.['ols.openshift.io/source'] === 'cluster-monitoring-operator';
   const isTriggerBootstrap =
@@ -1995,11 +1988,6 @@ const ProposalDetailPage: React.FC = () => {
             )}
             {activePhaseTab === id && effectiveTab !== id && !tabNeedsApproval[id] && (
               <span className="ols-plugin__tab-active-dot" />
-            )}
-            {attempt > 1 && id === 'overview' && (
-              <Label className="ols-plugin__chevron-tab-iteration" isCompact>
-                {`×${attempt}`}
-              </Label>
             )}
           </button>
         ))}
