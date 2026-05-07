@@ -302,8 +302,8 @@ export type AdapterComponent = {
 export type RemediationOption = {
   title: string;
   summary?: string;
-  diagnosis: AgentDiagnosis;
-  proposal: AgentProposal;
+  diagnosis?: AgentDiagnosis;
+  proposal?: AgentProposal;
   verification?: AgentVerification;
   rbac?: AgentRbac;
   components?: unknown;
@@ -389,7 +389,10 @@ export type LightspeedProposal = {
   spec: {
     request: string;
     targetNamespaces?: string[];
-    outputSchema?: unknown;
+    analysisOutput?: {
+      mode?: 'Default' | 'Minimal';
+      schema?: unknown;
+    };
     tools?: ToolsSpec;
     analysis?: ProposalStep;
     execution?: ProposalStep;

@@ -735,11 +735,13 @@ const RemediationOptionsView: React.FC<{
                     <FlexItem>
                       <strong>{opt.title}</strong>
                     </FlexItem>
-                    <FlexItem>
-                      <Label color={getRiskColor(opt.proposal.risk)}>
-                        {t('Risk: {{risk}}', { risk: opt.proposal.risk })}
-                      </Label>
-                    </FlexItem>
+                    {opt.proposal && (
+                      <FlexItem>
+                        <Label color={getRiskColor(opt.proposal.risk)}>
+                          {t('Risk: {{risk}}', { risk: opt.proposal.risk })}
+                        </Label>
+                      </FlexItem>
+                    )}
                     {opt.summary && <FlexItem>{opt.summary}</FlexItem>}
                     {isSelected && (
                       <FlexItem>
