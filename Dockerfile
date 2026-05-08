@@ -1,15 +1,43 @@
-FROM registry.access.redhat.com/ubi9/nodejs-22:latest AS build
+FROM registry.access.redhat.com/ubi9/nodejs-22-minimal:latest AS build
 USER root
-ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-RUN npm i -g corepack && corepack enable
 
-ADD . /usr/src/app
 WORKDIR /usr/src/app
-RUN yarn install --immutable && yarn build
 
-FROM registry.access.redhat.com/ubi9/nginx-120:latest
+# Copy only package files first for better layer caching
+COPY package.json package-lock.json ./
+
+RUN NODE_OPTIONS=--max-old-space-size=4096 npm ci --omit=dev --omit=optional --ignore-scripts --no-fund
+
+COPY console-extensions.json LICENSE tsconfig.json tsconfig.build.json webpack.config.ts ./
+COPY locales ./locales
+COPY src ./src
+RUN npm run build
+
+FROM registry.access.redhat.com/ubi9-minimal@sha256:83006d535923fcf1345067873524a3980316f51794f01d8655be55d6e9387183
+USER 0
+
+RUN microdnf install -y nginx && microdnf clean all
 
 COPY --from=build /usr/src/app/dist /usr/share/nginx/html
+
+RUN mkdir -p /licenses
+COPY --from=build /usr/src/app/LICENSE /licenses/LICENSE
+
+# Create nginx temp directory and set permissions for OpenShift
+RUN mkdir -p /tmp/nginx && \
+    chgrp -R 0 /var/log/nginx /var/lib/nginx /usr/share/nginx/html /tmp/nginx && \
+    chmod -R g=u /var/log/nginx /var/lib/nginx /usr/share/nginx/html /tmp/nginx
+
+LABEL name="openshift-lightspeed/lightspeed-agentic-console-plugin-rhel9" \
+      cpe="cpe:/a:redhat:openshift_lightspeed:1::el9" \
+      com.redhat.component="openshift-lightspeed" \
+      io.k8s.display-name="OpenShift Lightspeed Agentic Console" \
+      summary="OpenShift Lightspeed Agentic Console provides OCP console plugin for OpenShift Lightspeed Service" \
+      description="OpenShift Lightspeed Agentic Console provides OCP console plugin for OpenShift Lightspeed Service" \
+      io.k8s.description="OpenShift Lightspeed Agentic Console is a component of OpenShift Lightspeed" \
+      io.openshift.tags="openshift-lightspeed,ols" \
+      konflux.additional-tags="latest"
+
 USER 1001
 
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["nginx", "-g", "daemon off;", "-e", "stderr"]
