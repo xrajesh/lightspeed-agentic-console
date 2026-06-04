@@ -1,0 +1,73 @@
+# Proposal Lifecycle
+
+The core domain of the plugin: displaying and managing proposals through a multi-stage workflow.
+
+## Behavioral Rules
+
+### Phase Derivation
+
+1. The plugin MUST derive the proposal phase from `status.conditions[]`, not from a stored phase field. The function `derivePhaseFromConditions` implements this logic and MUST match the operator's `DerivePhase` in `lightspeed-agentic-operator/api/v1alpha1/proposal_types.go`.
+2. Phase derivation follows condition priority: Escalated > Denied > Verified > Executed > Analyzed > Pending.
+3. Within each condition, `status: True` means the stage completed successfully, `status: Unknown` means the stage is in progress, and `status: False` means the stage failed (unless a specific `reason` indicates retry).
+4. The `Verified` condition with reason `RetryingExecution` maps to the `Executing` phase (not `Failed`).
+
+### Proposal Phases
+
+5. Valid phases are: Pending, Analyzing, Proposed, Executing, Verifying, Escalating, Completed, Failed, Denied, Escalated.
+6. Terminal phases are: Completed, Failed, Denied, Escalated. No approval actions are shown for terminal proposals.
+
+### Proposal List
+
+7. The list page MUST watch all Proposal CRs across namespaces and display them in a virtualized table.
+8. The list MUST support filtering by phase and text search.
+9. Each row MUST show: name (linked to detail), phase label, request preview (truncated to 80 chars), namespace, and age.
+
+### Proposal Detail — Tabs
+
+10. The detail page MUST show tabs: Overview, Proposal, Execution, Verification, and conditionally Escalation.
+11. The Escalation tab MUST only appear when the proposal has an `Escalated` condition.
+12. For CMO (cluster-monitoring-operator) sourced proposals, the Overview tab is hidden and the default tab is Proposal.
+13. A blue dot indicator MUST appear on the tab corresponding to the currently active phase when the user is viewing a different tab.
+14. Tabs that need approval MUST show a "Needs approval" badge.
+
+### Approval Flow
+
+15. Each stage (Analysis, Execution, Verification, Escalation) can independently require approval based on the ProposalApproval CR.
+16. Approval decisions are written as JSON patches to the ProposalApproval CR, not to the Proposal CR.
+17. When approving execution, the user can select a specific remediation option (by index) and specify retry count (0-3).
+18. Execution approval uses a two-step confirmation pattern: click Approve, then click Confirm Approve. The confirmation auto-resets after 5 seconds.
+19. The user can select which Agent to use for each approval stage. The available agents are fetched from the cluster-scoped Agent CRD list.
+
+### Remediation Options
+
+20. Analysis produces one or more `RemediationOption` objects, each containing diagnosis, proposed remediation, RBAC requirements, and a verification plan.
+21. When multiple options exist, they are rendered as expandable cards with a "Select this option" button.
+22. RBAC permissions shown in the proposal are locked at approval time — the UI shows a danger-level alert stating the agent cannot escalate its own privileges.
+
+### Refine Flow
+
+23. After analysis completes, the user can submit revision feedback via a "Refine" button.
+24. Refinement writes `spec.revisionFeedback` to the Proposal CR via patch. If the value already exists, it uses `replace`; otherwise `add`.
+25. A revision is considered pending when `spec.revisionFeedback` is set AND `metadata.generation` exceeds the `observedGeneration` on the `Analyzed` condition.
+
+### Sandbox Log Streaming
+
+26. While a stage is in progress, the plugin streams logs from the sandbox pod's `agent` container.
+27. Log streaming uses `follow: true` with automatic reconnection on stream end or error (exponential backoff from 1s to 15s).
+28. When the streaming result data arrives, the log viewer auto-collapses to an expandable section.
+29. Logs are capped at 512KB; excess is trimmed from the start at newline boundaries.
+
+### Trigger-Bootstrap Proposals
+
+30. Proposals with label `ols.openshift.io/proposal-type: trigger-bootstrap` get a simplified single-page layout (no tabs) showing the trigger name, analysis logs, and trigger options.
+
+### Escalation
+
+31. Verification failure enables an "Escalate" button that opens a confirmation modal.
+32. Escalation approval creates an Escalation stage in the ProposalApproval CR.
+33. Escalation results display a summary and optionally the full escalation content in an expandable section.
+
+## Constraints
+
+- The `derivePhaseFromConditions` function is a behavioral contract with the operator. Changes require synchronization.
+- The approval patch structure depends on whether `spec`, `spec.stages`, or individual stages already exist — three patch variants are generated accordingly.
