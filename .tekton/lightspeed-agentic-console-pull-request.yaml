@@ -29,6 +29,13 @@ spec:
   - name: build-platforms
     value:
     - linux/x86_64
+    - linux-mxlarge/arm64
+  - name: hermetic
+    value: "true"
+  - name: prefetch-input
+    value: '[{"type": "npm", "path": "."}, {"type": "rpm", "path": "."}]'
+  - name: build-source-image
+    value: "true"
   - name: dockerfile
     value: Dockerfile
   pipelineSpec:
@@ -91,9 +98,6 @@ spec:
     - default: "false"
       description: Enable cache proxy configuration
       name: enable-cache-proxy
-    - default: "true"
-      description: Use the package registry proxy when prefetching dependencies
-      name: enable-package-registry-proxy
     - default: .
       description: Target directories in component's source code to scan with SAST
         tools. Multiple values should be separated with commas.
@@ -173,8 +177,6 @@ spec:
       params:
       - name: input
         value: $(params.prefetch-input)
-      - name: enable-package-registry-proxy
-        value: $(params.enable-package-registry-proxy)
       - name: SOURCE_ARTIFACT
         value: $(tasks.clone-repository.results.SOURCE_ARTIFACT)
       - name: ociStorage
@@ -188,7 +190,7 @@ spec:
         - name: name
           value: prefetch-dependencies-oci-ta
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-prefetch-dependencies-oci-ta:0.3@sha256:3dc78afbf3a441e0280067433cb28ea3d2d0088ec214c73bf063f145b4f273ef
+          value: quay.io/konflux-ci/tekton-catalog/task-prefetch-dependencies-oci-ta:0.3@sha256:2229dbc5e15acc0a6d8aec526465aeb0ad54e269c311ac3d0aba88013845e308
         - name: kind
           value: task
         resolver: bundles
@@ -246,7 +248,7 @@ spec:
         - name: name
           value: buildah-remote-oci-ta
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-buildah-remote-oci-ta:0.10@sha256:41f3f361785550b378b50b8ce42870092026ae413c723c738c496a75587eff82
+          value: quay.io/konflux-ci/tekton-catalog/task-buildah-remote-oci-ta:0.9@sha256:b44b827737f48b572d15fdfdf1abe9ead1678925dcc0ac8fe3062f4efa1b1715
         - name: kind
           value: task
         resolver: bundles
