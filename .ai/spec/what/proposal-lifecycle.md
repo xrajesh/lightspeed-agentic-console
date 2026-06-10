@@ -33,6 +33,7 @@ The core domain of the plugin: displaying and managing proposals through a multi
 ### Approval Flow
 
 15. Each stage (Analysis, Execution, Verification, Escalation) can independently require approval based on the ProposalApproval CR.
+15a. **Authorization gate.** Before rendering Approve/Deny buttons, the plugin MUST perform a `useAccessReview` check for `patch` verb on `proposalapprovals` resource in API group `agentic.openshift.io`. If the user lacks the permission, the buttons MUST be hidden or disabled with a tooltip explaining that cluster-admin is required. This prevents confusing 403 errors — the API server enforces the real gate. See parent spec `agentic-security.md` rule 5.
 16. Approval decisions are written as JSON patches to the ProposalApproval CR, not to the Proposal CR.
 17. When approving execution, the user can select a specific remediation option (by index) and specify retry count (0-3).
 18. Execution approval uses a two-step confirmation pattern: click Approve, then click Confirm Approve. The confirmation auto-resets after 5 seconds.
