@@ -30,6 +30,7 @@ import {
   Stack,
   StackItem,
   Title,
+  Tooltip,
 } from '@patternfly/react-core';
 
 import {
@@ -206,23 +207,33 @@ const ApprovalCard: React.FC<{
                     </FlexItem>
                   )}
                   <FlexItem>
-                    <Button
-                      isDisabled={approval.inProgress}
-                      isLoading={approval.inProgress}
-                      onClick={() => approval.approve({ agent: selectedAgent || undefined })}
-                      variant="primary"
+                    <Tooltip
+                      content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
+                      trigger={!approval.canApprove && !approval.canApproveLoading ? undefined : 'manual'}
                     >
-                      {approveLabel}
-                    </Button>
+                      <Button
+                        isAriaDisabled={!approval.canApprove || approval.inProgress}
+                        isLoading={approval.inProgress}
+                        onClick={() => approval.approve({ agent: selectedAgent || undefined })}
+                        variant="primary"
+                      >
+                        {approveLabel}
+                      </Button>
+                    </Tooltip>
                   </FlexItem>
                   <FlexItem>
-                    <Button
-                      isDisabled={approval.inProgress}
-                      onClick={() => approval.deny()}
-                      variant="secondary"
+                    <Tooltip
+                      content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
+                      trigger={!approval.canApprove && !approval.canApproveLoading ? undefined : 'manual'}
                     >
-                      {t('Deny')}
-                    </Button>
+                      <Button
+                        isAriaDisabled={!approval.canApprove || approval.inProgress}
+                        onClick={() => approval.deny()}
+                        variant="secondary"
+                      >
+                        {t('Deny')}
+                      </Button>
+                    </Tooltip>
                   </FlexItem>
                 </Flex>
               </StackItem>
@@ -1081,14 +1092,19 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
                 </FlexItem>
               )}
               <FlexItem className="ols-plugin__approve-split">
-                <Button
-                  className="ols-plugin__approve-split-main"
-                  isDisabled={executionApproval.inProgress}
-                  onClick={() => setConfirmRetries(0)}
-                  variant="danger"
+                <Tooltip
+                  content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
+                  trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
                 >
-                  {t('Approve')}
-                </Button>
+                  <Button
+                    className="ols-plugin__approve-split-main"
+                    isAriaDisabled={!executionApproval.canApprove || executionApproval.inProgress}
+                    onClick={() => setConfirmRetries(0)}
+                    variant="danger"
+                  >
+                    {t('Approve')}
+                  </Button>
+                </Tooltip>
                 <Dropdown
                   isOpen={retryDropdownOpen}
                   isScrollable
@@ -1099,16 +1115,21 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
                     setConfirmRetries(value as number);
                   }}
                   toggle={(toggleRef) => (
-                    <Button
-                      aria-label={t('Approve with retries')}
-                      className="ols-plugin__approve-split-toggle"
-                      isDisabled={busy}
-                      onClick={() => setRetryDropdownOpen((o) => !o)}
-                      ref={toggleRef}
-                      variant="danger"
+                    <Tooltip
+                      content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
+                      trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
                     >
-                      &#9660;
-                    </Button>
+                      <Button
+                        aria-label={t('Approve with retries')}
+                        className="ols-plugin__approve-split-toggle"
+                        isAriaDisabled={!executionApproval.canApprove || busy}
+                        onClick={() => setRetryDropdownOpen((o) => !o)}
+                        ref={toggleRef}
+                        variant="danger"
+                      >
+                        &#9660;
+                      </Button>
+                    </Tooltip>
                   )}
                 >
                   <DropdownList>
@@ -1121,14 +1142,19 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
                 </Dropdown>
               </FlexItem>
               <FlexItem>
-                <Button
-                  isDisabled={executionApproval.inProgress}
-                  isLoading={executionApproval.inProgress}
-                  onClick={() => executionApproval.deny()}
-                  variant="secondary"
+                <Tooltip
+                  content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
+                  trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
                 >
-                  {t('Deny')}
-                </Button>
+                  <Button
+                    isAriaDisabled={!executionApproval.canApprove || executionApproval.inProgress}
+                    isLoading={executionApproval.inProgress}
+                    onClick={() => executionApproval.deny()}
+                    variant="secondary"
+                  >
+                    {t('Deny')}
+                  </Button>
+                </Tooltip>
               </FlexItem>
               <FlexItem>
                 <Button
@@ -1143,23 +1169,28 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
           ) : (
             <>
               <FlexItem>
-                <Button
-                  className="ols-plugin__confirm-sweep"
-                  isDisabled={executionApproval.inProgress}
-                  isLoading={executionApproval.inProgress}
-                  onClick={() =>
-                    executionApproval.approve({
-                      maxAttempts: confirmRetries,
-                      option: localSelectedOption,
-                      agent: execAgent || undefined,
-                    })
-                  }
-                  variant="danger"
+                <Tooltip
+                  content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
+                  trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
                 >
-                  {confirmRetries > 0
-                    ? t('Confirm Approve ({{num}} retries)', { num: confirmRetries })
-                    : t('Confirm Approve')}
-                </Button>
+                  <Button
+                    className="ols-plugin__confirm-sweep"
+                    isAriaDisabled={!executionApproval.canApprove || executionApproval.inProgress}
+                    isLoading={executionApproval.inProgress}
+                    onClick={() =>
+                      executionApproval.approve({
+                        maxAttempts: confirmRetries,
+                        option: localSelectedOption,
+                        agent: execAgent || undefined,
+                      })
+                    }
+                    variant="danger"
+                  >
+                    {confirmRetries > 0
+                      ? t('Confirm Approve ({{num}} retries)', { num: confirmRetries })
+                      : t('Confirm Approve')}
+                  </Button>
+                </Tooltip>
               </FlexItem>
               <FlexItem>
                 <Button

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { k8sPatch } from '@openshift-console/dynamic-plugin-sdk';
+import { k8sPatch, useAccessReview } from '@openshift-console/dynamic-plugin-sdk';
 
 import {
   ApprovalStageType,
@@ -20,6 +20,8 @@ export type StageApprovalResult = {
   inProgress: boolean;
   error: string | null;
   clearError: () => void;
+  canApprove: boolean;
+  canApproveLoading: boolean;
 };
 
 export function useStageApproval(
@@ -31,6 +33,13 @@ export function useStageApproval(
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
+  const [canApprove, canApproveLoading] = useAccessReview({
+    group: 'agentic.openshift.io',
+    resource: 'proposalapprovals',
+    verb: 'patch',
+    namespace: approval?.metadata?.namespace ?? proposal?.metadata?.namespace,
+  });
+
   const effectivePhase =
     phase ?? derivePhaseFromConditions(proposal?.status?.conditions as ProposalCondition[]);
   const needs = stageNeedsApproval(approval, stageType, proposal?.status?.conditions, effectivePhase);
@@ -38,7 +47,7 @@ export function useStageApproval(
 
   const approve = React.useCallback(
     async (options?: { maxAttempts?: number; option?: number; agent?: string }) => {
-      if (!proposal || !approval) return;
+      if (!proposal || !approval || !canApprove) return;
       setInProgress(true);
       setError(null);
       try {
@@ -54,11 +63,11 @@ export function useStageApproval(
         setInProgress(false);
       }
     },
-    [proposal, approval, stageType],
+    [proposal, approval, stageType, canApprove],
   );
 
   const deny = React.useCallback(async () => {
-    if (!approval) return;
+    if (!approval || !canApprove) return;
     setInProgress(true);
     setError(null);
     try {
@@ -73,9 +82,9 @@ export function useStageApproval(
     } finally {
       setInProgress(false);
     }
-  }, [approval, stageType]);
+  }, [approval, stageType, canApprove]);
 
   const clearError = React.useCallback(() => setError(null), []);
 
-  return { needsApproval: needs, stageStatus: status, approve, deny, inProgress, error, clearError };
+  return { needsApproval: needs, stageStatus: status, approve, deny, inProgress, error, clearError, canApprove, canApproveLoading };
 }

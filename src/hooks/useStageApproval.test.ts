@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { k8sPatch } from '@openshift-console/dynamic-plugin-sdk';
+import { k8sPatch, useAccessReview } from '@openshift-console/dynamic-plugin-sdk';
 
 import {
   LightspeedProposal,
@@ -10,6 +10,7 @@ import { useStageApproval } from './useStageApproval';
 import { makeApproval } from '../test-helpers';
 
 const mockK8sPatch = k8sPatch as ReturnType<typeof vi.fn>;
+const mockUseAccessReview = useAccessReview as ReturnType<typeof vi.fn>;
 
 function makeProposal(overrides?: Partial<LightspeedProposal>): LightspeedProposal {
   return {
@@ -136,5 +137,53 @@ describe('useStageApproval', () => {
       result.current.clearError();
     });
     expect(result.current.error).toBeNull();
+  });
+
+  it('returns canApprove=true when user has patch permission', () => {
+    mockUseAccessReview.mockReturnValue([true, false]);
+    const { result } = renderHook(() =>
+      useStageApproval(makeProposal(), makeApproval(), 'Analysis'),
+    );
+    expect(result.current.canApprove).toBe(true);
+    expect(result.current.canApproveLoading).toBe(false);
+  });
+
+  it('returns canApprove=false when user lacks patch permission', () => {
+    mockUseAccessReview.mockReturnValue([false, false]);
+    const { result } = renderHook(() =>
+      useStageApproval(makeProposal(), makeApproval(), 'Analysis'),
+    );
+    expect(result.current.canApprove).toBe(false);
+    expect(result.current.canApproveLoading).toBe(false);
+  });
+
+  it('returns canApproveLoading=true while access review is in flight', () => {
+    mockUseAccessReview.mockReturnValue([false, true]);
+    const { result } = renderHook(() =>
+      useStageApproval(makeProposal(), makeApproval(), 'Analysis'),
+    );
+    expect(result.current.canApproveLoading).toBe(true);
+  });
+
+  it('passes approval namespace to useAccessReview', () => {
+    const approval = makeApproval();
+    renderHook(() => useStageApproval(makeProposal(), approval, 'Analysis'));
+    expect(mockUseAccessReview).toHaveBeenCalledWith({
+      group: 'agentic.openshift.io',
+      resource: 'proposalapprovals',
+      verb: 'patch',
+      namespace: approval.metadata.namespace,
+    });
+  });
+
+  it('falls back to proposal namespace when approval is undefined', () => {
+    const proposal = makeProposal({ metadata: { name: 'test', namespace: 'my-ns' } });
+    renderHook(() => useStageApproval(proposal, undefined, 'Analysis'));
+    expect(mockUseAccessReview).toHaveBeenCalledWith({
+      group: 'agentic.openshift.io',
+      resource: 'proposalapprovals',
+      verb: 'patch',
+      namespace: 'my-ns',
+    });
   });
 });

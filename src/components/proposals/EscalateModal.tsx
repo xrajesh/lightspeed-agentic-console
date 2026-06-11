@@ -8,6 +8,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalVariant,
+  Tooltip,
 } from '@patternfly/react-core';
 
 import {
@@ -26,6 +27,7 @@ const EscalateModal: React.FC<{
   const escalation = useStageApproval(proposal, approval, 'Escalation');
 
   const onApprove = React.useCallback(async () => {
+    if (!escalation.canApprove) return;
     await escalation.approve();
     if (!escalation.error) {
       onClose();
@@ -52,15 +54,20 @@ const EscalateModal: React.FC<{
         )}
       </ModalBody>
       <ModalFooter>
-        <Button
-          isDisabled={escalation.inProgress || !approval}
-          isLoading={escalation.inProgress}
-          onClick={onApprove}
-          variant="primary"
+        <Tooltip
+          content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
+          trigger={!escalation.canApprove && !escalation.canApproveLoading ? undefined : 'manual'}
         >
-          {t('Escalate')}
-        </Button>
-        <Button isDisabled={escalation.inProgress} onClick={onClose} variant="link">
+          <Button
+            isAriaDisabled={!escalation.canApprove || escalation.inProgress || !approval}
+            isLoading={escalation.inProgress}
+            onClick={onApprove}
+            variant="primary"
+          >
+            {t('Escalate')}
+          </Button>
+        </Tooltip>
+        <Button isAriaDisabled={escalation.inProgress} onClick={onClose} variant="link">
           {t('Cancel')}
         </Button>
       </ModalFooter>
