@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { derivePhaseFromConditions } from './proposal';
+import { derivePhaseFromConditions, getPhaseDisplay } from './proposal';
 import { cond } from '../test-helpers';
 
 describe('derivePhaseFromConditions', () => {
@@ -25,21 +25,21 @@ describe('derivePhaseFromConditions', () => {
   });
 
   it('returns Executing for Executed=Unknown', () => {
-    expect(
-      derivePhaseFromConditions([cond('Analyzed', 'True'), cond('Executed', 'Unknown')]),
-    ).toBe('Executing');
+    expect(derivePhaseFromConditions([cond('Analyzed', 'True'), cond('Executed', 'Unknown')])).toBe(
+      'Executing',
+    );
   });
 
   it('returns Verifying for Executed=True', () => {
-    expect(
-      derivePhaseFromConditions([cond('Analyzed', 'True'), cond('Executed', 'True')]),
-    ).toBe('Verifying');
+    expect(derivePhaseFromConditions([cond('Analyzed', 'True'), cond('Executed', 'True')])).toBe(
+      'Verifying',
+    );
   });
 
   it('returns Failed for Executed=False', () => {
-    expect(
-      derivePhaseFromConditions([cond('Analyzed', 'True'), cond('Executed', 'False')]),
-    ).toBe('Failed');
+    expect(derivePhaseFromConditions([cond('Analyzed', 'True'), cond('Executed', 'False')])).toBe(
+      'Failed',
+    );
   });
 
   it('returns Verifying for Verified=Unknown', () => {
@@ -101,8 +101,39 @@ describe('derivePhaseFromConditions', () => {
   });
 
   it('Escalated takes priority over Denied', () => {
+    expect(derivePhaseFromConditions([cond('Escalated', 'True'), cond('Denied', 'True')])).toBe(
+      'Escalated',
+    );
+  });
+
+  it('returns EmergencyStopped for EmergencyStopped=True', () => {
+    expect(derivePhaseFromConditions([cond('EmergencyStopped', 'True')])).toBe('EmergencyStopped');
+  });
+
+  it('EmergencyStopped takes priority over Analyzed=True', () => {
     expect(
-      derivePhaseFromConditions([cond('Escalated', 'True'), cond('Denied', 'True')]),
-    ).toBe('Escalated');
+      derivePhaseFromConditions([cond('EmergencyStopped', 'True'), cond('Analyzed', 'True')]),
+    ).toBe('EmergencyStopped');
+  });
+
+  it('EmergencyStopped takes priority over Escalated=True', () => {
+    expect(
+      derivePhaseFromConditions([cond('EmergencyStopped', 'True'), cond('Escalated', 'True')]),
+    ).toBe('EmergencyStopped');
+  });
+
+  it('EmergencyStopped takes priority over Denied=True', () => {
+    expect(
+      derivePhaseFromConditions([cond('EmergencyStopped', 'True'), cond('Denied', 'True')]),
+    ).toBe('EmergencyStopped');
+  });
+});
+
+describe('getPhaseDisplay', () => {
+  it('returns purple label for EmergencyStopped', () => {
+    expect(getPhaseDisplay('EmergencyStopped')).toEqual({
+      color: 'purple',
+      label: 'Emergency Stopped',
+    });
   });
 });

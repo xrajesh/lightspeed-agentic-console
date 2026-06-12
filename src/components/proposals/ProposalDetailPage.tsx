@@ -68,6 +68,7 @@ import { type StageApprovalResult, useStageApproval } from '../../hooks/useStage
 import { MarkdownText } from './MarkdownText';
 import DynamicComponent from './DynamicComponent';
 import EscalateModal from './EscalateModal';
+import AgenticLayout from '../AgenticLayout';
 import PhaseIcon from './PhaseIcon';
 import SandboxLogViewer from './SandboxLogViewer';
 
@@ -1874,6 +1875,7 @@ const ProposalDetailPage: React.FC = () => {
     const hasOptions = triggerOptions.length > 0;
 
     return (
+      <AgenticLayout>
       <PageSection>
         <Flex
           alignItems={{ default: 'alignItemsCenter' }}
@@ -1922,6 +1924,7 @@ const ProposalDetailPage: React.FC = () => {
           )}
         </Stack>
       </PageSection>
+      </AgenticLayout>
     );
   }
 
@@ -1951,6 +1954,7 @@ const ProposalDetailPage: React.FC = () => {
   };
 
   return (
+    <AgenticLayout>
     <PageSection>
       <Flex
         alignItems={{ default: 'alignItemsCenter' }}
@@ -2074,6 +2078,7 @@ const ProposalDetailPage: React.FC = () => {
         )}
       </div>
     </PageSection>
+    </AgenticLayout>
   );
 };
 

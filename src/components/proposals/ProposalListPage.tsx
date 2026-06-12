@@ -15,7 +15,15 @@ import {
   useListPageFilter,
   VirtualizedTable,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { Button, EmptyState, EmptyStateBody, Flex, FlexItem, Label, Title } from '@patternfly/react-core';
+import {
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  Flex,
+  FlexItem,
+  Label,
+  Title,
+} from '@patternfly/react-core';
 import { CogIcon, SearchIcon } from '@patternfly/react-icons';
 
 import {
@@ -25,6 +33,7 @@ import {
   LightspeedProposalGVK,
   ProposalCondition,
 } from '../../models/proposal';
+import AgenticLayout from '../AgenticLayout';
 
 type ProposalResource = LightspeedProposal & K8sResourceCommon;
 
@@ -54,6 +63,7 @@ const filters: RowFilter<ProposalResource>[] = [
       { id: 'Failed', title: 'Failed' },
       { id: 'Denied', title: 'Denied' },
       { id: 'Escalated', title: 'Escalated' },
+      { id: 'EmergencyStopped', title: 'Emergency Stopped' },
     ],
     reducer: (obj) => derivePhaseFromConditions(obj?.status?.conditions as ProposalCondition[]),
     type: 'proposal-phase',
@@ -61,7 +71,9 @@ const filters: RowFilter<ProposalResource>[] = [
 ];
 
 const ProposalRow: React.FC<RowProps<ProposalResource>> = ({ activeColumnIDs, obj }) => {
-  const phase = getPhaseDisplay(derivePhaseFromConditions(obj.status?.conditions as ProposalCondition[]));
+  const phase = getPhaseDisplay(
+    derivePhaseFromConditions(obj.status?.conditions as ProposalCondition[]),
+  );
   const detailPath = `/lightspeed/proposals/${obj.metadata.namespace}/${obj.metadata.name}`;
   const requestPreview =
     obj.spec.request.length > 80 ? `${obj.spec.request.substring(0, 80)}...` : obj.spec.request;
@@ -131,9 +143,12 @@ const ProposalListPage: React.FC = () => {
   const [data, filteredData, onFilterChange] = useListPageFilter(proposals, filters);
 
   return (
-    <>
+    <AgenticLayout>
       <div className="ols-plugin__list-page-header">
-        <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }} alignItems={{ default: 'alignItemsCenter' }}>
+        <Flex
+          justifyContent={{ default: 'justifyContentSpaceBetween' }}
+          alignItems={{ default: 'alignItemsCenter' }}
+        >
           <FlexItem>
             <Title headingLevel="h1">{t('AI Hub')}</Title>
           </FlexItem>
@@ -166,7 +181,7 @@ const ProposalListPage: React.FC = () => {
           unfilteredData={data}
         />
       </ListPageBody>
-    </>
+    </AgenticLayout>
   );
 };
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  BanIcon,
   CheckCircleIcon,
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
@@ -46,7 +47,11 @@ const PhaseIcon: React.FC<{
         <ExclamationCircleIcon color="var(--pf-t--global--icon--color--severity--warning--default)" />
       );
     case 'Escalating':
-      return <InProgressIcon color="var(--pf-t--global--icon--color--severity--warning--default)" />;
+      return (
+        <InProgressIcon color="var(--pf-t--global--icon--color--severity--warning--default)" />
+      );
+    case 'EmergencyStopped':
+      return <BanIcon color="var(--pf-t--global--icon--color--severity--custom--default)" />;
     default:
       return <HourglassStartIcon />;
   }

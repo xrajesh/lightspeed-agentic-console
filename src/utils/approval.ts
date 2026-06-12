@@ -22,7 +22,13 @@ export function getStageStatus(
   return stage.decision === 'Denied' ? 'denied' : 'approved';
 }
 
-const TERMINAL_PHASES = new Set<ProposalPhase>(['Completed', 'Failed', 'Denied', 'Escalated']);
+const TERMINAL_PHASES = new Set<ProposalPhase>([
+  'Completed',
+  'Failed',
+  'Denied',
+  'Escalated',
+  'EmergencyStopped',
+]);
 
 export function stageNeedsApproval(
   approval: LightspeedProposalApproval | undefined,
@@ -46,8 +52,7 @@ export function stageNeedsApproval(
     case 'Verification':
       return get('Executed')?.status === 'True' && !get('Verified');
     case 'Escalation':
-      return get('Escalated')?.status === 'Unknown'
-        && !findStage(approval, 'Escalation');
+      return get('Escalated')?.status === 'Unknown' && !findStage(approval, 'Escalation');
     default:
       return false;
   }
@@ -72,7 +77,8 @@ export function buildApprovalPatch(
       stage.execution = {
         ...(options?.option !== undefined && { option: options.option }),
         ...(options?.agent && { agent: options.agent }),
-        ...(options?.maxAttempts !== undefined && options.maxAttempts > 0 && { maxAttempts: options.maxAttempts }),
+        ...(options?.maxAttempts !== undefined &&
+          options.maxAttempts > 0 && { maxAttempts: options.maxAttempts }),
       };
       break;
     case 'Verification':

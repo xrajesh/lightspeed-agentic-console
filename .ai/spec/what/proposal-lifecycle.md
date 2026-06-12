@@ -7,14 +7,14 @@ The core domain of the plugin: displaying and managing proposals through a multi
 ### Phase Derivation
 
 1. The plugin MUST derive the proposal phase from `status.conditions[]`, not from a stored phase field. The function `derivePhaseFromConditions` implements this logic and MUST match the operator's `DerivePhase` in `lightspeed-agentic-operator/api/v1alpha1/proposal_types.go`.
-2. Phase derivation follows condition priority: Escalated > Denied > Verified > Executed > Analyzed > Pending.
+2. Phase derivation follows condition priority: EmergencyStopped > Escalated > Denied > Verified > Executed > Analyzed > Pending.
 3. Within each condition, `status: True` means the stage completed successfully, `status: Unknown` means the stage is in progress, and `status: False` means the stage failed (unless a specific `reason` indicates retry).
 4. The `Verified` condition with reason `RetryingExecution` maps to the `Executing` phase (not `Failed`).
 
 ### Proposal Phases
 
-5. Valid phases are: Pending, Analyzing, Proposed, Executing, Verifying, Escalating, Completed, Failed, Denied, Escalated.
-6. Terminal phases are: Completed, Failed, Denied, Escalated. No approval actions are shown for terminal proposals.
+5. Valid phases are: Pending, Analyzing, Proposed, Executing, Verifying, Escalating, Completed, Failed, Denied, Escalated, EmergencyStopped.
+6. Terminal phases are: Completed, Failed, Denied, Escalated, EmergencyStopped. No approval actions are shown for terminal proposals.
 
 ### Proposal List
 

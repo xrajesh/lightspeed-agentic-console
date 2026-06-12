@@ -156,6 +156,30 @@ export const EscalationResultGVK = {
   version: EscalationResultModel.apiVersion,
 };
 
+export const AgenticOLSConfigModel: K8sModel = {
+  apiGroup: 'agentic.openshift.io',
+  apiVersion: 'v1alpha1',
+  kind: 'AgenticOLSConfig',
+  plural: 'agenticolsconfigs',
+  abbr: 'AOC',
+  namespaced: false,
+  label: 'AgenticOLSConfig',
+  labelPlural: 'AgenticOLSConfigs',
+};
+
+export const AgenticOLSConfigGVK = {
+  group: AgenticOLSConfigModel.apiGroup,
+  kind: AgenticOLSConfigModel.kind,
+  version: AgenticOLSConfigModel.apiVersion,
+};
+
+export type AgenticOLSConfig = {
+  apiVersion: string;
+  kind: string;
+  metadata: { name: string };
+  spec?: { suspended?: boolean };
+};
+
 // ProposalApproval types
 
 export type ApprovalStageType = 'Analysis' | 'Execution' | 'Verification' | 'Escalation';
@@ -227,7 +251,8 @@ export type ProposalPhase =
   | 'Completed'
   | 'Failed'
   | 'Denied'
-  | 'Escalated';
+  | 'Escalated'
+  | 'EmergencyStopped';
 
 export type StepPhase = 'Pending' | 'Running' | 'Completed' | 'Failed' | 'Skipped';
 
@@ -556,18 +581,21 @@ export const getPhaseDisplay = (phase?: ProposalPhase | string): PhaseDisplay =>
       return { color: 'red', label: 'Denied' };
     case 'Escalated':
       return { color: 'orangered', label: 'Escalated' };
+    case 'EmergencyStopped':
+      return { color: 'purple', label: 'Emergency Stopped' };
     default:
       return { color: 'grey', label: phase || 'Unknown' };
   }
 };
 
 // SYNC: must match DerivePhase in lightspeed-agentic-operator/api/v1alpha1/proposal_types.go
-export const derivePhaseFromConditions = (
-  conditions?: ProposalCondition[],
-): ProposalPhase => {
+export const derivePhaseFromConditions = (conditions?: ProposalCondition[]): ProposalPhase => {
   if (!conditions?.length) return 'Pending';
 
   const get = (type: string) => conditions.find((c) => c.type === type);
+
+  const emergencyStopped = get('EmergencyStopped');
+  if (emergencyStopped?.status === 'True') return 'EmergencyStopped';
 
   const escalated = get('Escalated');
   if (escalated?.status === 'True') return 'Escalated';
@@ -623,7 +651,12 @@ export const getRiskColor = (risk?: string): 'green' | 'orange' | 'red' | 'grey'
   }
 };
 
-export type LLMProviderType = 'Anthropic' | 'GoogleCloudVertex' | 'OpenAI' | 'AzureOpenAI' | 'AWSBedrock';
+export type LLMProviderType =
+  | 'Anthropic'
+  | 'GoogleCloudVertex'
+  | 'OpenAI'
+  | 'AzureOpenAI'
+  | 'AWSBedrock';
 
 export type SecretRef = {
   name: string;
