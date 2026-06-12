@@ -1,17 +1,9 @@
-.ols-plugin__list-page-header {
-  padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--lg);
-}
-
 .ols-plugin__config-page {
   padding: var(--pf-t--global--spacer--lg);
 }
 
 .ols-plugin__config-error-text {
   color: var(--pf-t--global--color--status--danger--default);
-}
-
-.ols-plugin__config-breadcrumb {
-  padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--lg) 0;
 }
 
 .ols-plugin__config-tab-content {

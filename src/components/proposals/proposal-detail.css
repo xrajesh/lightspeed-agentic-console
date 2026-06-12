@@ -84,16 +84,6 @@
   padding: var(--pf-t--global--spacer--md);
 }
 
-.ols-plugin__proposal-attempt {
-  margin-bottom: var(--pf-t--global--spacer--sm);
-  border-left: 3px solid var(--pf-t--global--border--color--default);
-  padding-left: var(--pf-t--global--spacer--md);
-}
-
-.ols-plugin__proposal-sandbox-info {
-  margin-top: var(--pf-t--global--spacer--sm);
-}
-
 .ols-plugin__rbac-card {
   border: 2px solid var(--pf-t--global--color--status--danger--default);
 }
@@ -101,23 +91,6 @@
 .ols-plugin__rbac-label {
   margin-right: var(--pf-t--global--spacer--xs);
   margin-bottom: var(--pf-t--global--spacer--xs);
-}
-
-.ols-plugin__approve-split {
-  display: flex;
-}
-
-.ols-plugin__approve-split-main {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.ols-plugin__approve-split-toggle {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-left: 1px solid var(--pf-t--global--border--color--on-danger--default);
-  padding-inline: var(--pf-t--global--spacer--sm);
-  font-size: var(--pf-t--global--font--size--xs);
 }
 
 .ols-plugin__confirm-sweep {
@@ -189,32 +162,22 @@
   margin-bottom: var(--pf-t--global--spacer--md, 16px);
 }
 
-/* stylelint-disable selector-disallowed-list -- overriding PF expandable toggle color */
-.ols-plugin__option-selected .pf-v6-c-expandable-section__toggle,
-.ols-plugin__proposal-tab-content .pf-v6-c-expandable-section__toggle {
-  color: var(--pf-t--global--text--color--regular);
+/* PF6 MenuToggle has no variant="danger", so override primary colors with danger status colors */
+.ols-plugin__approve-danger {
+  --pf-v6-c-menu-toggle--m-primary--BackgroundColor: var(--pf-t--global--color--status--danger--default);
+  --pf-v6-c-menu-toggle--m-primary--hover--BackgroundColor: var(--pf-t--global--color--status--danger--hover);
+  --pf-v6-c-menu-toggle--m-primary--expanded--BackgroundColor: var(--pf-t--global--color--status--danger--hover);
+  --pf-v6-c-menu-toggle--m-split-button--m-primary--child--BackgroundColor: var(--pf-t--global--color--status--danger--default);
 }
-
-.ols-plugin__proposal-tab-content .pf-v6-c-expandable-section__toggle:hover {
-  color: var(--pf-t--global--text--color--regular);
-}
-/* stylelint-enable selector-disallowed-list */
 
 .ols-plugin__refine-actions {
   margin-top: var(--pf-t--global--spacer--sm);
 }
 
-.ols-plugin__refine-textarea {
-  width: 100%;
-  resize: vertical;
-  border: 1px solid var(--pf-t--global--border--color--default);
-  border-radius: var(--pf-t--global--border--radius--medium);
-  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
-  font-family: var(--pf-t--global--font--family--text);
-  font-size: var(--pf-t--global--font--size--body--default);
-  line-height: var(--pf-t--global--font--line-height--body);
-  background: var(--pf-t--global--background--color--primary--default);
-  color: var(--pf-t--global--text--color--regular);
-  outline: none;
-  max-height: 200px;
+.ols-plugin__option-actions {
+  padding: var(--pf-t--global--spacer--md);
+}
+
+.ols-plugin__option-select-btn {
+  margin-top: var(--pf-t--global--spacer--md);
 }

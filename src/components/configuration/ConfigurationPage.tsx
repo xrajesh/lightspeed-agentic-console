@@ -19,12 +19,12 @@ import './configuration.css';
 
 const ConfigurationPage: React.FC = () => {
   const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
-  const history = useNavigate();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = React.useState<string | number>(0);
 
   return (
     <AgenticLayout>
-      <div className="ols-plugin__config-breadcrumb">
+      <PageSection type="breadcrumb" hasBodyWrapper={false}>
         <Breadcrumb>
           <BreadcrumbItem
             to="#"
@@ -37,7 +37,7 @@ const ConfigurationPage: React.FC = () => {
           </BreadcrumbItem>
           <BreadcrumbItem isActive>{t('Configuration')}</BreadcrumbItem>
         </Breadcrumb>
-      </div>
+      </PageSection>
       <PageSection>
         <Title headingLevel="h1">{t('Configuration')}</Title>
       </PageSection>

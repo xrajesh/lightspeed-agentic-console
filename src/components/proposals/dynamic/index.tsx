@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Alert, Card, CardBody, CodeBlock, CodeBlockCode } from '@patternfly/react-core';
 
+import './dynamic-components.css';
+
 import type {
   ActionPickerProps,
   CmoAlertDiagnosisProps,
