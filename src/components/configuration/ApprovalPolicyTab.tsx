@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  k8sCreate,
-  k8sPatch,
-  useK8sWatchResource,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { k8sCreate, k8sPatch, useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import {
   Alert,
   Button,
@@ -121,9 +117,7 @@ const ApprovalPolicyTab: React.FC = () => {
           {error}
         </Alert>
       )}
-      {success && (
-        <Alert variant="success" isInline title={success} />
-      )}
+      {success && <Alert variant="success" isInline title={success} />}
 
       {STAGES.map((stage) => (
         <div key={stage} className="ols-plugin__config-approval-row">
@@ -132,16 +126,12 @@ const ApprovalPolicyTab: React.FC = () => {
             <ToggleGroupItem
               text={t('Manual')}
               isSelected={stageValues[stage] === 'Manual'}
-              onChange={() =>
-                setStageValues((prev) => ({ ...prev, [stage]: 'Manual' }))
-              }
+              onChange={() => setStageValues((prev) => ({ ...prev, [stage]: 'Manual' }))}
             />
             <ToggleGroupItem
               text={t('Automatic')}
               isSelected={stageValues[stage] === 'Automatic'}
-              onChange={() =>
-                setStageValues((prev) => ({ ...prev, [stage]: 'Automatic' }))
-              }
+              onChange={() => setStageValues((prev) => ({ ...prev, [stage]: 'Automatic' }))}
             />
           </ToggleGroup>
         </div>

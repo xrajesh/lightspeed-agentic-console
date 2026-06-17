@@ -11,10 +11,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 
-import {
-  LightspeedProposal,
-  LightspeedProposalApproval,
-} from '../../models/proposal';
+import { LightspeedProposal, LightspeedProposalApproval } from '../../models/proposal';
 import { useStageApproval } from '../../hooks/useStageApproval';
 
 const EscalateModal: React.FC<{

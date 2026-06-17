@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import {
   K8sResourceCommon,
   k8sPatch,
@@ -25,10 +25,12 @@ import {
   Flex,
   FlexItem,
   MenuToggle,
+  MenuToggleAction,
   Label,
   PageSection,
   Stack,
   StackItem,
+  TextArea,
   Title,
   Tooltip,
 } from '@patternfly/react-core';
@@ -98,8 +100,14 @@ const AdapterComponents: React.FC<{ components?: unknown }> = ({ components }) =
     <Stack hasGutter>
       {items.map((comp, i) => (
         <StackItem key={i}>
-          {typeof comp === 'object' && comp !== null && 'type' in comp && KNOWN_COMPONENT_TYPES.has((comp as AdapterComponent).type) ? (
-            <DynamicComponent props={comp as AdapterComponent} type={(comp as AdapterComponent).type} />
+          {typeof comp === 'object' &&
+          comp !== null &&
+          'type' in comp &&
+          KNOWN_COMPONENT_TYPES.has((comp as AdapterComponent).type) ? (
+            <DynamicComponent
+              props={comp as AdapterComponent}
+              type={(comp as AdapterComponent).type}
+            />
           ) : (
             <Card isCompact>
               <CardBody>
@@ -274,7 +282,9 @@ const OverviewTab: React.FC<{
   latestVerificationResult?: VerificationResultCR;
 }> = ({ proposal, latestExecutionResult, latestVerificationResult }) => {
   const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
-  const phase = getPhaseDisplay(derivePhaseFromConditions(proposal.status?.conditions as ProposalCondition[]));
+  const phase = getPhaseDisplay(
+    derivePhaseFromConditions(proposal.status?.conditions as ProposalCondition[]),
+  );
   const sourceUrl = proposal.metadata.annotations?.['ols.openshift.io/source-url'];
   const sourceName = proposal.metadata.annotations?.['ols.openshift.io/source-name'] || t('Source');
   const execFailed = resultOutcome(latestExecutionResult) === 'Failed';
@@ -296,7 +306,9 @@ const OverviewTab: React.FC<{
                   >
                     <FlexItem>
                       <PhaseIcon
-                        phase={derivePhaseFromConditions(proposal.status?.conditions as ProposalCondition[])}
+                        phase={derivePhaseFromConditions(
+                          proposal.status?.conditions as ProposalCondition[],
+                        )}
                         executionFailed={execFailed}
                         verificationFailed={verifyFailed}
                       />
@@ -724,9 +736,7 @@ const RemediationOptionsView: React.FC<{
     return (
       <Card>
         <RemediationOptionCard option={options[0]} />
-        {actionButtons && (
-          <div style={{ padding: 'var(--pf-t--global--spacer--md)' }}>{actionButtons}</div>
-        )}
+        {actionButtons && <div className="ols-plugin__option-actions">{actionButtons}</div>}
       </Card>
     );
   }
@@ -766,17 +776,15 @@ const RemediationOptionsView: React.FC<{
                 <RemediationOptionCard option={opt} />
                 {onSelect && !isSelected && (
                   <Button
+                    className="ols-plugin__option-select-btn"
                     onClick={() => onSelect(i)}
-                    style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}
                     variant="primary"
                   >
                     {t('Select this option')}
                   </Button>
                 )}
                 {isSelected && actionButtons && (
-                  <div style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
-                    {actionButtons}
-                  </div>
+                  <div className="ols-plugin__option-select-btn">{actionButtons}</div>
                 )}
               </ExpandableSection>
             </Card>
@@ -804,7 +812,11 @@ const StructuredResult: React.FC<{ data: ExecutionResultCR }> = ({ data }) => {
                   <ExclamationCircleIcon color="var(--pf-t--color--red--default)" />
                 )}
               </FlexItem>
-              <FlexItem>{executionOutcome === 'Succeeded' ? t('Execution Succeeded') : t('Execution Failed')}</FlexItem>
+              <FlexItem>
+                {executionOutcome === 'Succeeded'
+                  ? t('Execution Succeeded')
+                  : t('Execution Failed')}
+              </FlexItem>
             </Flex>
           </CardTitle>
         </Card>
@@ -906,7 +918,6 @@ const StructuredResult: React.FC<{ data: ExecutionResultCR }> = ({ data }) => {
           </Card>
         </StackItem>
       )}
-
     </Stack>
   );
 };
@@ -965,8 +976,7 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
     (c: ProposalCondition) => c.type === 'Analyzed',
   );
   const revisionPending =
-    !!proposal.spec.revisionFeedback &&
-    generation > (analyzedCondition?.observedGeneration ?? 0);
+    !!proposal.spec.revisionFeedback && generation > (analyzedCondition?.observedGeneration ?? 0);
 
   const [logsExpanded, setLogsExpanded] = useAutoCollapseLogs(hasAnalysis && !revisionPending);
 
@@ -1014,9 +1024,7 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
                   {proposal.spec.revisionFeedback}
                 </Alert>
               )}
-              {sandboxPod && (
-                <SandboxLogViewer podName={sandboxPod} podNamespace={sandboxNs} />
-              )}
+              {sandboxPod && <SandboxLogViewer podName={sandboxPod} podNamespace={sandboxNs} />}
             </CardBody>
           </Card>
         </StackItem>
@@ -1064,200 +1072,189 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
 
   const busy = executionApproval.inProgress || refineInProgress;
 
-  const actionButtons = showExecutionApproval && optionSelected ? (
-    <Stack hasGutter>
-      {isAdvisory && (
-        <StackItem>
-          <Alert isInline title={t('Execution is skipped for this proposal')} variant="info">
-            {t(
-              'Review the advisory below and apply changes externally (e.g., via GitOps). No direct cluster execution will occur.',
-            )}
-          </Alert>
-        </StackItem>
-      )}
-      <StackItem>
-        <Flex
-          alignItems={{ default: 'alignItemsCenter' }}
-          spaceItems={{ default: 'spaceItemsSm' }}
-        >
-          {confirmRetries === null ? (
-            <>
-              {agentNames.length > 0 && (
-                <FlexItem>
-                  <AgentDropdown
-                    agentNames={agentNames}
-                    defaultAgent={proposal.spec.execution?.agent}
-                    onSelect={setExecAgent}
-                    selected={execAgent}
-                  />
-                </FlexItem>
+  const actionButtons =
+    showExecutionApproval && optionSelected ? (
+      <Stack hasGutter>
+        {isAdvisory && (
+          <StackItem>
+            <Alert isInline title={t('Execution is skipped for this proposal')} variant="info">
+              {t(
+                'Review the advisory below and apply changes externally (e.g., via GitOps). No direct cluster execution will occur.',
               )}
-              <FlexItem className="ols-plugin__approve-split">
-                <Tooltip
-                  content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
-                  trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
-                >
-                  <Button
-                    className="ols-plugin__approve-split-main"
-                    isAriaDisabled={!executionApproval.canApprove || executionApproval.inProgress}
-                    onClick={() => setConfirmRetries(0)}
-                    variant="danger"
+            </Alert>
+          </StackItem>
+        )}
+        <StackItem>
+          <Flex
+            alignItems={{ default: 'alignItemsCenter' }}
+            spaceItems={{ default: 'spaceItemsSm' }}
+          >
+            {confirmRetries === null ? (
+              <>
+                {agentNames.length > 0 && (
+                  <FlexItem>
+                    <AgentDropdown
+                      agentNames={agentNames}
+                      defaultAgent={proposal.spec.execution?.agent}
+                      onSelect={setExecAgent}
+                      selected={execAgent}
+                    />
+                  </FlexItem>
+                )}
+                <FlexItem className="ols-plugin__approve-danger">
+                  <Tooltip
+                    content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
+                    trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
                   >
-                    {t('Approve')}
-                  </Button>
-                </Tooltip>
-                <Dropdown
-                  isOpen={retryDropdownOpen}
-                  isScrollable
-                  maxMenuHeight="200px"
-                  onOpenChange={setRetryDropdownOpen}
-                  onSelect={(_e, value) => {
-                    setRetryDropdownOpen(false);
-                    setConfirmRetries(value as number);
-                  }}
-                  toggle={(toggleRef) => (
-                    <Tooltip
-                      content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
-                      trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
+                    <Dropdown
+                      isOpen={retryDropdownOpen}
+                      isScrollable
+                      maxMenuHeight="200px"
+                      onOpenChange={setRetryDropdownOpen}
+                      onSelect={(_e, value) => {
+                        setRetryDropdownOpen(false);
+                        setConfirmRetries(value as number);
+                      }}
+                      toggle={(toggleRef) => (
+                        <MenuToggle
+                          isDisabled={!executionApproval.canApprove || busy}
+                          onClick={() => setRetryDropdownOpen((o) => !o)}
+                          ref={toggleRef}
+                          splitButtonItems={[
+                            <MenuToggleAction key="approve" onClick={() => setConfirmRetries(0)}>
+                              {t('Approve')}
+                            </MenuToggleAction>,
+                          ]}
+                          variant="primary"
+                        />
+                      )}
                     >
-                      <Button
-                        aria-label={t('Approve with retries')}
-                        className="ols-plugin__approve-split-toggle"
-                        isAriaDisabled={!executionApproval.canApprove || busy}
-                        onClick={() => setRetryDropdownOpen((o) => !o)}
-                        ref={toggleRef}
-                        variant="danger"
-                      >
-                        &#9660;
-                      </Button>
-                    </Tooltip>
-                  )}
-                >
-                  <DropdownList>
-                    {RETRY_OPTIONS.map((n) => (
-                      <DropdownItem key={n} value={n}>
-                        {t('Approve with {{num}} retries', { num: n })}
-                      </DropdownItem>
-                    ))}
-                  </DropdownList>
-                </Dropdown>
-              </FlexItem>
-              <FlexItem>
-                <Tooltip
-                  content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
-                  trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
-                >
+                      <DropdownList>
+                        {RETRY_OPTIONS.map((n) => (
+                          <DropdownItem key={n} value={n}>
+                            {t('Approve with {{num}} retries', { num: n })}
+                          </DropdownItem>
+                        ))}
+                      </DropdownList>
+                    </Dropdown>
+                  </Tooltip>
+                </FlexItem>
+                <FlexItem>
+                  <Tooltip
+                    content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
+                    trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
+                  >
+                    <Button
+                      isAriaDisabled={!executionApproval.canApprove || executionApproval.inProgress}
+                      isLoading={executionApproval.inProgress}
+                      onClick={() => executionApproval.deny()}
+                      variant="secondary"
+                    >
+                      {t('Deny')}
+                    </Button>
+                  </Tooltip>
+                </FlexItem>
+                <FlexItem>
                   <Button
-                    isAriaDisabled={!executionApproval.canApprove || executionApproval.inProgress}
-                    isLoading={executionApproval.inProgress}
-                    onClick={() => executionApproval.deny()}
+                    isDisabled={executionApproval.inProgress}
+                    onClick={() => setRefineOpen((o) => !o)}
                     variant="secondary"
                   >
-                    {t('Deny')}
+                    {t('Refine')}
                   </Button>
-                </Tooltip>
-              </FlexItem>
+                </FlexItem>
+              </>
+            ) : (
+              <>
+                <FlexItem>
+                  <Tooltip
+                    content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
+                    trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
+                  >
+                    <Button
+                      className="ols-plugin__confirm-sweep"
+                      isAriaDisabled={!executionApproval.canApprove || executionApproval.inProgress}
+                      isLoading={executionApproval.inProgress}
+                      onClick={() =>
+                        executionApproval.approve({
+                          maxAttempts: confirmRetries,
+                          option: localSelectedOption,
+                          agent: execAgent || undefined,
+                        })
+                      }
+                      variant="danger"
+                    >
+                      {confirmRetries > 0
+                        ? t('Confirm Approve ({{num}} retries)', { num: confirmRetries })
+                        : t('Confirm Approve')}
+                    </Button>
+                  </Tooltip>
+                </FlexItem>
+                <FlexItem>
+                  <Button
+                    isDisabled={executionApproval.inProgress}
+                    onClick={() => setConfirmRetries(null)}
+                    variant="link"
+                  >
+                    {t('Cancel')}
+                  </Button>
+                </FlexItem>
+              </>
+            )}
+          </Flex>
+        </StackItem>
+        {refineOpen && (
+          <StackItem>
+            <TextArea
+              aria-label={t('Revision feedback')}
+              onChange={(_e, value) => setRefineFeedback(value)}
+              placeholder={t('Describe what you want changed about this analysis...')}
+              resizeOrientation="vertical"
+              rows={3}
+              value={refineFeedback}
+            />
+            <Flex className="ols-plugin__refine-actions" spaceItems={{ default: 'spaceItemsSm' }}>
               <FlexItem>
                 <Button
-                  isDisabled={executionApproval.inProgress}
-                  onClick={() => setRefineOpen((o) => !o)}
-                  variant="secondary"
+                  isDisabled={!refineFeedback.trim() || refineInProgress}
+                  isLoading={refineInProgress}
+                  onClick={submitRefine}
+                  variant="primary"
                 >
-                  {t('Refine')}
+                  {t('Submit')}
                 </Button>
               </FlexItem>
-            </>
-          ) : (
-            <>
-              <FlexItem>
-                <Tooltip
-                  content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
-                  trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
-                >
-                  <Button
-                    className="ols-plugin__confirm-sweep"
-                    isAriaDisabled={!executionApproval.canApprove || executionApproval.inProgress}
-                    isLoading={executionApproval.inProgress}
-                    onClick={() =>
-                      executionApproval.approve({
-                        maxAttempts: confirmRetries,
-                        option: localSelectedOption,
-                        agent: execAgent || undefined,
-                      })
-                    }
-                    variant="danger"
-                  >
-                    {confirmRetries > 0
-                      ? t('Confirm Approve ({{num}} retries)', { num: confirmRetries })
-                      : t('Confirm Approve')}
-                  </Button>
-                </Tooltip>
-              </FlexItem>
               <FlexItem>
                 <Button
-                  isDisabled={executionApproval.inProgress}
-                  onClick={() => setConfirmRetries(null)}
+                  isDisabled={refineInProgress}
+                  onClick={() => {
+                    setRefineOpen(false);
+                    setRefineError(null);
+                  }}
                   variant="link"
                 >
                   {t('Cancel')}
                 </Button>
               </FlexItem>
-            </>
-          )}
-        </Flex>
-      </StackItem>
-      {refineOpen && (
-        <StackItem>
-          <textarea
-            aria-label={t('Revision feedback')}
-            className="ols-plugin__refine-textarea"
-            onChange={(e) => setRefineFeedback(e.target.value)}
-            placeholder={t('Describe what you want changed about this analysis...')}
-            rows={3}
-            value={refineFeedback}
-          />
-          <Flex
-            className="ols-plugin__refine-actions"
-            spaceItems={{ default: 'spaceItemsSm' }}
-          >
-            <FlexItem>
-              <Button
-                isDisabled={!refineFeedback.trim() || refineInProgress}
-                isLoading={refineInProgress}
-                onClick={submitRefine}
-                variant="primary"
-              >
-                {t('Submit')}
-              </Button>
-            </FlexItem>
-            <FlexItem>
-              <Button
-                isDisabled={refineInProgress}
-                onClick={() => { setRefineOpen(false); setRefineError(null); }}
-                variant="link"
-              >
-                {t('Cancel')}
-              </Button>
-            </FlexItem>
-          </Flex>
-        </StackItem>
-      )}
-      {executionApproval.error && (
-        <StackItem>
-          <Alert isInline title={t('Action failed')} variant="danger">
-            {executionApproval.error}
-          </Alert>
-        </StackItem>
-      )}
-      {refineError && (
-        <StackItem>
-          <Alert isInline title={t('Refine failed')} variant="danger">
-            {refineError}
-          </Alert>
-        </StackItem>
-      )}
-    </Stack>
-  ) : undefined;
+            </Flex>
+          </StackItem>
+        )}
+        {executionApproval.error && (
+          <StackItem>
+            <Alert isInline title={t('Action failed')} variant="danger">
+              {executionApproval.error}
+            </Alert>
+          </StackItem>
+        )}
+        {refineError && (
+          <StackItem>
+            <Alert isInline title={t('Refine failed')} variant="danger">
+              {refineError}
+            </Alert>
+          </StackItem>
+        )}
+      </Stack>
+    ) : undefined;
 
   const proposalContent = (
     <StackItem>
@@ -1283,9 +1280,7 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
           </ExpandableSection>
         </StackItem>
       )}
-      <StackItem>
-        {proposalContent}
-      </StackItem>
+      <StackItem>{proposalContent}</StackItem>
     </Stack>
   );
 };
@@ -1433,49 +1428,50 @@ const VerificationTab: React.FC<{
                     <MarkdownText content={latestVerificationResult.status?.summary} />
                   </StackItem>
                 )}
-                {latestVerificationResult.status?.checks && latestVerificationResult.status?.checks.length > 0 && (
-                  <StackItem>
-                    <Stack hasGutter>
-                      {latestVerificationResult.status?.checks.map((check, i) => (
-                        <StackItem key={i}>
-                          <Card isCompact isPlain>
-                            <CardBody>
-                              <Stack hasGutter>
-                                <StackItem>
-                                  <Flex alignItems={{ default: 'alignItemsCenter' }}>
-                                    <FlexItem>
-                                      {check.result === 'Passed' ? (
-                                        <CheckCircleIcon color="var(--pf-t--color--green--default)" />
-                                      ) : (
-                                        <ExclamationCircleIcon color="var(--pf-t--color--red--default)" />
-                                      )}
-                                    </FlexItem>
-                                    <FlexItem>
-                                      <strong>{check.name}</strong>
-                                    </FlexItem>
-                                    <FlexItem>
-                                      <Label
-                                        color={check.result === 'Passed' ? 'green' : 'red'}
-                                        isCompact
-                                      >
-                                        {check.result === 'Passed' ? t('Pass') : t('Fail')}
-                                      </Label>
-                                    </FlexItem>
-                                  </Flex>
-                                </StackItem>
-                                <StackItem>
-                                  <CodeBlock>
-                                    <CodeBlockCode>{`$ ${check.source}\n${check.value}`}</CodeBlockCode>
-                                  </CodeBlock>
-                                </StackItem>
-                              </Stack>
-                            </CardBody>
-                          </Card>
-                        </StackItem>
-                      ))}
-                    </Stack>
-                  </StackItem>
-                )}
+                {latestVerificationResult.status?.checks &&
+                  latestVerificationResult.status?.checks.length > 0 && (
+                    <StackItem>
+                      <Stack hasGutter>
+                        {latestVerificationResult.status?.checks.map((check, i) => (
+                          <StackItem key={i}>
+                            <Card isCompact isPlain>
+                              <CardBody>
+                                <Stack hasGutter>
+                                  <StackItem>
+                                    <Flex alignItems={{ default: 'alignItemsCenter' }}>
+                                      <FlexItem>
+                                        {check.result === 'Passed' ? (
+                                          <CheckCircleIcon color="var(--pf-t--color--green--default)" />
+                                        ) : (
+                                          <ExclamationCircleIcon color="var(--pf-t--color--red--default)" />
+                                        )}
+                                      </FlexItem>
+                                      <FlexItem>
+                                        <strong>{check.name}</strong>
+                                      </FlexItem>
+                                      <FlexItem>
+                                        <Label
+                                          color={check.result === 'Passed' ? 'green' : 'red'}
+                                          isCompact
+                                        >
+                                          {check.result === 'Passed' ? t('Pass') : t('Fail')}
+                                        </Label>
+                                      </FlexItem>
+                                    </Flex>
+                                  </StackItem>
+                                  <StackItem>
+                                    <CodeBlock>
+                                      <CodeBlockCode>{`$ ${check.source}\n${check.value}`}</CodeBlockCode>
+                                    </CodeBlock>
+                                  </StackItem>
+                                </Stack>
+                              </CardBody>
+                            </Card>
+                          </StackItem>
+                        ))}
+                      </Stack>
+                    </StackItem>
+                  )}
                 {verificationOutcome === 'Failed' && onEscalate && (
                   <StackItem>
                     <Button onClick={onEscalate} variant="danger">
@@ -1488,7 +1484,6 @@ const VerificationTab: React.FC<{
           </Card>
         </StackItem>
       )}
-
     </Stack>
   );
 };
@@ -1518,7 +1513,9 @@ const EscalationTab: React.FC<{
           approval={escalationApproval}
           approveLabel={t('Approve Escalation')}
           defaultAgent={proposal.spec.analysis?.agent}
-          message={t('Escalation requires approval before it can proceed. The agent will research the issue and draft a support case.')}
+          message={t(
+            'Escalation requires approval before it can proceed. The agent will research the issue and draft a support case.',
+          )}
         />
       );
     }
@@ -1702,56 +1699,70 @@ const ProposalDetailPage: React.FC = () => {
 
   const [agentList] = useK8sWatchResource<K8sResourceCommon[]>(agentListConfig);
   const agentNames = React.useMemo(
-    () => (Array.isArray(agentList) ? agentList.map((a) => a.metadata?.name ?? '').filter(Boolean) : []),
+    () =>
+      Array.isArray(agentList) ? agentList.map((a) => a.metadata?.name ?? '').filter(Boolean) : [],
     [agentList],
   );
 
   // Watch result CRs filtered by proposal label
   const resultLabelSelector = React.useMemo(
-    () => name ? { matchLabels: { 'agentic.openshift.io/proposal': name } } : undefined,
+    () => (name ? { matchLabels: { 'agentic.openshift.io/proposal': name } } : undefined),
     [name],
   );
 
   const analysisResultsConfig = React.useMemo(
-    () => name ? {
-      groupVersionKind: AnalysisResultGVK,
-      namespace: ns,
-      selector: resultLabelSelector,
-      isList: true,
-    } : null,
+    () =>
+      name
+        ? {
+            groupVersionKind: AnalysisResultGVK,
+            namespace: ns,
+            selector: resultLabelSelector,
+            isList: true,
+          }
+        : null,
     [name, ns, resultLabelSelector],
   );
   const [analysisResults] = useK8sWatchResource<AnalysisResultCR[]>(analysisResultsConfig);
 
   const executionResultsConfig = React.useMemo(
-    () => name ? {
-      groupVersionKind: ExecutionResultGVK,
-      namespace: ns,
-      selector: resultLabelSelector,
-      isList: true,
-    } : null,
+    () =>
+      name
+        ? {
+            groupVersionKind: ExecutionResultGVK,
+            namespace: ns,
+            selector: resultLabelSelector,
+            isList: true,
+          }
+        : null,
     [name, ns, resultLabelSelector],
   );
   const [executionResults] = useK8sWatchResource<ExecutionResultCR[]>(executionResultsConfig);
 
   const verificationResultsConfig = React.useMemo(
-    () => name ? {
-      groupVersionKind: VerificationResultGVK,
-      namespace: ns,
-      selector: resultLabelSelector,
-      isList: true,
-    } : null,
+    () =>
+      name
+        ? {
+            groupVersionKind: VerificationResultGVK,
+            namespace: ns,
+            selector: resultLabelSelector,
+            isList: true,
+          }
+        : null,
     [name, ns, resultLabelSelector],
   );
-  const [verificationResults] = useK8sWatchResource<VerificationResultCR[]>(verificationResultsConfig);
+  const [verificationResults] =
+    useK8sWatchResource<VerificationResultCR[]>(verificationResultsConfig);
 
   const escalationResultsConfig = React.useMemo(
-    () => name ? {
-      groupVersionKind: EscalationResultGVK,
-      namespace: ns,
-      selector: resultLabelSelector,
-      isList: true,
-    } : null,
+    () =>
+      name
+        ? {
+            groupVersionKind: EscalationResultGVK,
+            namespace: ns,
+            selector: resultLabelSelector,
+            isList: true,
+          }
+        : null,
     [name, ns, resultLabelSelector],
   );
   const [escalationResults] = useK8sWatchResource<EscalationResultCR[]>(escalationResultsConfig);
@@ -1770,40 +1781,46 @@ const ProposalDetailPage: React.FC = () => {
   );
 
   const latestAnalysisResult = React.useMemo(
-    () => getLatestResult(
-      Array.isArray(analysisResults) ? analysisResults : undefined,
-      proposal?.status?.steps?.analysis?.results,
-    ),
+    () =>
+      getLatestResult(
+        Array.isArray(analysisResults) ? analysisResults : undefined,
+        proposal?.status?.steps?.analysis?.results,
+      ),
     [analysisResults, proposal?.status?.steps?.analysis?.results, getLatestResult],
   );
 
   const latestExecutionResult = React.useMemo(
-    () => getLatestResult(
-      Array.isArray(executionResults) ? executionResults : undefined,
-      proposal?.status?.steps?.execution?.results,
-    ),
+    () =>
+      getLatestResult(
+        Array.isArray(executionResults) ? executionResults : undefined,
+        proposal?.status?.steps?.execution?.results,
+      ),
     [executionResults, proposal?.status?.steps?.execution?.results, getLatestResult],
   );
 
   const latestVerificationResult = React.useMemo(
-    () => getLatestResult(
-      Array.isArray(verificationResults) ? verificationResults : undefined,
-      proposal?.status?.steps?.verification?.results,
-    ),
+    () =>
+      getLatestResult(
+        Array.isArray(verificationResults) ? verificationResults : undefined,
+        proposal?.status?.steps?.verification?.results,
+      ),
     [verificationResults, proposal?.status?.steps?.verification?.results, getLatestResult],
   );
 
   const latestEscalationResult = React.useMemo(
-    () => getLatestResult(
-      Array.isArray(escalationResults) ? escalationResults : undefined,
-      proposal?.status?.steps?.escalation?.results,
-    ),
+    () =>
+      getLatestResult(
+        Array.isArray(escalationResults) ? escalationResults : undefined,
+        proposal?.status?.steps?.escalation?.results,
+      ),
     [escalationResults, proposal?.status?.steps?.escalation?.results, getLatestResult],
   );
 
   const executionFailed = resultOutcome(latestExecutionResult) === 'Failed';
   const verificationFailed = resultOutcome(latestVerificationResult) === 'Failed';
-  const currentPhase = derivePhaseFromConditions(proposal?.status?.conditions as ProposalCondition[]);
+  const currentPhase = derivePhaseFromConditions(
+    proposal?.status?.conditions as ProposalCondition[],
+  );
 
   const activePhaseTab: TabKey | null = React.useMemo(() => {
     switch (currentPhase) {
@@ -1836,7 +1853,12 @@ const ProposalDetailPage: React.FC = () => {
     executionApproval.clearError();
     verificationApproval.clearError();
     escalationApproval.clearError();
-  }, [analysisApproval.clearError, executionApproval.clearError, verificationApproval.clearError, escalationApproval.clearError]);
+  }, [
+    analysisApproval.clearError,
+    executionApproval.clearError,
+    verificationApproval.clearError,
+    escalationApproval.clearError,
+  ]);
   const [escalateOpen, setEscalateOpen] = React.useState(false);
 
   if (!loaded) {
@@ -1870,8 +1892,7 @@ const ProposalDetailPage: React.FC = () => {
     const triggerOptions = latestAnalysisResult?.status?.options ?? [];
     const sandboxPod = analysis?.sandbox?.claimName;
     const sandboxNs = analysis?.sandbox?.namespace || 'openshift-lightspeed';
-    const isAnalyzing =
-      currentPhase === 'Analyzing' || currentPhase === 'Pending';
+    const isAnalyzing = currentPhase === 'Analyzing' || currentPhase === 'Pending';
     const hasOptions = triggerOptions.length > 0;
 
     return (
@@ -1929,7 +1950,9 @@ const ProposalDetailPage: React.FC = () => {
   }
 
   const isCmoAlert = isCmoSource && !isTriggerBootstrap;
-  const hasEscalation = proposal?.status?.conditions?.some((c: ProposalCondition) => c.type === 'Escalated');
+  const hasEscalation = proposal?.status?.conditions?.some(
+    (c: ProposalCondition) => c.type === 'Escalated',
+  );
   const visibleTabs = TAB_IDS.filter((id) => {
     if (id === 'overview' && isCmoAlert) return false;
     if (id === 'escalation' && !hasEscalation) return false;
@@ -2054,10 +2077,7 @@ const ProposalDetailPage: React.FC = () => {
           />
         )}
         {effectiveTab === 'result' && (
-          <ResultTab
-            proposal={proposal}
-            latestExecutionResult={latestExecutionResult}
-          />
+          <ResultTab proposal={proposal} latestExecutionResult={latestExecutionResult} />
         )}
         {effectiveTab === 'verification' && (
           <VerificationTab

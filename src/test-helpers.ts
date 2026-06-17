@@ -1,8 +1,4 @@
-import {
-  ApprovalStage,
-  LightspeedProposalApproval,
-  ProposalCondition,
-} from './models/proposal';
+import { ApprovalStage, LightspeedProposalApproval, ProposalCondition } from './models/proposal';
 
 export function cond(type: string, status: string, reason?: string): ProposalCondition {
   return { type, status, reason };

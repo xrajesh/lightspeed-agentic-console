@@ -116,30 +116,55 @@ const LLMProviderForm: React.FC<LLMProviderFormProps> = ({ onSubmit, onCancel })
       </FormGroup>
 
       <FormGroup label={t('Credentials Secret Name')} isRequired fieldId="provider-secret">
-        <TextInput id="provider-secret" value={secretName} onChange={(_e, v) => setSecretName(v)} isRequired />
+        <TextInput
+          id="provider-secret"
+          value={secretName}
+          onChange={(_e, v) => setSecretName(v)}
+          isRequired
+        />
       </FormGroup>
 
-      {(providerType === 'GoogleCloudVertex') && (
+      {providerType === 'GoogleCloudVertex' && (
         <>
           <FormGroup label={t('Project ID')} isRequired fieldId="provider-project">
-            <TextInput id="provider-project" value={projectID} onChange={(_e, v) => setProjectID(v)} isRequired />
+            <TextInput
+              id="provider-project"
+              value={projectID}
+              onChange={(_e, v) => setProjectID(v)}
+              isRequired
+            />
           </FormGroup>
           <FormGroup label={t('Region')} isRequired fieldId="provider-region">
-            <TextInput id="provider-region" value={region} onChange={(_e, v) => setRegion(v)} isRequired />
+            <TextInput
+              id="provider-region"
+              value={region}
+              onChange={(_e, v) => setRegion(v)}
+              isRequired
+            />
           </FormGroup>
         </>
       )}
 
       {providerType === 'AWSBedrock' && (
         <FormGroup label={t('Region')} isRequired fieldId="provider-region">
-          <TextInput id="provider-region" value={region} onChange={(_e, v) => setRegion(v)} isRequired />
+          <TextInput
+            id="provider-region"
+            value={region}
+            onChange={(_e, v) => setRegion(v)}
+            isRequired
+          />
         </FormGroup>
       )}
 
       {providerType === 'AzureOpenAI' && (
         <>
           <FormGroup label={t('Endpoint')} isRequired fieldId="provider-endpoint">
-            <TextInput id="provider-endpoint" value={endpoint} onChange={(_e, v) => setEndpoint(v)} isRequired />
+            <TextInput
+              id="provider-endpoint"
+              value={endpoint}
+              onChange={(_e, v) => setEndpoint(v)}
+              isRequired
+            />
           </FormGroup>
           <FormGroup label={t('API Version')} fieldId="provider-api-version">
             <TextInput
@@ -153,11 +178,21 @@ const LLMProviderForm: React.FC<LLMProviderFormProps> = ({ onSubmit, onCancel })
       )}
 
       <FormGroup label={t('URL Override')} fieldId="provider-url">
-        <TextInput id="provider-url" value={url} onChange={(_e, v) => setUrl(v)} placeholder={t('Optional')} />
+        <TextInput
+          id="provider-url"
+          value={url}
+          onChange={(_e, v) => setUrl(v)}
+          placeholder={t('Optional')}
+        />
       </FormGroup>
 
       <div className="ols-plugin__config-form-actions">
-        <Button variant="primary" onClick={handleSubmit} isLoading={submitting} isDisabled={!isValid() || submitting}>
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+          isLoading={submitting}
+          isDisabled={!isValid() || submitting}
+        >
           {t('Create')}
         </Button>
         <Button variant="link" onClick={onCancel} isDisabled={submitting}>

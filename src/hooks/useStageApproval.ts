@@ -42,7 +42,12 @@ export function useStageApproval(
 
   const effectivePhase =
     phase ?? derivePhaseFromConditions(proposal?.status?.conditions as ProposalCondition[]);
-  const needs = stageNeedsApproval(approval, stageType, proposal?.status?.conditions, effectivePhase);
+  const needs = stageNeedsApproval(
+    approval,
+    stageType,
+    proposal?.status?.conditions,
+    effectivePhase,
+  );
   const status = getStageStatus(approval, stageType);
 
   const approve = React.useCallback(

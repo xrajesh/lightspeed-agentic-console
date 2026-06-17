@@ -26,40 +26,38 @@
     "webpack": "node -r ts-node/register ./node_modules/.bin/webpack"
   },
   "dependencies": {
-    "@openshift-console/dynamic-plugin-sdk": "4.21.0",
-    "@openshift-console/dynamic-plugin-sdk-webpack": "4.21.0",
+    "@openshift-console/dynamic-plugin-sdk": "4.22.0",
+    "@openshift-console/dynamic-plugin-sdk-webpack": "4.22.0",
     "@patternfly/react-charts": "^8.4.1",
-    "@patternfly/react-core": "^6.2.2",
-    "@patternfly/react-icons": "^6.2.2",
-    "@patternfly/react-table": "^6.2.2",
-    "@types/react-router-dom": "^5.3.3",
+    "@patternfly/react-core": "^6.4.3",
+    "@patternfly/react-icons": "^6.4.0",
+    "@patternfly/react-table": "^6.4.3",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.4",
     "dompurify": "^3.2.7",
-    "i18next": "^23.11.5",
+    "i18next": "^25.8.18",
     "marked": "^17.0.5",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-i18next": "^11.7.3",
-    "react-router": "5.3.x",
-    "react-router-dom": "5.3.x",
-    "react-router-dom-v5-compat": "^6.11.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-i18next": "~16.5.8",
+    "react-router": "~7.13.1",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "victory": "^37.3.6",
     "webpack": "^5.100.0",
+    "@types/dompurify": "^3.2.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.28",
     "webpack-cli": "^6.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@babel/preset-env": "^7.29.0",
     "@cypress/webpack-preprocessor": "^7.0.2",
-    "@testing-library/react-hooks": "^8.0.1",
-    "@types/dompurify": "^3.2.0",
-    "@types/node": "^22.0.0",
-    "@types/react": "^17.0.37",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.2",
     "babel-loader": "^10.1.0",
     "cypress": "^15.11.0",
     "cypress-multi-reporters": "^2.0.5",
@@ -78,7 +76,6 @@
     "mochawesome-merge": "^5.1.1",
     "pluralize": "^8.0.0",
     "prettier": "^3.8.1",
-    "react-test-renderer": "^17.0.2",
     "stylelint": "^17.4.0",
     "stylelint-config-standard": "^40.0.0",
     "typescript-eslint": "^8.56.1",
@@ -96,7 +93,7 @@
       "ConfigurationPage": "./components/configuration/ConfigurationPage"
     },
     "dependencies": {
-      "@console/pluginAPI": "^4.21.0"
+      "@console/pluginAPI": ">=4.22.0-0"
     }
   }
 }

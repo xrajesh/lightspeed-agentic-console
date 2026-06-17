@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import {
   K8sResourceCommon,
   ListPageBody,
   ListPageFilter,
+  ListPageHeader,
   ResourceLink,
   RowFilter,
   RowProps,
@@ -15,15 +16,7 @@ import {
   useListPageFilter,
   VirtualizedTable,
 } from '@openshift-console/dynamic-plugin-sdk';
-import {
-  Button,
-  EmptyState,
-  EmptyStateBody,
-  Flex,
-  FlexItem,
-  Label,
-  Title,
-} from '@patternfly/react-core';
+import { Button, EmptyState, EmptyStateBody, Label } from '@patternfly/react-core';
 import { CogIcon, SearchIcon } from '@patternfly/react-icons';
 
 import {
@@ -132,7 +125,7 @@ const FilteredEmptyMsg: React.FC = () => {
 
 const ProposalListPage: React.FC = () => {
   const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [proposals, loaded, loadError] = useK8sWatchResource<ProposalResource[]>({
     groupVersionKind: LightspeedProposalGVK,
@@ -144,25 +137,15 @@ const ProposalListPage: React.FC = () => {
 
   return (
     <AgenticLayout>
-      <div className="ols-plugin__list-page-header">
-        <Flex
-          justifyContent={{ default: 'justifyContentSpaceBetween' }}
-          alignItems={{ default: 'alignItemsCenter' }}
+      <ListPageHeader title={t('AI Hub')}>
+        <Button
+          variant="plain"
+          aria-label={t('Configuration')}
+          onClick={() => navigate('/lightspeed/configuration')}
         >
-          <FlexItem>
-            <Title headingLevel="h1">{t('AI Hub')}</Title>
-          </FlexItem>
-          <FlexItem>
-            <Button
-              variant="plain"
-              aria-label={t('Configuration')}
-              onClick={() => history.push('/lightspeed/configuration')}
-            >
-              <CogIcon />
-            </Button>
-          </FlexItem>
-        </Flex>
-      </div>
+          <CogIcon />
+        </Button>
+      </ListPageHeader>
       <ListPageBody>
         <ListPageFilter
           data={data}

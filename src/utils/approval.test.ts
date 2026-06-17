@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  ApprovalStage,
-  derivePhaseFromConditions,
-  ProposalCondition,
-} from '../models/proposal';
+import { ApprovalStage, derivePhaseFromConditions, ProposalCondition } from '../models/proposal';
 import { buildApprovalPatch, findStage, getStageStatus, stageNeedsApproval } from './approval';
 import { cond, makeApproval, makeApprovalNoSpec } from '../test-helpers';
 
@@ -66,22 +62,30 @@ describe('stageNeedsApproval', () => {
 
   it('returns false for terminal phase Completed', () => {
     const conditions = [cond('Verified', 'True')];
-    expect(stageNeedsApproval(makeApproval(), 'Analysis', conditions, phase(conditions))).toBe(false);
+    expect(stageNeedsApproval(makeApproval(), 'Analysis', conditions, phase(conditions))).toBe(
+      false,
+    );
   });
 
   it('returns false for terminal phase Failed', () => {
     const conditions = [cond('Analyzed', 'False', 'Error')];
-    expect(stageNeedsApproval(makeApproval(), 'Analysis', conditions, phase(conditions))).toBe(false);
+    expect(stageNeedsApproval(makeApproval(), 'Analysis', conditions, phase(conditions))).toBe(
+      false,
+    );
   });
 
   it('returns false for terminal phase Denied', () => {
     const conditions = [cond('Denied', 'True')];
-    expect(stageNeedsApproval(makeApproval(), 'Analysis', conditions, phase(conditions))).toBe(false);
+    expect(stageNeedsApproval(makeApproval(), 'Analysis', conditions, phase(conditions))).toBe(
+      false,
+    );
   });
 
   it('returns false for terminal phase Escalated', () => {
     const conditions = [cond('Escalated', 'True')];
-    expect(stageNeedsApproval(makeApproval(), 'Analysis', conditions, phase(conditions))).toBe(false);
+    expect(stageNeedsApproval(makeApproval(), 'Analysis', conditions, phase(conditions))).toBe(
+      false,
+    );
   });
 
   describe('Analysis stage', () => {
@@ -95,36 +99,48 @@ describe('stageNeedsApproval', () => {
 
     it('returns false when analysis is already complete', () => {
       const conditions = [cond('Analyzed', 'True')];
-      expect(stageNeedsApproval(makeApproval(), 'Analysis', conditions, phase(conditions))).toBe(false);
+      expect(stageNeedsApproval(makeApproval(), 'Analysis', conditions, phase(conditions))).toBe(
+        false,
+      );
     });
   });
 
   describe('Execution stage', () => {
     it('returns true when Analyzed=True and no Executed condition', () => {
       const conditions = [cond('Analyzed', 'True')];
-      expect(stageNeedsApproval(makeApproval(), 'Execution', conditions, phase(conditions))).toBe(true);
+      expect(stageNeedsApproval(makeApproval(), 'Execution', conditions, phase(conditions))).toBe(
+        true,
+      );
     });
 
     it('returns false when Analyzed is not True', () => {
       const conditions = [cond('Analyzed', 'Unknown')];
-      expect(stageNeedsApproval(makeApproval(), 'Execution', conditions, phase(conditions))).toBe(false);
+      expect(stageNeedsApproval(makeApproval(), 'Execution', conditions, phase(conditions))).toBe(
+        false,
+      );
     });
 
     it('returns false when Executed condition exists', () => {
       const conditions = [cond('Analyzed', 'True'), cond('Executed', 'Unknown')];
-      expect(stageNeedsApproval(makeApproval(), 'Execution', conditions, phase(conditions))).toBe(false);
+      expect(stageNeedsApproval(makeApproval(), 'Execution', conditions, phase(conditions))).toBe(
+        false,
+      );
     });
   });
 
   describe('Verification stage', () => {
     it('returns true when Executed=True and no Verified condition', () => {
       const conditions = [cond('Analyzed', 'True'), cond('Executed', 'True')];
-      expect(stageNeedsApproval(makeApproval(), 'Verification', conditions, phase(conditions))).toBe(true);
+      expect(
+        stageNeedsApproval(makeApproval(), 'Verification', conditions, phase(conditions)),
+      ).toBe(true);
     });
 
     it('returns false when Executed is not True', () => {
       const conditions = [cond('Analyzed', 'True'), cond('Executed', 'Unknown')];
-      expect(stageNeedsApproval(makeApproval(), 'Verification', conditions, phase(conditions))).toBe(false);
+      expect(
+        stageNeedsApproval(makeApproval(), 'Verification', conditions, phase(conditions)),
+      ).toBe(false);
     });
 
     it('returns false when Verified condition exists', () => {
@@ -133,7 +149,9 @@ describe('stageNeedsApproval', () => {
         cond('Executed', 'True'),
         cond('Verified', 'Unknown'),
       ];
-      expect(stageNeedsApproval(makeApproval(), 'Verification', conditions, phase(conditions))).toBe(false);
+      expect(
+        stageNeedsApproval(makeApproval(), 'Verification', conditions, phase(conditions)),
+      ).toBe(false);
     });
   });
 
@@ -171,9 +189,7 @@ describe('buildApprovalPatch', () => {
       agent: 'fast',
     });
     const stage = (patches[0].value as ApprovalStage[])?.[0] ?? patches[0].value;
-    expect(stage).toEqual(
-      expect.objectContaining({ execution: { option: 0, agent: 'fast' } }),
-    );
+    expect(stage).toEqual(expect.objectContaining({ execution: { option: 0, agent: 'fast' } }));
   });
 
   it('builds verification stage correctly', () => {

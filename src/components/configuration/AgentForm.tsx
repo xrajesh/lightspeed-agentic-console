@@ -98,7 +98,13 @@ const AgentForm: React.FC<AgentFormProps> = ({ providers, onSubmit, onCancel }) 
       {error && <p className="ols-plugin__config-error-text">{error}</p>}
 
       <FormGroup label={t('Name')} isRequired fieldId="agent-name">
-        <TextInput id="agent-name" value={name} onChange={(_e, v) => setName(v)} isRequired placeholder="default" />
+        <TextInput
+          id="agent-name"
+          value={name}
+          onChange={(_e, v) => setName(v)}
+          isRequired
+          placeholder="default"
+        />
       </FormGroup>
 
       <FormGroup label={t('LLM Provider')} isRequired fieldId="agent-provider">
@@ -109,7 +115,11 @@ const AgentForm: React.FC<AgentFormProps> = ({ providers, onSubmit, onCancel }) 
         >
           {providers.length ? (
             providers.map((p) => (
-              <FormSelectOption key={p.metadata.name} value={p.metadata.name} label={p.metadata.name} />
+              <FormSelectOption
+                key={p.metadata.name}
+                value={p.metadata.name}
+                label={p.metadata.name}
+              />
             ))
           ) : (
             <FormSelectOption value="" label={t('No providers available')} isDisabled />
@@ -151,7 +161,12 @@ const AgentForm: React.FC<AgentFormProps> = ({ providers, onSubmit, onCancel }) 
       </ExpandableSection>
 
       <div className="ols-plugin__config-form-actions">
-        <Button variant="primary" onClick={handleSubmit} isLoading={submitting} isDisabled={!isValid() || submitting}>
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+          isLoading={submitting}
+          isDisabled={!isValid() || submitting}
+        >
           {t('Create')}
         </Button>
         <Button variant="link" onClick={onCancel} isDisabled={submitting}>

@@ -16,14 +16,7 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
-import {
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import {
   LLMProviderK8s,
@@ -143,9 +136,7 @@ const LLMProvidersTab: React.FC = () => {
         </Tbody>
       </Table>
 
-      {showForm && (
-        <LLMProviderForm onSubmit={handleCreate} onCancel={() => setShowForm(false)} />
-      )}
+      {showForm && <LLMProviderForm onSubmit={handleCreate} onCancel={() => setShowForm(false)} />}
     </>
   );
 };
