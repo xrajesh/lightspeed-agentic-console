@@ -320,7 +320,6 @@ export type AgentProposal = {
   actions: AgentAction[];
   risk: string;
   reversible: boolean;
-  estimatedImpact?: string;
   rollbackPlan?: AgentRollbackPlan | string;
 };
 
