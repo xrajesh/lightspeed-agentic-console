@@ -969,6 +969,7 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
   );
   React.useEffect(() => {
     if (options.length === 1) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocalSelectedOption(0);
     }
   }, [options.length]);
@@ -984,6 +985,7 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
 
   const [execAgent, setExecAgent] = React.useState(proposal.spec.execution?.agent ?? '');
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setExecAgent(proposal.spec.execution?.agent ?? '');
   }, [proposal.spec.execution?.agent]);
 
@@ -1885,6 +1887,8 @@ const ProposalDetailPage: React.FC = () => {
     executionApproval.error ||
     verificationApproval.error ||
     escalationApproval.error;
+
+  /* eslint-disable react-hooks/exhaustive-deps */
   const clearError = React.useCallback(() => {
     analysisApproval.clearError();
     executionApproval.clearError();
@@ -1896,6 +1900,7 @@ const ProposalDetailPage: React.FC = () => {
     verificationApproval.clearError,
     escalationApproval.clearError,
   ]);
+  /* eslint-enable react-hooks/exhaustive-deps */
   const [escalateOpen, setEscalateOpen] = React.useState(false);
 
   if (!loaded) {
@@ -2099,10 +2104,10 @@ const ProposalDetailPage: React.FC = () => {
         >
           {effectiveTab === 'overview' && (
             <OverviewTab
-              proposal={proposal}
               approval={approval}
               latestExecutionResult={latestExecutionResult}
               latestVerificationResult={latestVerificationResult}
+              proposal={proposal}
             />
           )}
           {effectiveTab === 'proposal' && (

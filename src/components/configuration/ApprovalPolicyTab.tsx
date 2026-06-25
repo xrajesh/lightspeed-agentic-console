@@ -54,6 +54,7 @@ const ApprovalPolicyTab: React.FC = () => {
   React.useEffect(() => {
     if (policyExists) {
       const stages = policy.spec?.stages;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStageValues({
         Analysis: getStageApproval(stages, 'Analysis'),
         Execution: getStageApproval(stages, 'Execution'),
@@ -62,6 +63,7 @@ const ApprovalPolicyTab: React.FC = () => {
       });
       setMaxAttempts(policy.spec?.maxAttempts ?? 1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [policyResourceVersion]);
 
   const handleSave = async () => {

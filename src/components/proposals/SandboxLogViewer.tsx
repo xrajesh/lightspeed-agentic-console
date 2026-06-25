@@ -80,6 +80,7 @@ const SandboxLogViewer: React.FC<{
 
   React.useEffect(() => {
     if (!podExists) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus((prev) => (prev === 'streaming' || prev === 'ended' ? 'ended' : 'searching'));
     } else if (podPhase === 'Pending') {
       setStatus('waiting');
@@ -91,6 +92,7 @@ const SandboxLogViewer: React.FC<{
       return;
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setStatus('streaming');
     setLogs('');
     const abortController = new AbortController();

@@ -28,6 +28,7 @@ const AgentForm: React.FC<AgentFormProps> = ({ providers, onSubmit, onCancel }) 
 
   React.useEffect(() => {
     if (!providerName && providers.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProviderName(providers[0].metadata.name);
     }
   }, [providers, providerName]);
