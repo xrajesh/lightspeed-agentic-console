@@ -37,7 +37,8 @@
         "@types/react",
         "@patternfly/*",
         "eslint",
-        "node"
+        "node",
+        "vitest"
       ],
       "matchUpdateTypes": ["major"],
       "enabled": false
