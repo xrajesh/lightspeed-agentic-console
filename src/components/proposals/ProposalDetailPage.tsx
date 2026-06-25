@@ -217,8 +217,12 @@ const ApprovalCard: React.FC<{
                   )}
                   <FlexItem>
                     <Tooltip
-                      content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
-                      trigger={!approval.canApprove && !approval.canApproveLoading ? undefined : 'manual'}
+                      content={t(
+                        'You must be a member of system:cluster-admins to approve or deny proposals.',
+                      )}
+                      trigger={
+                        !approval.canApprove && !approval.canApproveLoading ? undefined : 'manual'
+                      }
                     >
                       <Button
                         isAriaDisabled={!approval.canApprove || approval.inProgress}
@@ -232,8 +236,12 @@ const ApprovalCard: React.FC<{
                   </FlexItem>
                   <FlexItem>
                     <Tooltip
-                      content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
-                      trigger={!approval.canApprove && !approval.canApproveLoading ? undefined : 'manual'}
+                      content={t(
+                        'You must be a member of system:cluster-admins to approve or deny proposals.',
+                      )}
+                      trigger={
+                        !approval.canApprove && !approval.canApproveLoading ? undefined : 'manual'
+                      }
                     >
                       <Button
                         isAriaDisabled={!approval.canApprove || approval.inProgress}
@@ -278,9 +286,10 @@ const SandboxDisplay: React.FC<{ label: string; sandbox?: SandboxInfo }> = ({ la
 
 const OverviewTab: React.FC<{
   proposal: LightspeedProposal;
+  approval?: LightspeedProposalApproval;
   latestExecutionResult?: ExecutionResultCR;
   latestVerificationResult?: VerificationResultCR;
-}> = ({ proposal, latestExecutionResult, latestVerificationResult }) => {
+}> = ({ proposal, approval, latestExecutionResult, latestVerificationResult }) => {
   const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
   const phase = getPhaseDisplay(
     derivePhaseFromConditions(proposal.status?.conditions as ProposalCondition[]),
@@ -360,6 +369,16 @@ const OverviewTab: React.FC<{
                     : '-'}
                 </DescriptionListDescription>
               </DescriptionListGroup>
+              {approval?.spec?.approver?.username && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('Approved By')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    {approval.spec.approver.username}
+                    {approval.spec.approver.approvedAt &&
+                      ` (${new Date(approval.spec.approver.approvedAt).toLocaleString()})`}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
               <SandboxDisplay
                 label={t('Analysis Sandbox')}
                 sandbox={proposal.status?.steps?.analysis?.sandbox}
@@ -1103,8 +1122,14 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
                 )}
                 <FlexItem className="ols-plugin__approve-danger">
                   <Tooltip
-                    content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
-                    trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
+                    content={t(
+                      'You must be a member of system:cluster-admins to approve or deny proposals.',
+                    )}
+                    trigger={
+                      !executionApproval.canApprove && !executionApproval.canApproveLoading
+                        ? undefined
+                        : 'manual'
+                    }
                   >
                     <Dropdown
                       isOpen={retryDropdownOpen}
@@ -1141,8 +1166,14 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
                 </FlexItem>
                 <FlexItem>
                   <Tooltip
-                    content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
-                    trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
+                    content={t(
+                      'You must be a member of system:cluster-admins to approve or deny proposals.',
+                    )}
+                    trigger={
+                      !executionApproval.canApprove && !executionApproval.canApproveLoading
+                        ? undefined
+                        : 'manual'
+                    }
                   >
                     <Button
                       isAriaDisabled={!executionApproval.canApprove || executionApproval.inProgress}
@@ -1168,8 +1199,14 @@ const ProposalTab: React.FC<ProposalTabProps> = ({
               <>
                 <FlexItem>
                   <Tooltip
-                    content={t('You must be a member of system:cluster-admins to approve or deny proposals.')}
-                    trigger={!executionApproval.canApprove && !executionApproval.canApproveLoading ? undefined : 'manual'}
+                    content={t(
+                      'You must be a member of system:cluster-admins to approve or deny proposals.',
+                    )}
+                    trigger={
+                      !executionApproval.canApprove && !executionApproval.canApproveLoading
+                        ? undefined
+                        : 'manual'
+                    }
                   >
                     <Button
                       className="ols-plugin__confirm-sweep"
@@ -1897,54 +1934,54 @@ const ProposalDetailPage: React.FC = () => {
 
     return (
       <AgenticLayout>
-      <PageSection>
-        <Flex
-          alignItems={{ default: 'alignItemsCenter' }}
-          className="ols-plugin__proposal-header"
-          spaceItems={{ default: 'spaceItemsMd' }}
-        >
-          <FlexItem>
-            <Flex
-              alignItems={{ default: 'alignItemsCenter' }}
-              spaceItems={{ default: 'spaceItemsSm' }}
-            >
-              <FlexItem>
-                <PhaseIcon
-                  phase={currentPhase}
-                  executionFailed={executionFailed}
-                  verificationFailed={verificationFailed}
-                />
-              </FlexItem>
-              <FlexItem>
-                <Title headingLevel="h1">{triggerName}</Title>
-              </FlexItem>
-            </Flex>
-          </FlexItem>
-          <FlexItem>
-            <Label color={phase.color}>{phase.label}</Label>
-          </FlexItem>
-        </Flex>
-        <Stack hasGutter>
-          {isAnalyzing && sandboxPod && (
-            <StackItem>
-              <Card>
-                <CardTitle>{t('Discovering metrics and testing queries...')}</CardTitle>
-                <CardBody>
-                  <SandboxLogViewer podName={sandboxPod} podNamespace={sandboxNs} />
-                </CardBody>
-              </Card>
-            </StackItem>
-          )}
-          {hasOptions && <TriggerOptionsView options={triggerOptions} />}
-          {!hasOptions && !isAnalyzing && (
-            <StackItem>
-              <Alert isInline title={t('No options proposed')} variant="warning">
-                {t('The agent did not return any trigger proposals.')}
-              </Alert>
-            </StackItem>
-          )}
-        </Stack>
-      </PageSection>
+        <PageSection>
+          <Flex
+            alignItems={{ default: 'alignItemsCenter' }}
+            className="ols-plugin__proposal-header"
+            spaceItems={{ default: 'spaceItemsMd' }}
+          >
+            <FlexItem>
+              <Flex
+                alignItems={{ default: 'alignItemsCenter' }}
+                spaceItems={{ default: 'spaceItemsSm' }}
+              >
+                <FlexItem>
+                  <PhaseIcon
+                    phase={currentPhase}
+                    executionFailed={executionFailed}
+                    verificationFailed={verificationFailed}
+                  />
+                </FlexItem>
+                <FlexItem>
+                  <Title headingLevel="h1">{triggerName}</Title>
+                </FlexItem>
+              </Flex>
+            </FlexItem>
+            <FlexItem>
+              <Label color={phase.color}>{phase.label}</Label>
+            </FlexItem>
+          </Flex>
+          <Stack hasGutter>
+            {isAnalyzing && sandboxPod && (
+              <StackItem>
+                <Card>
+                  <CardTitle>{t('Discovering metrics and testing queries...')}</CardTitle>
+                  <CardBody>
+                    <SandboxLogViewer podName={sandboxPod} podNamespace={sandboxNs} />
+                  </CardBody>
+                </Card>
+              </StackItem>
+            )}
+            {hasOptions && <TriggerOptionsView options={triggerOptions} />}
+            {!hasOptions && !isAnalyzing && (
+              <StackItem>
+                <Alert isInline title={t('No options proposed')} variant="warning">
+                  {t('The agent did not return any trigger proposals.')}
+                </Alert>
+              </StackItem>
+            )}
+          </Stack>
+        </PageSection>
       </AgenticLayout>
     );
   }
@@ -1978,126 +2015,127 @@ const ProposalDetailPage: React.FC = () => {
 
   return (
     <AgenticLayout>
-    <PageSection>
-      <Flex
-        alignItems={{ default: 'alignItemsCenter' }}
-        className="ols-plugin__proposal-header"
-        spaceItems={{ default: 'spaceItemsMd' }}
-      >
-        <FlexItem>
-          <Flex
-            alignItems={{ default: 'alignItemsCenter' }}
-            spaceItems={{ default: 'spaceItemsSm' }}
-          >
-            <FlexItem>
-              <PhaseIcon
-                phase={currentPhase}
-                executionFailed={executionFailed}
-                verificationFailed={verificationFailed}
-              />
-            </FlexItem>
-            <FlexItem>
-              <Title headingLevel="h1">{proposal.metadata.name}</Title>
-            </FlexItem>
-          </Flex>
-        </FlexItem>
-        <FlexItem>
-          <Label color={phase.color}>{phase.label}</Label>
-        </FlexItem>
-      </Flex>
-
-      {escalateOpen && (
-        <EscalateModal
-          approval={approval}
-          isOpen={escalateOpen}
-          onClose={() => setEscalateOpen(false)}
-          proposal={proposal}
-        />
-      )}
-
-      {actionError && (
-        <Alert
-          actionClose={
-            <Button onClick={clearError} variant="plain">
-              {t('Close')}
-            </Button>
-          }
-          isInline
-          title={t('Action failed')}
-          variant="danger"
+      <PageSection>
+        <Flex
+          alignItems={{ default: 'alignItemsCenter' }}
+          className="ols-plugin__proposal-header"
+          spaceItems={{ default: 'spaceItemsMd' }}
         >
-          {actionError}
-        </Alert>
-      )}
+          <FlexItem>
+            <Flex
+              alignItems={{ default: 'alignItemsCenter' }}
+              spaceItems={{ default: 'spaceItemsSm' }}
+            >
+              <FlexItem>
+                <PhaseIcon
+                  phase={currentPhase}
+                  executionFailed={executionFailed}
+                  verificationFailed={verificationFailed}
+                />
+              </FlexItem>
+              <FlexItem>
+                <Title headingLevel="h1">{proposal.metadata.name}</Title>
+              </FlexItem>
+            </Flex>
+          </FlexItem>
+          <FlexItem>
+            <Label color={phase.color}>{phase.label}</Label>
+          </FlexItem>
+        </Flex>
 
-      <div className="ols-plugin__chevron-tabs" role="tablist">
-        {visibleTabs.map((id) => (
-          <button
-            aria-controls={`ols-tabpanel-${id}`}
-            aria-selected={effectiveTab === id}
-            className={`ols-plugin__chevron-tab${effectiveTab === id ? ' ols-plugin__chevron-tab--active' : ''}`}
-            id={`ols-tab-${id}`}
-            key={id}
-            onClick={() => setActiveTab(id)}
-            role="tab"
-            type="button"
+        {escalateOpen && (
+          <EscalateModal
+            approval={approval}
+            isOpen={escalateOpen}
+            onClose={() => setEscalateOpen(false)}
+            proposal={proposal}
+          />
+        )}
+
+        {actionError && (
+          <Alert
+            actionClose={
+              <Button onClick={clearError} variant="plain">
+                {t('Close')}
+              </Button>
+            }
+            isInline
+            title={t('Action failed')}
+            variant="danger"
           >
-            {tabLabels[id]}
-            {tabNeedsApproval[id] && (
-              <Label className="ols-plugin__chevron-tab-iteration" color="blue" isCompact>
-                {t('Needs approval')}
-              </Label>
-            )}
-            {activePhaseTab === id && effectiveTab !== id && !tabNeedsApproval[id] && (
-              <span className="ols-plugin__tab-active-dot" />
-            )}
-          </button>
-        ))}
-      </div>
-      <div
-        aria-labelledby={`ols-tab-${effectiveTab}`}
-        className="ols-plugin__chevron-tab-panel"
-        id={`ols-tabpanel-${effectiveTab}`}
-        role="tabpanel"
-      >
-        {effectiveTab === 'overview' && (
-          <OverviewTab
-            proposal={proposal}
-            latestExecutionResult={latestExecutionResult}
-            latestVerificationResult={latestVerificationResult}
-          />
+            {actionError}
+          </Alert>
         )}
-        {effectiveTab === 'proposal' && (
-          <ProposalTab
-            agentNames={agentNames}
-            analysisApproval={analysisApproval}
-            executionApproval={executionApproval}
-            latestAnalysisResult={latestAnalysisResult}
-            proposal={proposal}
-          />
-        )}
-        {effectiveTab === 'result' && (
-          <ResultTab proposal={proposal} latestExecutionResult={latestExecutionResult} />
-        )}
-        {effectiveTab === 'verification' && (
-          <VerificationTab
-            agentNames={agentNames}
-            latestVerificationResult={latestVerificationResult}
-            onEscalate={() => setEscalateOpen(true)}
-            proposal={proposal}
-            verificationApproval={verificationApproval}
-          />
-        )}
-        {effectiveTab === 'escalation' && (
-          <EscalationTab
-            agentNames={agentNames}
-            escalationApproval={escalationApproval}
-            latestEscalationResult={latestEscalationResult}
-            proposal={proposal}
-          />
-        )}
-      </div>
-    </PageSection>
+
+        <div className="ols-plugin__chevron-tabs" role="tablist">
+          {visibleTabs.map((id) => (
+            <button
+              aria-controls={`ols-tabpanel-${id}`}
+              aria-selected={effectiveTab === id}
+              className={`ols-plugin__chevron-tab${effectiveTab === id ? ' ols-plugin__chevron-tab--active' : ''}`}
+              id={`ols-tab-${id}`}
+              key={id}
+              onClick={() => setActiveTab(id)}
+              role="tab"
+              type="button"
+            >
+              {tabLabels[id]}
+              {tabNeedsApproval[id] && (
+                <Label className="ols-plugin__chevron-tab-iteration" color="blue" isCompact>
+                  {t('Needs approval')}
+                </Label>
+              )}
+              {activePhaseTab === id && effectiveTab !== id && !tabNeedsApproval[id] && (
+                <span className="ols-plugin__tab-active-dot" />
+              )}
+            </button>
+          ))}
+        </div>
+        <div
+          aria-labelledby={`ols-tab-${effectiveTab}`}
+          className="ols-plugin__chevron-tab-panel"
+          id={`ols-tabpanel-${effectiveTab}`}
+          role="tabpanel"
+        >
+          {effectiveTab === 'overview' && (
+            <OverviewTab
+              proposal={proposal}
+              approval={approval}
+              latestExecutionResult={latestExecutionResult}
+              latestVerificationResult={latestVerificationResult}
+            />
+          )}
+          {effectiveTab === 'proposal' && (
+            <ProposalTab
+              agentNames={agentNames}
+              analysisApproval={analysisApproval}
+              executionApproval={executionApproval}
+              latestAnalysisResult={latestAnalysisResult}
+              proposal={proposal}
+            />
+          )}
+          {effectiveTab === 'result' && (
+            <ResultTab proposal={proposal} latestExecutionResult={latestExecutionResult} />
+          )}
+          {effectiveTab === 'verification' && (
+            <VerificationTab
+              agentNames={agentNames}
+              latestVerificationResult={latestVerificationResult}
+              onEscalate={() => setEscalateOpen(true)}
+              proposal={proposal}
+              verificationApproval={verificationApproval}
+            />
+          )}
+          {effectiveTab === 'escalation' && (
+            <EscalationTab
+              agentNames={agentNames}
+              escalationApproval={escalationApproval}
+              latestEscalationResult={latestEscalationResult}
+              proposal={proposal}
+            />
+          )}
+        </div>
+      </PageSection>
     </AgenticLayout>
   );
 };

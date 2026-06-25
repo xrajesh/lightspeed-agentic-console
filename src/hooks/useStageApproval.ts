@@ -91,5 +91,15 @@ export function useStageApproval(
 
   const clearError = React.useCallback(() => setError(null), []);
 
-  return { needsApproval: needs, stageStatus: status, approve, deny, inProgress, error, clearError, canApprove, canApproveLoading };
+  return {
+    needsApproval: needs,
+    stageStatus: status,
+    approve,
+    deny,
+    inProgress,
+    error,
+    clearError,
+    canApprove,
+    canApproveLoading,
+  };
 }
