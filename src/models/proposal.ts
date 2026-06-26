@@ -215,7 +215,14 @@ export type ApprovalStageStatus = {
   conditions?: ProposalCondition[];
 };
 
+export type ApproverInfo = {
+  username?: string;
+  uid?: string;
+  approvedAt?: string;
+};
+
 export type ProposalApprovalSpec = {
+  approver?: ApproverInfo;
   stages?: ApprovalStage[];
 };
 
