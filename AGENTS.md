@@ -23,7 +23,7 @@ This is a **template repository** for creating OpenShift Console dynamic plugins
 - Cypress for e2e testing
 - Helm for deployment
 
-**Compatibility:** Requires OpenShift 4.12+ (uses ConsolePlugin CRD v1 API)
+**Compatibility:** Requires OpenShift 4.22+
 
 ## Architecture & Patterns
 
@@ -171,7 +171,6 @@ helm upgrade -i my-plugin charts/openshift-console-plugin \
   --set plugin.image=my-plugin-image-location
 ```
 
-**Note:** OpenShift 4.10 requires `--set plugin.securityContext.enabled=false`
 
 ## Important Constraints & Gotchas
 
