@@ -20,7 +20,7 @@ This is a **template repository** for creating OpenShift Console dynamic plugins
 - PatternFly 6 (UI component library)
 - Webpack 5 with Module Federation
 - react-i18next for internationalization
-- Cypress for e2e testing
+- Playwright for e2e testing
 
 **Compatibility:** Requires OpenShift 4.22+
 
@@ -83,7 +83,7 @@ package.json           # Plugin metadata in consolePlugin section
 tsconfig.json          # TypeScript config (strict: false currently)
 webpack.config.ts      # Module federation + build config
 locales/               # i18n translation files
-integration-tests/     # Cypress e2e tests
+integration-tests/     # Playwright e2e tests
 ```
 
 ## Development Workflow
@@ -100,8 +100,8 @@ integration-tests/     # Cypress e2e tests
 - Follow existing code patterns in the repo
 
 ### Testing
-- `npm run test-cypress` - opens Cypress UI
-- `npm run test-cypress-headless` - runs Cypress in CI mode
+- `npm run test-e2e` - runs Playwright tests
+- `npm run test-e2e-headless` - runs Playwright tests with list reporter
 - Add e2e tests for new pages/features
 
 ## TypeScript Configuration
@@ -195,7 +195,7 @@ See [Console Plugin SDK README](https://github.com/openshift/console/tree/master
 
 ## Testing Strategy
 
-- **E2E tests (Cypress):** For user flows and page rendering
+- **E2E tests (Playwright):** For user flows and page rendering
 - **Component tests:** Add when components have complex logic
 - **Test data attributes:** Use `data-test` attributes for selectors
 - Run tests locally before opening PRs
@@ -214,7 +214,7 @@ See [Console Plugin SDK README](https://github.com/openshift/console/tree/master
 - **Add a page?** Update console-extensions.json + exposedModules + create component
 - **Style something?** Use PatternFly components and CSS variables, prefix custom classes
 - **Add translations?** Use `t()` function, run `npm run i18n` after
-- **Test changes?** Run locally with `npm start` + `npm run start-console`, add Cypress tests
+- **Test changes?** Run locally with `npm start` + `npm run start-console`, add Playwright tests
 - **Deploy?** Build image, push to registry, deploy to cluster
 
 ## Risk Levels
