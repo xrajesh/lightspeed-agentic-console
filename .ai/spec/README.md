@@ -28,6 +28,7 @@ AI agents. Content is optimized for precision and machine consumption.
 | Navigate the codebase | `how/project-structure.md` |
 | Understand K8s data flow | `how/k8s-data-layer.md` |
 | Understand the plugin system | `how/console-plugin-system.md` |
+| Understand e2e testing | `how/e2e-testing.md` |
 
 ## Cross-Reference
 
@@ -37,6 +38,7 @@ AI agents. Content is optimized for precision and machine consumption.
 | `what/proposal-lifecycle.md` | `how/k8s-data-layer.md`, `how/project-structure.md` |
 | `what/configuration.md` | `how/k8s-data-layer.md` |
 | `what/dynamic-components.md` | `how/project-structure.md` |
+| — | `how/e2e-testing.md` |
 
 ## Conventions
 

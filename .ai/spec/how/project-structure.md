@@ -25,6 +25,10 @@
 | `src/components/configuration/AgentForm.tsx` | `AgentForm` | Agent creation form with provider selection |
 | `console-extensions.json` | — | Plugin extension declarations (routes, nav items) |
 | `webpack.config.ts` | — | Module federation and build configuration |
+| `playwright.config.ts` | — | Playwright e2e test configuration |
+| `integration-tests/support/fixtures.ts` | `test`, `oc`, `gatherClusterArtifacts` | Custom test fixture, cluster CLI helper, artifact collection |
+| `integration-tests/support/global-setup.ts` | `globalSetup` | Operator readiness, browser login, storageState |
+| `integration-tests/support/global-teardown.ts` | `globalTeardown` | Cluster cleanup and artifact gathering |
 
 ## Key Entry Points
 
