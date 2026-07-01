@@ -21,7 +21,6 @@ This is a **template repository** for creating OpenShift Console dynamic plugins
 - Webpack 5 with Module Federation
 - react-i18next for internationalization
 - Cypress for e2e testing
-- Helm for deployment
 
 **Compatibility:** Requires OpenShift 4.22+
 
@@ -84,7 +83,6 @@ package.json           # Plugin metadata in consolePlugin section
 tsconfig.json          # TypeScript config (strict: false currently)
 webpack.config.ts      # Module federation + build config
 locales/               # i18n translation files
-charts/                # Helm chart for deployment
 integration-tests/     # Cypress e2e tests
 ```
 
@@ -153,7 +151,6 @@ When instantiating from template, update:
 2. `package.json` - `consolePlugin.displayName` and `description`
 3. All i18n namespace references (`plugin__<name>`)
 4. CSS class prefixes
-5. Helm chart values
 
 ## Build & Deployment
 
@@ -162,15 +159,6 @@ When instantiating from template, update:
 docker build -t quay.io/my-repository/my-plugin:latest .
 # For Apple Silicon: add --platform=linux/amd64
 ```
-
-### Deploying via Helm
-```bash
-helm upgrade -i my-plugin charts/openshift-console-plugin \
-  -n my-namespace \
-  --create-namespace \
-  --set plugin.image=my-plugin-image-location
-```
-
 
 ## Important Constraints & Gotchas
 
@@ -227,7 +215,7 @@ See [Console Plugin SDK README](https://github.com/openshift/console/tree/master
 - **Style something?** Use PatternFly components and CSS variables, prefix custom classes
 - **Add translations?** Use `t()` function, run `npm run i18n` after
 - **Test changes?** Run locally with `npm start` + `npm run start-console`, add Cypress tests
-- **Deploy?** Build image, push to registry, install via Helm chart
+- **Deploy?** Build image, push to registry, deploy to cluster
 
 ## Risk Levels
 

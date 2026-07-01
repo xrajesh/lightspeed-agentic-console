@@ -96,16 +96,6 @@ docker push quay.io/my-repository/lightspeed-agentic-console-plugin:latest
 
 On Apple Silicon, add `--platform=linux/amd64`.
 
-### Deploying via Helm
-
-```sh
-helm upgrade -i lightspeed-agentic-console-plugin charts/openshift-console-plugin \
-  -n openshift-lightspeed --create-namespace \
-  --set plugin.image=quay.io/my-repository/lightspeed-agentic-console-plugin:latest
-```
-
-See [charts/openshift-console-plugin/values.yaml](charts/openshift-console-plugin/values.yaml) for all available parameters.
-
 ## Internationalization
 
 The i18n namespace is `plugin__lightspeed-agentic-console-plugin`. After adding or changing translatable strings, run:

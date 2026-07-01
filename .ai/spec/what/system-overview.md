@@ -29,7 +29,6 @@ The OpenShift Lightspeed Agentic Console Plugin is a dynamic plugin that loads i
 | Field/Flag | Type | Default | Description |
 |---|---|---|---|
 | `consolePlugin.name` | string | `lightspeed-agentic-console-plugin` | Plugin name registered with console |
-| `plugin.image` | Helm value | — | Container image location for deployment |
 
 ## Constraints
 
