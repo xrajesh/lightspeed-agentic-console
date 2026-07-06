@@ -9,8 +9,8 @@
 | `src/utils/approval.ts` | `findStage`, `getStageStatus`, `stageNeedsApproval`, `buildApprovalPatch` | Pure functions for approval logic |
 | `src/hooks/useStageApproval.ts` | `useStageApproval` | React hook wrapping approval state and K8s patch operations |
 | `src/utils/markdown.ts` | — | Markdown rendering utilities |
-| `src/components/proposals/ProposalListPage.tsx` | `ProposalListPage` | Proposal list with virtualized table and phase filters |
-| `src/components/proposals/ProposalDetailPage.tsx` | `ProposalDetailPage`, `OverviewTab`, `ProposalTab`, `ResultTab`, `VerificationTab`, `EscalationTab` | Multi-tab proposal detail with approval flows |
+| `src/components/proposals/ProposalListPage.tsx` | `ProposalListPage` | Run list with virtualized table and phase filters |
+| `src/components/proposals/ProposalDetailPage.tsx` | `ProposalDetailPage`, `OverviewTab`, `ProposalTab`, `ResultTab`, `VerificationTab`, `EscalationTab` | Multi-tab run detail with approval flows |
 | `src/components/proposals/SandboxLogViewer.tsx` | `SandboxLogViewer` | Real-time pod log streaming with reconnection |
 | `src/components/proposals/EscalateModal.tsx` | `EscalateModal` | Escalation confirmation modal |
 | `src/components/proposals/MarkdownText.tsx` | `MarkdownText` | Sanitized markdown-to-HTML rendering |

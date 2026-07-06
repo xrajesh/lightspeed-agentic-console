@@ -1,6 +1,6 @@
 # OpenShift Lightspeed Agentic Console Plugin — Specifications
 
-An OpenShift Console dynamic plugin that provides the "AI Hub" UI for managing AI-driven cluster operation proposals. Users view, approve/deny, and monitor proposals through a multi-stage workflow (Analysis, Execution, Verification, Escalation), configure approval policies, manage LLM providers, and create agent tiers.
+An OpenShift Console dynamic plugin that provides the "AI Hub" UI for managing AI-driven cluster operation runs. Users view, approve/deny, and monitor runs through a multi-stage workflow (Analysis, Execution, Verification, Escalation), configure approval policies, manage LLM providers, and create agent tiers.
 
 ## Structure
 
@@ -11,7 +11,7 @@ An OpenShift Console dynamic plugin that provides the "AI Hub" UI for managing A
 
 ## Scope
 
-Covers the console plugin only — the React frontend that renders proposal state and sends approval/denial patches. Out of scope: the lightspeed-agentic-operator (which reconciles proposals), the agentic-sandbox (which executes agent workloads), CRD definitions, and backend API logic.
+Covers the console plugin only — the React frontend that renders run state and sends approval/denial patches. Out of scope: the lightspeed-agentic-operator (which reconciles runs), the agentic-sandbox (which executes agent workloads), CRD definitions, and backend API logic.
 
 ## Audience
 
@@ -22,7 +22,7 @@ AI agents. Content is optimized for precision and machine consumption.
 | Task | Start here |
 |---|---|
 | Understand the system | `what/system-overview.md` |
-| Understand proposals UI | `what/proposal-lifecycle.md` |
+| Understand runs UI | `what/run-lifecycle.md` |
 | Understand configuration UI | `what/configuration.md` |
 | Understand dynamic rendering | `what/dynamic-components.md` |
 | Navigate the codebase | `how/project-structure.md` |
@@ -35,7 +35,7 @@ AI agents. Content is optimized for precision and machine consumption.
 | what/ | how/ |
 |---|---|
 | `what/system-overview.md` | `how/project-structure.md`, `how/console-plugin-system.md` |
-| `what/proposal-lifecycle.md` | `how/k8s-data-layer.md`, `how/project-structure.md` |
+| `what/run-lifecycle.md` | `how/k8s-data-layer.md`, `how/project-structure.md` |
 | `what/configuration.md` | `how/k8s-data-layer.md` |
 | `what/dynamic-components.md` | `how/project-structure.md` |
 | — | `how/e2e-testing.md` |

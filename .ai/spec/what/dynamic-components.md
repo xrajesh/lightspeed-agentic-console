@@ -6,7 +6,7 @@ The plugin renders adapter-defined structured data from analysis results using a
 
 ### Component Registry
 
-1. The plugin recognizes these component types: `lightspeed_prometheus_query`, `lightspeed_metrics_chart`, `lightspeed_resource_diff`, `lightspeed_action_picker`, `lightspeed_evidence_table`, `lightspeed_status_timeline`, `cmo_alert_diagnosis`, `cmo_metric_evidence`, `cmo_remediation_step`, `cmo_trigger_proposal`.
+1. The plugin recognizes these component types: `lightspeed_prometheus_query`, `lightspeed_metrics_chart`, `lightspeed_resource_diff`, `lightspeed_action_picker`, `lightspeed_evidence_table`, `lightspeed_status_timeline`, `cmo_alert_diagnosis`, `cmo_metric_evidence`, `cmo_remediation_step`, `cmo_trigger_run`.
 2. Known component types are rendered by their corresponding React component. Unknown types fall back to a JSON code block display.
 3. Components are passed as `AdapterComponent` objects — a type field plus arbitrary key-value data.
 
@@ -24,7 +24,7 @@ The plugin renders adapter-defined structured data from analysis results using a
 10. `cmo_alert_diagnosis` renders alert diagnosis details including alert name, severity, root cause, evidence list, and affected resources.
 11. `cmo_metric_evidence` renders a single metric data point with query, value, threshold, and status.
 12. `cmo_remediation_step` renders an ordered remediation step with action, commands, and risk level.
-13. `cmo_trigger_proposal` renders a PrometheusRule proposal showing the PromQL expression, tested status, severity, duration, and description.
+13. `cmo_trigger_run` renders a PrometheusRule run showing the PromQL expression, tested status, severity, duration, and description.
 
 ## Constraints
 

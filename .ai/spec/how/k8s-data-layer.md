@@ -7,16 +7,16 @@
 | `src/models/proposal.ts` | `LightspeedProposalModel`, `LightspeedProposalGVK`, all `*Model`/`*GVK` constants | K8sModel definitions for the Console SDK's watch/patch/create/delete functions |
 | `src/models/proposal.ts` | `LightspeedProposal`, `LightspeedProposalApproval`, `*ResultCR` types | TypeScript types for each CRD |
 | `src/hooks/useStageApproval.ts` | `useStageApproval` | Encapsulates approval read state + patch write in a single hook |
-| `src/utils/approval.ts` | `buildApprovalPatch` | Generates JSON Patch arrays for ProposalApproval mutations |
+| `src/utils/approval.ts` | `buildApprovalPatch` | Generates JSON Patch arrays for `AgenticRunApproval` mutations |
 | `src/config.ts` | `getApiUrl` | Constructs backend proxy URLs |
 
 ## Data Flow
 
-### Proposal Watching
+### AgenticRun Watching
 
 ```
 useK8sWatchResource(ProposalGVK, {name, namespace})
-  → WebSocket watch on /apis/agentic.openshift.io/v1alpha1/namespaces/{ns}/proposals/{name}
+  → WebSocket watch on /apis/agentic.openshift.io/v1alpha1/namespaces/{ns}/agenticruns/{name}
   → Console SDK manages cache invalidation and re-renders
 ```
 
@@ -25,8 +25,8 @@ useK8sWatchResource(ProposalGVK, {name, namespace})
 Result CRs are not watched by name. Instead:
 
 ```
-useK8sWatchResource(AnalysisResultGVK, {namespace, selector: {matchLabels: {agentic.openshift.io/proposal: name}}, isList: true})
-  → Returns all AnalysisResults for this proposal
+useK8sWatchResource(AnalysisResultGVK, {namespace, selector: {matchLabels: {agentic.openshift.io/run: name}}, isList: true})
+  → Returns all AnalysisResults for this run
   → getLatestResult(results, proposal.status.steps.analysis.results)
     → Finds the result CR referenced by the last entry in the step's results array
 ```
@@ -63,11 +63,11 @@ CRD types are hand-written, not generated. A TODO exists to auto-generate from O
 ### Approval State Machine
 
 The `useStageApproval` hook combines:
-- Read: `stageNeedsApproval()` + `getStageStatus()` → derived from ProposalApproval CR state
+- Read: `stageNeedsApproval()` + `getStageStatus()` → derived from `AgenticRunApproval` CR state
 - Write: `approve()` + `deny()` → `k8sPatch` with generated patches
 - UI state: `inProgress`, `error`, `clearError`
 
-This hook is instantiated once per stage in ProposalDetailPage, giving each tab independent approval state.
+This hook is instantiated once per stage in `ProposalDetailPage`, giving each tab independent approval state.
 
 ## Integration Points
 

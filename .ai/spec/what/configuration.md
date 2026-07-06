@@ -1,20 +1,20 @@
 # Configuration
 
-The Configuration page (`/lightspeed/configuration`) provides cluster-wide settings for the agentic system, accessible via a gear icon on the proposal list page.
+The Configuration page (`/lightspeed/configuration`) provides cluster-wide settings for the agentic system, accessible via a gear icon on the run list page.
 
 ## Behavioral Rules
 
 ### Navigation
 
-1. The Configuration page MUST be reachable from the proposal list page via a gear icon button.
-2. A breadcrumb MUST link back to the AI Hub (proposal list).
+1. The Configuration page MUST be reachable from the run list page via a gear icon button.
+2. A breadcrumb MUST link back to the AI Hub (run list).
 
 ### Approval Policy Tab
 
 3. The ApprovalPolicy CR is cluster-scoped with a singleton name `cluster`.
 4. Each of the four stages (Analysis, Execution, Verification, Escalation) can be set to `Manual` or `Automatic` via toggle groups.
 5. Max retry attempts are configurable between 1 and 3 via a number input.
-6. If the ApprovalPolicy CR does not exist, saving creates it with `maxConcurrentProposals: 5` as the default.
+6. If the ApprovalPolicy CR does not exist, saving creates it with `maxConcurrentRuns: 5` as the default.
 7. If the CR exists, saving patches `spec.stages` and `spec.maxAttempts` via replace operations.
 
 ### LLM Providers Tab
@@ -34,5 +34,5 @@ The Configuration page (`/lightspeed/configuration`) provides cluster-wide setti
 
 ## Constraints
 
-- All configuration CRDs use the same `agentic.openshift.io/v1alpha1` API group/version as proposals.
+- All configuration CRDs use the same `agentic.openshift.io/v1alpha1` API group/version as runs.
 - The ApprovalPolicy singleton pattern means only one policy governs the entire cluster.
