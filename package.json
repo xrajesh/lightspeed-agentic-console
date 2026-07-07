@@ -62,7 +62,7 @@
     "i18next-parser": "^9.4.0",
     "jsdom": "^26.1.0",
     "pluralize": "^8.0.0",
-    "prettier": "3.8.3",
+    "prettier": "3.8.4",
     "stylelint": "17.13.0",
     "stylelint-config-standard": "40.0.0",
     "typescript-eslint": "8.62.0",
