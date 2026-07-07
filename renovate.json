@@ -65,7 +65,7 @@
     },
     {
       "groupName": "test",
-      "matchPackageNames": ["cypress", "cypress-*", "@cypress/*"]
+      "matchPackageNames": ["@playwright/*"]
     }
   ]
 }
