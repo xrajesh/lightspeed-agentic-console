@@ -35,15 +35,15 @@ The core domain of the plugin: displaying and managing runs through a multi-stag
 15. Each stage (Analysis, Execution, Verification, Escalation) can independently require approval based on the `AgenticRunApproval` CR.
 15a. **Authorization gate.** Before rendering Approve/Deny buttons, the plugin MUST perform a `useAccessReview` check for `patch` verb on `agenticrunapprovals` resource in API group `agentic.openshift.io`. The namespace MUST fall back from `approval.metadata.namespace` to the run's `metadata.namespace` when the approval CR has not loaded yet. If the user lacks the permission, the buttons MUST be disabled (using `isAriaDisabled` so hover/focus events remain active for the tooltip) with a tooltip stating "You must be a member of system:cluster-admins to approve or deny runs." This applies to all approval surfaces: `ApprovalCard` (Analysis, Verification, Escalation stages), the execution approval split-button and Deny button in `ProposalTab`, and the Escalate button in `EscalateModal`. The `approve()` and `deny()` callbacks MUST also guard against `!canApprove` as defense-in-depth. This prevents confusing 403 errors — the API server enforces the real gate.
 16. Approval decisions are written as JSON patches to the `AgenticRunApproval` CR, not to the `AgenticRun` CR.
-17. When approving execution, the user can select a specific remediation option (by index) and specify retry count (0-3).
+17. When approving execution, the user can select a specific remediation option (by index) and specify retry count (0-3). Each option's remediation plan contains concrete bash commands (kubectl/oc) visible in the approval view.
 18. Execution approval uses a two-step confirmation pattern: click Approve, then click Confirm Approve. The confirmation auto-resets after 5 seconds.
 19. The user can select which Agent to use for each approval stage. The available agents are fetched from the cluster-scoped Agent CRD list.
 
 ### Remediation Options
 
-20. Analysis produces one or more `RemediationOption` objects, each containing diagnosis, proposed remediation, RBAC requirements, and a verification plan.
+20. Analysis produces one or more `RemediationOption` objects, each containing diagnosis, proposed remediation (a concrete script of ordered bash commands using kubectl/oc), RBAC requirements derived from those commands, and a verification plan. Each action in the remediation plan includes `command` (exact bash command), `type` (phase category: pre-check, mutation, wait, post-check), and `description`. [OLS-3441]
 21. When multiple options exist, they are rendered as expandable cards with a "Select this option" button.
-22. RBAC permissions shown in the run are locked at approval time — the UI shows a danger-level alert stating the agent cannot escalate its own privileges.
+22. RBAC permissions shown in the run are derived from the concrete bash commands in the remediation script and locked at approval time — the UI shows a danger-level alert stating the agent cannot escalate its own privileges. [OLS-3441]
 
 ### Refine Flow
 
