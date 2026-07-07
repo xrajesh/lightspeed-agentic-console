@@ -44,7 +44,6 @@
     "typescript": "^5.9.3",
     "victory": "^37.3.6",
     "webpack": "^5.106.2",
-    "@types/dompurify": "^3.2.0",
     "@types/node": "^22.20.0",
     "@types/react": "^18.3.28",
     "webpack-cli": "^7.0.0"
