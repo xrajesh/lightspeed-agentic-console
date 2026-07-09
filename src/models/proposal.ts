@@ -270,7 +270,7 @@ export type SandboxInfo = {
 
 export type ProposalCondition = {
   type: string;
-  status: string;
+  status: 'True' | 'False' | 'Unknown';
   lastTransitionTime?: string;
   reason?: string;
   message?: string;
@@ -299,9 +299,25 @@ export type SecretRequirement = {
   mountAs: SecretMountSpec;
 };
 
+export type MCPHeaderConfig = {
+  name: string;
+  valueFrom?: {
+    type: 'Secret' | 'ServiceAccountToken';
+    secret?: { name: string };
+  };
+};
+
+export type MCPServerConfig = {
+  name: string;
+  url: string;
+  timeoutSeconds?: number;
+  headers?: MCPHeaderConfig[];
+};
+
 export type ToolsSpec = {
   skills?: SkillsSource[];
   requiredSecrets?: SecretRequirement[];
+  mcpServers?: MCPServerConfig[];
 };
 
 export type ProposalStep = {
@@ -313,7 +329,7 @@ export type ProposalStep = {
 
 export type AgentDiagnosis = {
   summary: string;
-  confidence: string;
+  confidence: 'Low' | 'Medium' | 'High';
   rootCause: string;
 };
 
@@ -325,26 +341,27 @@ export type AgentAction = {
 export type AgentProposal = {
   description: string;
   actions: AgentAction[];
-  risk: string;
-  reversible: boolean;
-  rollbackPlan?: AgentRollbackPlan | string;
+  risk: 'Low' | 'Medium' | 'High' | 'Critical';
+  reversible?: 'Reversible' | 'Irreversible' | 'Partial';
+  estimatedImpact: string;
+  rollbackPlan?: AgentRollbackPlan;
 };
 
 export type VerificationStep = {
   name: string;
-  command: string;
-  expected: string;
+  command?: string;
+  expected?: string;
   type: string;
 };
 
 export type AgentRollbackPlan = {
   description: string;
-  command: string;
+  command?: string;
 };
 
 export type AgentVerification = {
   description: string;
-  steps: VerificationStep[];
+  steps?: VerificationStep[];
 };
 
 export type PermissionRule = {
@@ -359,15 +376,6 @@ export type PermissionRule = {
 export type AgentRbac = {
   namespaceScoped: PermissionRule[];
   clusterScoped: PermissionRule[];
-};
-
-// RemediationOption bundles a single remediation approach with its own
-// diagnosis, proposal, RBAC, and verification plan.
-// AdapterComponent is an adapter-defined structured data entry.
-// The operator passes these through; the console renders known types.
-export type AdapterComponent = {
-  type: string;
-  [key: string]: unknown;
 };
 
 export type RemediationOption = {
@@ -393,7 +401,7 @@ export type ExecutionActionTaken = {
   type: string;
   description: string;
   resource?: { apiVersion: string; kind: string; name: string; namespace?: string };
-  outcome?: 'Succeeded' | 'Failed';
+  outcome: 'Succeeded' | 'Failed';
   output?: string;
   error?: string;
 };
@@ -476,7 +484,7 @@ export type LightspeedProposal = {
 // Result CR types — separate CRDs that hold step output data
 
 export type ResultCondition = {
-  type: 'Started' | 'Completed';
+  type: string;
   status: 'True' | 'False' | 'Unknown';
   lastTransitionTime: string;
   reason?: string;
@@ -547,16 +555,6 @@ export type EscalationResultCR = {
     failureReason?: string;
   };
 };
-
-type AnyResultCR = AnalysisResultCR | ExecutionResultCR | VerificationResultCR | EscalationResultCR;
-
-export function resultOutcome(cr: AnyResultCR | undefined): 'Succeeded' | 'Failed' | undefined {
-  const reason = cr?.status?.conditions?.find((c) => c.type === 'Completed')?.reason;
-  if (reason === 'Succeeded' || reason === 'Failed') {
-    return reason;
-  }
-  return undefined;
-}
 
 // Display helpers
 
@@ -645,12 +643,12 @@ export const derivePhaseFromConditions = (conditions?: ProposalCondition[]): Pro
 
 export const getRiskColor = (risk?: string): 'green' | 'orange' | 'red' | 'grey' => {
   switch (risk) {
-    case 'low':
+    case 'Low':
       return 'green';
-    case 'medium':
+    case 'Medium':
       return 'orange';
-    case 'high':
-    case 'critical':
+    case 'High':
+    case 'Critical':
       return 'red';
     default:
       return 'grey';
@@ -776,3 +774,8 @@ export type AgentResource = {
 export type LLMProviderK8s = LLMProviderResource & K8sResourceCommon;
 export type ApprovalPolicyK8s = ApprovalPolicyResource & K8sResourceCommon;
 export type AgentK8s = AgentResource & K8sResourceCommon;
+export type ProposalK8s = LightspeedProposal & K8sResourceCommon;
+export type ProposalApprovalK8s = LightspeedProposalApproval & K8sResourceCommon;
+export type AnalysisResultK8s = AnalysisResultCR & K8sResourceCommon;
+export type ExecutionResultK8s = ExecutionResultCR & K8sResourceCommon;
+export type VerificationResultK8s = VerificationResultCR & K8sResourceCommon;

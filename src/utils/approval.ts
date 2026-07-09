@@ -5,6 +5,7 @@ import {
   ProposalCondition,
   ProposalPhase,
 } from '../models/proposal';
+import { TERMINAL_PHASES } from '../models/proposal-views';
 
 export function findStage(
   approval: LightspeedProposalApproval | undefined,
@@ -22,14 +23,6 @@ export function getStageStatus(
   return stage.decision === 'Denied' ? 'denied' : 'approved';
 }
 
-const TERMINAL_PHASES = new Set<ProposalPhase>([
-  'Completed',
-  'Failed',
-  'Denied',
-  'Escalated',
-  'EmergencyStopped',
-]);
-
 export function stageNeedsApproval(
   approval: LightspeedProposalApproval | undefined,
   stageType: ApprovalStageType,
@@ -38,7 +31,7 @@ export function stageNeedsApproval(
 ): boolean {
   if (!approval) return false;
   if (findStage(approval, stageType)) return false;
-  if (TERMINAL_PHASES.has(phase)) return false;
+  if (TERMINAL_PHASES.includes(phase)) return false;
 
   const get = (type: string) => conditions?.find((c) => c.type === type);
 

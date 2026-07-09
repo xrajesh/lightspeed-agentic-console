@@ -22,21 +22,20 @@ The core domain of the plugin: displaying and managing runs through a multi-stag
 8. The list MUST support filtering by phase and text search.
 9. Each row MUST show: name (linked to detail), phase label, request preview (truncated to 80 chars), namespace, and age.
 
-### Run Detail — Tabs
+### Run Detail — Layout
 
-10. The detail page MUST show tabs: Overview, Proposal, Execution, Verification, and conditionally Escalation.
-11. The Escalation tab MUST only appear when the run has an `Escalated` condition.
-12. For CMO (cluster-monitoring-operator) sourced runs, the Overview tab is hidden and the default tab is Proposal.
-13. A blue dot indicator MUST appear on the tab corresponding to the currently active phase when the user is viewing a different tab.
-14. Tabs that need approval MUST show a "Needs approval" badge.
+10. The detail page MUST gate its content behind a loading/error guard (`StatusGuard`): show a spinner while loading, an error state on failure (403 → restricted access, 404 → not found, other → error message with detail), and the page content when data is ready.
+11. The detail page uses a single-page section layout (not tabs). Sections are rendered conditionally based on the current phase: Analysis summary, Remediation options, Execution summary, Verification summary, and Timeline.
+12. During in-progress stages (Analyzing, Executing, Verifying), the page MUST show a `StageInProgress` card with embedded live log streaming from the sandbox pod.
+13. The page MUST be wrapped in `AgenticLayout` to display the system-suspended banner when the agentic config has `suspended: true`.
 
 ### Approval Flow
 
 15. Each stage (Analysis, Execution, Verification, Escalation) can independently require approval based on the `AgenticRunApproval` CR.
-15a. **Authorization gate.** Before rendering Approve/Deny buttons, the plugin MUST perform a `useAccessReview` check for `patch` verb on `agenticrunapprovals` resource in API group `agentic.openshift.io`. The namespace MUST fall back from `approval.metadata.namespace` to the run's `metadata.namespace` when the approval CR has not loaded yet. If the user lacks the permission, the buttons MUST be disabled (using `isAriaDisabled` so hover/focus events remain active for the tooltip) with a tooltip stating "You must be a member of system:cluster-admins to approve or deny runs." This applies to all approval surfaces: `ApprovalCard` (Analysis, Verification, Escalation stages), the execution approval split-button and Deny button in `ProposalTab`, and the Escalate button in `EscalateModal`. The `approve()` and `deny()` callbacks MUST also guard against `!canApprove` as defense-in-depth. This prevents confusing 403 errors — the API server enforces the real gate.
+15a. **Authorization gate.** Before rendering Approve/Deny buttons, the plugin MUST perform a `useAccessReview` check for `patch` verb on `agenticrunapprovals` resource in API group `agentic.openshift.io`. The namespace MUST fall back from `approval.metadata.namespace` to the run's `metadata.namespace` when the approval CR has not loaded yet. If the user lacks the permission, the buttons MUST be disabled (using `isAriaDisabled` so hover/focus events remain active for the tooltip) with a tooltip stating "You must be a member of system:cluster-admins to approve or deny runs." This check is performed in the `useProposal` hook and exposed as `canApprove`/`canApproveLoading` on the returned view model. The `RemediationOptionCard` component receives `canApprove` as a prop to gate its Execute/Deny buttons, and `ConfirmationModal` is used for execution confirmation. The `approveExecution()` and `denyExecution()` callbacks in `useProposal` MUST also guard against `!canApprove` as defense-in-depth. This prevents confusing 403 errors — the API server enforces the real gate.
 16. Approval decisions are written as JSON patches to the `AgenticRunApproval` CR, not to the `AgenticRun` CR.
 17. When approving execution, the user can select a specific remediation option (by index) and specify retry count (0-3). Each option's remediation plan contains concrete bash commands (kubectl/oc) visible in the approval view.
-18. Execution approval uses a two-step confirmation pattern: click Approve, then click Confirm Approve. The confirmation auto-resets after 5 seconds.
+18. Execution approval uses a `ConfirmationModal` — the user clicks Execute on a remediation option card, which opens a modal dialog for confirmation with loading state and inline error display.
 19. The user can select which Agent to use for each approval stage. The available agents are fetched from the cluster-scoped Agent CRD list.
 
 ### Remediation Options
@@ -45,22 +44,18 @@ The core domain of the plugin: displaying and managing runs through a multi-stag
 21. When multiple options exist, they are rendered as expandable cards with a "Select this option" button.
 22. RBAC permissions shown in the run are derived from the concrete bash commands in the remediation script and locked at approval time — the UI shows a danger-level alert stating the agent cannot escalate its own privileges. [OLS-3441]
 
-### Refine Flow
+### Refine Flow [PLANNED]
 
-23. After analysis completes, the user can submit revision feedback via a "Refine" button.
-24. Refinement writes `spec.revisionFeedback` to the `AgenticRun` CR via patch. If the value already exists, it uses `replace`; otherwise `add`.
-25. A revision is considered pending when `spec.revisionFeedback` is set AND `metadata.generation` exceeds the `observedGeneration` on the `Analyzed` condition.
+23. [PLANNED] After analysis completes, the user can submit revision feedback via a "Refine" button. The `revisionFeedback` field exists in the CRD type definition but no UI component currently renders the Refine button.
+24. [PLANNED] Refinement writes `spec.revisionFeedback` to the `AgenticRun` CR via patch. If the value already exists, it uses `replace`; otherwise `add`.
+25. [PLANNED] A revision is considered pending when `spec.revisionFeedback` is set AND `metadata.generation` exceeds the `observedGeneration` on the `Analyzed` condition.
 
 ### Sandbox Log Streaming
 
 26. While a stage is in progress, the plugin streams logs from the sandbox pod's `agent` container.
 27. Log streaming uses `follow: true` with automatic reconnection on stream end or error (exponential backoff from 1s to 15s).
 28. When the streaming result data arrives, the log viewer auto-collapses to an expandable section.
-29. Logs are capped at 512KB; excess is trimmed from the start at newline boundaries.
-
-### Trigger-Bootstrap Runs
-
-30. Runs with label `ols.openshift.io/run-type: trigger-bootstrap` get a simplified single-page layout (no tabs) showing the trigger name, analysis logs, and trigger options.
+29. Logs are capped at 20,000 lines.
 
 ### Escalation
 

@@ -1,0 +1,134 @@
+import {
+  Card,
+  CardBody,
+  Content,
+  ContentVariants,
+  EmptyState,
+  EmptyStateBody,
+  Flex,
+  FlexItem,
+  Label,
+  Skeleton,
+} from '@patternfly/react-core';
+import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  ProposalPhase,
+  RootCauseView,
+  SandboxView,
+  TERMINAL_PHASES,
+} from '../../../models/proposal-views';
+import { SandboxLogViewer } from './SandboxLogViewer';
+
+interface AnalysisSummaryProps {
+  rootCause?: RootCauseView;
+  phase: ProposalPhase;
+  analysisSandbox?: SandboxView;
+  analysisStartedAt?: string;
+}
+
+export const AnalysisSummary: FC<AnalysisSummaryProps> = ({
+  rootCause,
+  phase,
+  analysisSandbox,
+  analysisStartedAt,
+}) => {
+  const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
+
+  if (phase === 'Pending' || phase === 'Analyzing') {
+    const isPending = phase === 'Pending';
+    return (
+      <>
+        <Card>
+          <CardBody>
+            <Flex direction={{ default: 'column' }}>
+              <FlexItem>
+                <Content component={ContentVariants.small}>
+                  <em>{isPending ? t('Waiting for analysis to start...') : t('Analyzing...')}</em>
+                </Content>
+              </FlexItem>
+              <FlexItem>
+                <Skeleton
+                  screenreaderText={
+                    isPending ? t('Waiting for analysis to start...') : t('Loading root cause')
+                  }
+                  width="70%"
+                />
+              </FlexItem>
+              <FlexItem>
+                <Skeleton width="40%" />
+              </FlexItem>
+              <FlexItem>
+                <Skeleton width="50%" />
+              </FlexItem>
+              {!isPending && analysisSandbox && (
+                <FlexItem>
+                  <SandboxLogViewer
+                    title={t('Analysis')}
+                    sandbox={analysisSandbox}
+                    sinceTime={analysisStartedAt}
+                    streaming
+                  />
+                </FlexItem>
+              )}
+            </Flex>
+          </CardBody>
+        </Card>
+      </>
+    );
+  }
+
+  if (rootCause) {
+    return (
+      <>
+        <Card>
+          <CardBody>
+            <Content component={ContentVariants.small}>
+              <Flex>
+                <FlexItem>{t('DETECTED ROOT CAUSE')}</FlexItem>
+                {rootCause.confidence && (
+                  <FlexItem>
+                    <Label
+                      variant="outline"
+                      color={
+                        rootCause.confidence.toLowerCase() === 'high'
+                          ? 'green'
+                          : rootCause.confidence.toLowerCase() === 'low'
+                            ? 'red'
+                            : 'orange'
+                      }
+                    >
+                      {t('Confidence')}: {rootCause.confidence}
+                    </Label>
+                  </FlexItem>
+                )}
+              </Flex>
+            </Content>
+            <Content component={ContentVariants.p}>
+              <strong>{rootCause.cause}</strong>
+            </Content>
+            <Content component={ContentVariants.p}>{rootCause.detail}</Content>
+
+            {analysisSandbox && (
+              <SandboxLogViewer
+                title={t('Analysis')}
+                sandbox={analysisSandbox}
+                sinceTime={analysisStartedAt}
+              />
+            )}
+          </CardBody>
+        </Card>
+      </>
+    );
+  }
+
+  if (TERMINAL_PHASES.includes(phase)) {
+    return (
+      <EmptyState>
+        <EmptyStateBody>{t('Root cause analysis was not completed.')}</EmptyStateBody>
+      </EmptyState>
+    );
+  }
+
+  return null;
+};

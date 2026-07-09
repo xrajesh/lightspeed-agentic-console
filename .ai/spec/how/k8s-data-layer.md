@@ -6,9 +6,10 @@
 |---|---|---|
 | `src/models/proposal.ts` | `LightspeedProposalModel`, `LightspeedProposalGVK`, all `*Model`/`*GVK` constants | K8sModel definitions for the Console SDK's watch/patch/create/delete functions |
 | `src/models/proposal.ts` | `LightspeedProposal`, `LightspeedProposalApproval`, `*ResultCR` types | TypeScript types for each CRD |
-| `src/hooks/useStageApproval.ts` | `useStageApproval` | Encapsulates approval read state + patch write in a single hook |
+| `src/models/proposal.ts` | `ProposalK8s`, `AnalysisResultK8s`, `ExecutionResultK8s`, `VerificationResultK8s`, `ProposalApprovalK8s` | K8s intersection types (`CRDType & K8sResourceCommon`) for `useK8sWatchResource` generics |
+| `src/models/proposal-views.ts` | `ProposalView`, `RemediationOptionView`, `ExecutionView`, `VerificationView` | View-model types — output of the API→view mapping layer |
+| `src/hooks/useProposal.ts` | `useProposal`, `mapToProposalView` | Fetches all proposal-related CRs and maps to a single `ProposalView` |
 | `src/utils/approval.ts` | `buildApprovalPatch` | Generates JSON Patch arrays for `AgenticRunApproval` mutations |
-| `src/config.ts` | `getApiUrl` | Constructs backend proxy URLs |
 
 ## Data Flow
 
@@ -32,6 +33,8 @@ useK8sWatchResource(AnalysisResultGVK, {namespace, selector: {matchLabels: {agen
 ```
 
 This pattern repeats for ExecutionResult, VerificationResult, and EscalationResult. The `results[]` array on each step status contains `{name, outcome}` refs — the name matches the result CR's `metadata.name`.
+
+The `useProposal` hook wraps all five watches (Proposal, AnalysisResult, ExecutionResult, VerificationResult, ProposalApproval) and uses `filterLatest` to select the most recent result CR by `creationTimestamp`. The mapped `ProposalView` is recomputed via `useMemo` whenever any watched resource changes.
 
 ### Approval Patch Generation
 
@@ -60,14 +63,16 @@ Every CRD has a paired `K8sModel` (used by Console SDK functions) and a `GVK` ob
 
 CRD types are hand-written, not generated. A TODO exists to auto-generate from OpenAPI. The types closely mirror the CRD status structure — changes in the operator's CRD require manual synchronization here.
 
-### Approval State Machine
+K8s intersection types (e.g., `ProposalK8s = LightspeedProposal & K8sResourceCommon`) are defined at the bottom of `proposal.ts` for use with `useK8sWatchResource` generics. A separate view-model layer in `proposal-views.ts` defines UI-optimized types (`ProposalView`, `RemediationOptionView`, etc.) with `*View` suffix. The `useProposal` hook in `src/hooks/useProposal.ts` contains pure mapping functions (`mapRootCause`, `mapOption`, `mapExecution`, `mapVerification`, `mapTimeline`) that transform API types into view types. Phase derivation is centralized in `derivePhaseFromConditions` (defined in `proposal.ts`, used by both list and detail pages).
 
-The `useStageApproval` hook combines:
-- Read: `stageNeedsApproval()` + `getStageStatus()` → derived from `AgenticRunApproval` CR state
-- Write: `approve()` + `deny()` → `k8sPatch` with generated patches
-- UI state: `inProgress`, `error`, `clearError`
+### Approval Logic
 
-This hook is instantiated once per stage in `ProposalDetailPage`, giving each tab independent approval state.
+Approval logic is embedded in the `useProposal` hook — a single hook instance per detail page. It exposes:
+- Read: `canApprove` / `canApproveLoading` → derived from `useAccessReview` on `proposalapprovals`
+- Write: `approveExecution(optionIndex, maxRetries)` / `denyExecution()` → `k8sPatch` with patches from `buildApprovalPatch`
+- State helpers: `stageNeedsApproval()` and `getStageStatus()` from `src/utils/approval.ts` are used internally
+
+There is no per-tab instantiation — the detail page uses a single-page sectioned layout.
 
 ## Integration Points
 
@@ -77,7 +82,7 @@ This hook is instantiated once per stage in `ProposalDetailPage`, giving each ta
 | Approval actions | Kubernetes API | Console SDK `k8sPatch` (HTTP PATCH) |
 | Configuration CRUD | Kubernetes API | Console SDK `k8sCreate`/`k8sPatch`/`k8sDelete` |
 | Log streaming | Kubernetes API | `consoleFetch` with ReadableStream |
-| Backend proxy | Lightspeed service | `/api/proxy/plugin/.../ols` (via `getApiUrl`) |
+| Backend proxy | Lightspeed service | `/api/proxy/plugin/.../ols` (defined in `src/config.ts` but currently unused) |
 
 ## Implementation Notes
 
