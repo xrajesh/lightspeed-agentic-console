@@ -155,7 +155,7 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
 
             {option.actions && option.actions.length > 0 && (
               <FlexItem>
-                <Title headingLevel="h5">{t('Proposed actions')}</Title>
+                <Title headingLevel="h5">{t('Remediation script')}</Title>
                 <Content component="ol">
                   {option.actions.map((action, i) => (
                     <Content component="li" key={i}>
@@ -163,6 +163,11 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
                         {action.type}
                       </Label>{' '}
                       {action.description}
+                      {action.command && (
+                        <ClipboardCopy isReadOnly isCode isBlock>
+                          {action.command}
+                        </ClipboardCopy>
+                      )}
                     </Content>
                   ))}
                 </Content>
