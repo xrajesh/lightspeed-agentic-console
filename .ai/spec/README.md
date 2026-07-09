@@ -24,7 +24,6 @@ AI agents. Content is optimized for precision and machine consumption.
 | Understand the system | `what/system-overview.md` |
 | Understand runs UI | `what/run-lifecycle.md` |
 | Understand configuration UI | `what/configuration.md` |
-| Understand dynamic rendering | `what/dynamic-components.md` |
 | Navigate the codebase | `how/project-structure.md` |
 | Understand K8s data flow | `how/k8s-data-layer.md` |
 | Understand the plugin system | `how/console-plugin-system.md` |
@@ -37,7 +36,6 @@ AI agents. Content is optimized for precision and machine consumption.
 | `what/system-overview.md` | `how/project-structure.md`, `how/console-plugin-system.md` |
 | `what/run-lifecycle.md` | `how/k8s-data-layer.md`, `how/project-structure.md` |
 | `what/configuration.md` | `how/k8s-data-layer.md` |
-| `what/dynamic-components.md` | `how/project-structure.md` |
 | — | `how/e2e-testing.md` |
 
 ## Conventions

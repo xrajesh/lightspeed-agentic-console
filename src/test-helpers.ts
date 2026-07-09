@@ -1,6 +1,10 @@
 import { ApprovalStage, LightspeedProposalApproval, ProposalCondition } from './models/proposal';
 
-export function cond(type: string, status: string, reason?: string): ProposalCondition {
+export function cond(
+  type: string,
+  status: 'True' | 'False' | 'Unknown',
+  reason?: string,
+): ProposalCondition {
   return { type, status, reason };
 }
 

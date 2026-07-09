@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 import {
-  K8sResourceCommon,
   ListPageBody,
   ListPageFilter,
   ListPageHeader,
@@ -22,15 +21,13 @@ import { CogIcon, SearchIcon } from '@patternfly/react-icons';
 import {
   derivePhaseFromConditions,
   getPhaseDisplay,
-  LightspeedProposal,
   LightspeedProposalGVK,
   ProposalCondition,
+  ProposalK8s,
 } from '../../models/proposal';
 import AgenticLayout from '../AgenticLayout';
 
-type ProposalResource = LightspeedProposal & K8sResourceCommon;
-
-const columns: TableColumn<ProposalResource>[] = [
+const columns: TableColumn<ProposalK8s>[] = [
   { id: 'name', sort: 'metadata.name', title: 'Name' },
   { id: 'phase', title: 'Phase' },
   { id: 'request', title: 'Request' },
@@ -38,7 +35,7 @@ const columns: TableColumn<ProposalResource>[] = [
   { id: 'age', sort: 'metadata.creationTimestamp', title: 'Age' },
 ];
 
-const filters: RowFilter<ProposalResource>[] = [
+const filters: RowFilter<ProposalK8s>[] = [
   {
     filter: (filterValue, obj) => {
       const selected = filterValue?.selected || [];
@@ -63,7 +60,7 @@ const filters: RowFilter<ProposalResource>[] = [
   },
 ];
 
-const ProposalRow: React.FC<RowProps<ProposalResource>> = ({ activeColumnIDs, obj }) => {
+const ProposalRow: React.FC<RowProps<ProposalK8s>> = ({ activeColumnIDs, obj }) => {
   const phase = getPhaseDisplay(
     derivePhaseFromConditions(obj.status?.conditions as ProposalCondition[]),
   );
@@ -127,7 +124,7 @@ const ProposalListPage: React.FC = () => {
   const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
   const navigate = useNavigate();
 
-  const [proposals, loaded, loadError] = useK8sWatchResource<ProposalResource[]>({
+  const [proposals, loaded, loadError] = useK8sWatchResource<ProposalK8s[]>({
     groupVersionKind: LightspeedProposalGVK,
     isList: true,
     namespaced: true,
@@ -153,7 +150,7 @@ const ProposalListPage: React.FC = () => {
           onFilterChange={onFilterChange}
           rowFilters={filters}
         />
-        <VirtualizedTable<ProposalResource>
+        <VirtualizedTable<ProposalK8s>
           columns={columns}
           data={filteredData}
           EmptyMsg={FilteredEmptyMsg}

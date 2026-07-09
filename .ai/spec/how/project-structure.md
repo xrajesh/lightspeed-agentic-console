@@ -4,19 +4,28 @@
 
 | File/Directory | Key Symbols | Responsibility |
 |---|---|---|
-| `src/models/proposal.ts` | All K8sModel definitions, GVK constants, CRD types, `derivePhaseFromConditions`, `getPhaseDisplay`, `resultOutcome` | Central type definitions and phase logic |
+| `src/models/proposal.ts` | All K8sModel definitions, GVK constants, CRD types, `derivePhaseFromConditions`, `getPhaseDisplay` | Central type definitions and phase logic |
 | `src/config.ts` | `getApiUrl` | API proxy URL construction |
 | `src/utils/approval.ts` | `findStage`, `getStageStatus`, `stageNeedsApproval`, `buildApprovalPatch` | Pure functions for approval logic |
-| `src/hooks/useStageApproval.ts` | `useStageApproval` | React hook wrapping approval state and K8s patch operations |
-| `src/utils/markdown.ts` | — | Markdown rendering utilities |
-| `src/components/proposals/ProposalListPage.tsx` | `ProposalListPage` | Run list with virtualized table and phase filters |
-| `src/components/proposals/ProposalDetailPage.tsx` | `ProposalDetailPage`, `OverviewTab`, `ProposalTab`, `ResultTab`, `VerificationTab`, `EscalationTab` | Multi-tab run detail with approval flows |
-| `src/components/proposals/SandboxLogViewer.tsx` | `SandboxLogViewer` | Real-time pod log streaming with reconnection |
-| `src/components/proposals/EscalateModal.tsx` | `EscalateModal` | Escalation confirmation modal |
-| `src/components/proposals/MarkdownText.tsx` | `MarkdownText` | Sanitized markdown-to-HTML rendering |
-| `src/components/proposals/PhaseIcon.tsx` | `PhaseIcon` | Phase status icon with failure indicators |
-| `src/components/proposals/DynamicComponent.tsx` | `DynamicComponent` | Component registry dispatch for adapter components |
-| `src/components/proposals/dynamic/` | `ResourceDiff`, `Visualization`, `DataTable`, `ActionPicker`, `EvidenceTable`, `StatusTimeline`, `CmoComponents` | Individual dynamic component renderers |
+| `src/utils/proposal-utils.ts` | `buildPodLogUrl`, `getOutcomeStatus`, `getReversibilityColor` | Helpers for pod log URLs, outcome status mapping, reversibility colors |
+| `src/components/proposals/ProposalListPage.tsx` | `ProposalListPage` | Proposal list with virtualized table and phase filters |
+| `src/components/proposals/ProposalDetailPage.tsx` | `ProposalDetailsPage` | Section-based proposal detail page, delegates to `detail/` subcomponents |
+| `src/components/proposals/detail/AnalysisSummary.tsx` | `AnalysisSummary` | Root cause display, analysis loading/streaming state |
+| `src/components/proposals/detail/RemediationOptionCard.tsx` | `RemediationOptionCard` | Expandable remediation option card |
+| `src/components/proposals/detail/ExecutionSummary.tsx` | `ExecutionSummary` | Post-execution actions and outcome display |
+| `src/components/proposals/detail/VerificationSummary.tsx` | `VerificationSummary` | Verification checks and summary |
+| `src/components/proposals/detail/ProposalPhaseLabel.tsx` | `ProposalPhaseLabel` | Phase label with status color |
+| `src/components/proposals/detail/ProposalTimeline.tsx` | `ProposalTimeline` | Chronological event timeline |
+| `src/components/proposals/detail/StageInProgress.tsx` | `StageInProgress` | In-progress stage card with embedded log viewer |
+| `src/components/proposals/detail/SandboxLogViewer.tsx` | `SandboxLogViewer` | Expandable log viewer with streaming and search |
+| `src/components/AgenticLayout.tsx` | `AgenticLayout` | Watches `AgenticOLSConfig` CR; renders a system-suspended danger banner above page content when `spec.suspended` is true |
+| `src/components/ConfirmationModal.tsx` | `ConfirmationModal` | Reusable confirmation modal with confirm/cancel actions, loading state, and inline error display |
+| `src/components/StatusGuard.tsx` | `StatusGuard` | Loading/error/empty gate using PatternFly `ErrorState`; replaces internal console `StatusBox` |
+| `src/models/proposal-views.ts` | `ProposalView`, `RemediationOptionView`, `ExecutionView`, `VerificationView`, `SandboxView`, `TimelineEvent`, `TERMINAL_PHASES` | View-model types for the detail page (output of `useProposal` mapping layer) |
+| `src/constants.ts` | `PROPOSAL_NAMESPACE`, `PROPOSAL_LABEL_SOURCE`, `RESULT_LABEL_PROPOSAL` | Shared constants for K8s label keys and namespace |
+| `src/hooks/useProposal.ts` | `useProposal`, `mapRootCause`, `mapOption`, `mapExecution`, `mapVerification`, `mapTimeline`, `filterLatest` | Fetches proposal + result CRs, maps API types → view types |
+| `src/hooks/useExecutionLogActions.ts` | `useExecutionLogActions` | Parses execution actions from sandbox pod logs |
+| `src/hooks/useSandboxLogStream.ts` | `useSandboxLogStream` | Streams audit lines from sandbox pod logs |
 | `src/components/configuration/ConfigurationPage.tsx` | `ConfigurationPage` | Configuration page with tabbed layout |
 | `src/components/configuration/ApprovalPolicyTab.tsx` | `ApprovalPolicyTab` | Approval policy CRUD |
 | `src/components/configuration/LLMProvidersTab.tsx` | `LLMProvidersTab` | LLM provider list and creation |
@@ -45,6 +54,6 @@ The plugin has no traditional `main` entry point. Webpack's `ConsoleRemotePlugin
 
 - Components: PascalCase `.tsx` files, one primary component per file, default export.
 - CSS: co-located `.css` files alongside components. All classes prefixed `ols-plugin__`.
-- Models: singular `proposal.ts` contains all CRD types (not split by CRD).
+- Models: `proposal.ts` contains all CRD types and K8s intersection types. `proposal-views.ts` contains view-model types (`*View` suffix) for the detail page.
 - Hooks: `use` prefix, one hook per file in `src/hooks/`.
-- Dynamic components: each renderer in `src/components/proposals/dynamic/`, re-exported via `index.tsx`.
+- Detail subcomponents: each section of the detail page is a separate component in `src/components/proposals/detail/`, imported by `ProposalDetailPage.tsx`.

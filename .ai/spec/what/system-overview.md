@@ -16,12 +16,12 @@ The OpenShift Lightspeed Agentic Console Plugin is a dynamic plugin that loads i
 
 6. All custom resources use API group `agentic.openshift.io` version `v1alpha1`.
 7. The plugin communicates with the cluster exclusively through the OpenShift Console SDK's `useK8sWatchResource` (reads) and `k8sPatch`/`k8sCreate`/`k8sDelete` (writes).
-8. The plugin proxies API requests to the lightspeed backend through `/api/proxy/plugin/lightspeed-agentic-console-plugin/ols`.
+8. The plugin defines a backend proxy path at `/api/proxy/plugin/lightspeed-agentic-console-plugin/ols` (in `src/config.ts`), but this path is currently unused. Pod log streaming uses the standard Kubernetes API path directly via `consoleFetch`.
 9. Pod logs are streamed via the Kubernetes API at `/api/kubernetes/api/v1/namespaces/{ns}/pods/{pod}/log` using `consoleFetch`.
 
 ### CRD Inventory
 
-10. The plugin operates on these CRDs: `AgenticRun` (namespaced), `AgenticRunApproval` (namespaced), Agent (cluster-scoped), LLMProvider (cluster-scoped), ApprovalPolicy (cluster-scoped), AnalysisResult (namespaced), ExecutionResult (namespaced), VerificationResult (namespaced), EscalationResult (namespaced).
+10. The plugin operates on these CRDs: `AgenticRun` (namespaced), `AgenticRunApproval` (namespaced), Agent (cluster-scoped), LLMProvider (cluster-scoped), ApprovalPolicy (cluster-scoped), AnalysisResult (namespaced), ExecutionResult (namespaced), VerificationResult (namespaced), EscalationResult (namespaced), AgenticOLSConfig (cluster-scoped).
 11. Result CRs (AnalysisResult, ExecutionResult, VerificationResult, EscalationResult) are discovered via label selector `agentic.openshift.io/run: <run-name>` and correlated to their parent `AgenticRun` via `status.steps.<stage>.results[]` references.
 
 ## Configuration Surface

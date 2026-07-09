@@ -1,5 +1,13 @@
 import { vi } from 'vitest';
 
+export class HttpError extends Error {
+  code?: number;
+  constructor(message: string, code?: number) {
+    super(message);
+    this.code = code;
+  }
+}
+
 export const k8sPatch = vi.fn();
 export const k8sCreate = vi.fn();
 export const consoleFetch = vi.fn();
