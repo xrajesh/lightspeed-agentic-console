@@ -3,21 +3,21 @@
 // endpoint, or from the CRD YAML files in lightspeed-operator/config/crd/bases/.
 import { K8sModel, K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
 
-export const LightspeedProposalModel: K8sModel = {
+export const LightspeedAgenticRunModel: K8sModel = {
   apiGroup: 'agentic.openshift.io',
   apiVersion: 'v1alpha1',
-  kind: 'Proposal',
-  plural: 'proposals',
-  abbr: 'LSP',
+  kind: 'AgenticRun',
+  plural: 'agenticruns',
+  abbr: 'AGR',
   namespaced: true,
-  label: 'Proposal',
-  labelPlural: 'Proposals',
+  label: 'AgenticRun',
+  labelPlural: 'AgenticRuns',
 };
 
-export const LightspeedProposalGVK = {
-  group: LightspeedProposalModel.apiGroup,
-  kind: LightspeedProposalModel.kind,
-  version: LightspeedProposalModel.apiVersion,
+export const LightspeedAgenticRunGVK = {
+  group: LightspeedAgenticRunModel.apiGroup,
+  kind: LightspeedAgenticRunModel.kind,
+  version: LightspeedAgenticRunModel.apiVersion,
 };
 
 export const LightspeedAgentModel: K8sModel = {
@@ -71,21 +71,21 @@ export const LightspeedApprovalPolicyGVK = {
   version: LightspeedApprovalPolicyModel.apiVersion,
 };
 
-export const LightspeedProposalApprovalModel: K8sModel = {
+export const LightspeedAgenticRunApprovalModel: K8sModel = {
   apiGroup: 'agentic.openshift.io',
   apiVersion: 'v1alpha1',
-  kind: 'ProposalApproval',
-  plural: 'proposalapprovals',
-  abbr: 'LSPA',
+  kind: 'AgenticRunApproval',
+  plural: 'agenticrunapprovals',
+  abbr: 'AGRA',
   namespaced: true,
-  label: 'ProposalApproval',
-  labelPlural: 'ProposalApprovals',
+  label: 'AgenticRunApproval',
+  labelPlural: 'AgenticRunApprovals',
 };
 
-export const LightspeedProposalApprovalGVK = {
-  group: LightspeedProposalApprovalModel.apiGroup,
-  kind: LightspeedProposalApprovalModel.kind,
-  version: LightspeedProposalApprovalModel.apiVersion,
+export const LightspeedAgenticRunApprovalGVK = {
+  group: LightspeedAgenticRunApprovalModel.apiGroup,
+  kind: LightspeedAgenticRunApprovalModel.kind,
+  version: LightspeedAgenticRunApprovalModel.apiVersion,
 };
 
 export const AnalysisResultModel: K8sModel = {
@@ -163,7 +163,7 @@ export type AgenticOLSConfig = {
   spec?: { suspended?: boolean };
 };
 
-// ProposalApproval types
+// AgenticRunApproval types
 
 export type ApprovalStageType = 'Analysis' | 'Execution' | 'Verification' | 'Escalation';
 
@@ -195,7 +195,7 @@ export type ApprovalStage = {
 
 export type ApprovalStageStatus = {
   name: string;
-  conditions?: ProposalCondition[];
+  conditions?: AgenticRunCondition[];
 };
 
 export type ApproverInfo = {
@@ -204,16 +204,16 @@ export type ApproverInfo = {
   approvedAt?: string;
 };
 
-export type ProposalApprovalSpec = {
+export type AgenticRunApprovalSpec = {
   approver?: ApproverInfo;
   stages?: ApprovalStage[];
 };
 
-export type ProposalApprovalStatus = {
+export type AgenticRunApprovalStatus = {
   stages?: ApprovalStageStatus[];
 };
 
-export type LightspeedProposalApproval = {
+export type LightspeedAgenticRunApproval = {
   apiVersion: string;
   kind: string;
   metadata: {
@@ -227,11 +227,11 @@ export type LightspeedProposalApproval = {
       uid: string;
     }>;
   };
-  spec?: ProposalApprovalSpec;
-  status?: ProposalApprovalStatus;
+  spec?: AgenticRunApprovalSpec;
+  status?: AgenticRunApprovalStatus;
 };
 
-export type ProposalPhase =
+export type AgenticRunPhase =
   | 'Pending'
   | 'Analyzing'
   | 'Proposed'
@@ -251,7 +251,7 @@ export type SandboxInfo = {
   namespace?: string;
 };
 
-export type ProposalCondition = {
+export type AgenticRunCondition = {
   type: string;
   status: 'True' | 'False' | 'Unknown';
   lastTransitionTime?: string;
@@ -303,7 +303,7 @@ export type ToolsSpec = {
   mcpServers?: MCPServerConfig[];
 };
 
-export type ProposalStep = {
+export type AgenticRunStep = {
   agent?: string;
   tools?: ToolsSpec;
 };
@@ -377,7 +377,7 @@ export type RemediationOption = {
 export type AnalysisStepStatus = {
   phase?: StepPhase;
   sandbox?: SandboxInfo;
-  conditions?: ProposalCondition[];
+  conditions?: AgenticRunCondition[];
   results?: StepResultRef[];
 };
 
@@ -399,7 +399,7 @@ export type ExecutionStepStatus = {
   phase?: StepPhase;
   retryCount?: number;
   sandbox?: SandboxInfo;
-  conditions?: ProposalCondition[];
+  conditions?: AgenticRunCondition[];
   results?: StepResultRef[];
 };
 
@@ -413,18 +413,18 @@ export type VerificationCheck = {
 export type VerificationStepStatus = {
   phase?: StepPhase;
   sandbox?: SandboxInfo;
-  conditions?: ProposalCondition[];
+  conditions?: AgenticRunCondition[];
   results?: StepResultRef[];
 };
 
-export type ProposalStatus = {
+export type AgenticRunStatus = {
   steps?: StepsStatus;
-  conditions?: ProposalCondition[];
+  conditions?: AgenticRunCondition[];
 };
 
 export type EscalationStepStatus = {
   sandbox?: SandboxInfo;
-  conditions?: ProposalCondition[];
+  conditions?: AgenticRunCondition[];
   results?: StepResultRef[];
 };
 
@@ -437,7 +437,7 @@ export type StepsStatus = {
 
 // Main CRD type
 
-export type LightspeedProposal = {
+export type LightspeedAgenticRun = {
   apiVersion: string;
   kind: string;
   metadata: {
@@ -457,12 +457,12 @@ export type LightspeedProposal = {
       schema?: unknown;
     };
     tools?: ToolsSpec;
-    analysis?: ProposalStep;
-    execution?: ProposalStep;
-    verification?: ProposalStep;
+    analysis?: AgenticRunStep;
+    execution?: AgenticRunStep;
+    verification?: AgenticRunStep;
     revisionFeedback?: string;
   };
-  status?: ProposalStatus;
+  status?: AgenticRunStatus;
 };
 
 // Result CR types — separate CRDs that hold step output data
@@ -480,7 +480,7 @@ export type AnalysisResultCR = {
   kind: string;
   metadata: { name: string; namespace: string; creationTimestamp?: string };
   spec: {
-    proposalName: string;
+    agenticRunName: string;
   };
   status?: {
     conditions?: ResultCondition[];
@@ -495,7 +495,7 @@ export type ExecutionResultCR = {
   kind: string;
   metadata: { name: string; namespace: string; creationTimestamp?: string };
   spec: {
-    proposalName: string;
+    agenticRunName: string;
     retryIndex?: number;
   };
   status?: {
@@ -512,7 +512,7 @@ export type VerificationResultCR = {
   kind: string;
   metadata: { name: string; namespace: string; creationTimestamp?: string };
   spec: {
-    proposalName: string;
+    agenticRunName: string;
     retryIndex?: number;
   };
   status?: {
@@ -529,7 +529,7 @@ export type EscalationResultCR = {
   kind: string;
   metadata: { name: string; namespace: string; creationTimestamp?: string };
   spec: {
-    proposalName: string;
+    agenticRunName: string;
   };
   status?: {
     conditions?: ResultCondition[];
@@ -547,7 +547,7 @@ export type PhaseDisplay = {
   label: string;
 };
 
-export const getPhaseDisplay = (phase?: ProposalPhase | string): PhaseDisplay => {
+export const getPhaseDisplay = (phase?: AgenticRunPhase | string): PhaseDisplay => {
   switch (phase) {
     case 'Pending':
       return { color: 'grey', label: 'Pending' };
@@ -576,8 +576,8 @@ export const getPhaseDisplay = (phase?: ProposalPhase | string): PhaseDisplay =>
   }
 };
 
-// SYNC: must match DerivePhase in lightspeed-agentic-operator/api/v1alpha1/proposal_types.go
-export const derivePhaseFromConditions = (conditions?: ProposalCondition[]): ProposalPhase => {
+// SYNC: must match DerivePhase in lightspeed-agentic-operator/api/v1alpha1/agenticrun_types.go
+export const derivePhaseFromConditions = (conditions?: AgenticRunCondition[]): AgenticRunPhase => {
   if (!conditions?.length) return 'Pending';
 
   const get = (type: string) => conditions.find((c) => c.type === type);
@@ -712,7 +712,7 @@ export type ApprovalPolicyStage = {
 export type ApprovalPolicySpec = {
   stages?: ApprovalPolicyStage[];
   maxAttempts?: number;
-  maxConcurrentProposals?: number;
+  maxConcurrentAgenticRuns?: number;
 };
 
 export type ApprovalPolicyResource = {
@@ -751,15 +751,15 @@ export type AgentResource = {
   };
   spec: AgentSpec;
   status?: {
-    conditions?: ProposalCondition[];
+    conditions?: AgenticRunCondition[];
   };
 };
 
 export type LLMProviderK8s = LLMProviderResource & K8sResourceCommon;
 export type ApprovalPolicyK8s = ApprovalPolicyResource & K8sResourceCommon;
 export type AgentK8s = AgentResource & K8sResourceCommon;
-export type ProposalK8s = LightspeedProposal & K8sResourceCommon;
-export type ProposalApprovalK8s = LightspeedProposalApproval & K8sResourceCommon;
+export type AgenticRunK8s = LightspeedAgenticRun & K8sResourceCommon;
+export type AgenticRunApprovalK8s = LightspeedAgenticRunApproval & K8sResourceCommon;
 export type AnalysisResultK8s = AnalysisResultCR & K8sResourceCommon;
 export type ExecutionResultK8s = ExecutionResultCR & K8sResourceCommon;
 export type VerificationResultK8s = VerificationResultCR & K8sResourceCommon;

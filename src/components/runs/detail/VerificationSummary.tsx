@@ -16,7 +16,7 @@ import {
 import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { VerificationView } from '../../../models/proposal-views';
+import { VerificationView } from '../../../models/agenticrun-views';
 import { SandboxLogViewer } from './SandboxLogViewer';
 
 interface VerificationSummaryProps {

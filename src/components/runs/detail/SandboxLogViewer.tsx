@@ -12,7 +12,7 @@ import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSandboxLogStream } from '../../../hooks/useSandboxLogStream';
-import { SandboxView } from '../../../models/proposal-views';
+import { SandboxView } from '../../../models/agenticrun-views';
 
 interface SandboxLogViewerProps {
   title: string;

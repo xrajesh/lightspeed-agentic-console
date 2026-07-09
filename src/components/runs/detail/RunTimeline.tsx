@@ -1,13 +1,13 @@
 import { Timestamp } from '@openshift-console/dynamic-plugin-sdk';
 import { ProgressStep, ProgressStepper } from '@patternfly/react-core';
 import type { FC } from 'react';
-import { TimelineEvent } from '../../../models/proposal-views';
+import { TimelineEvent } from '../../../models/agenticrun-views';
 
-interface ProposalTimelineProps {
+interface RunTimelineProps {
   events: TimelineEvent[];
 }
 
-export const ProposalTimeline: FC<ProposalTimelineProps> = ({ events }) => (
+export const RunTimeline: FC<RunTimelineProps> = ({ events }) => (
   <ProgressStepper isVertical>
     {events.map((event, i) => (
       <ProgressStep

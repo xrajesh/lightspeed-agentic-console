@@ -22,7 +22,7 @@ import {
   LLMProviderK8s,
   LightspeedLLMProviderGVK,
   LightspeedLLMProviderModel,
-} from '../../models/proposal';
+} from '../../models/agenticrun';
 import LLMProviderForm from './LLMProviderForm';
 
 const LLMProvidersTab: React.FC = () => {

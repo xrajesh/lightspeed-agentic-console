@@ -24,8 +24,8 @@ import {
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useExecutionLogActions } from '../../../hooks/useExecutionLogActions';
-import { ExecutionView } from '../../../models/proposal-views';
-import { getOutcomeStatus } from '../../../utils/proposal-utils';
+import { ExecutionView } from '../../../models/agenticrun-views';
+import { getOutcomeStatus } from '../../../utils/agenticrun-utils';
 import { SandboxLogViewer } from './SandboxLogViewer';
 
 interface ExecutionSummaryProps {

@@ -11,35 +11,35 @@ import {
   AnalysisResultK8s,
   ExecutionResultGVK,
   ExecutionResultK8s,
-  LightspeedProposalApprovalGVK,
-  LightspeedProposalApprovalModel,
-  LightspeedProposalGVK,
-  ProposalApprovalK8s,
-  ProposalK8s,
-  ProposalPhase,
+  LightspeedAgenticRunApprovalGVK,
+  LightspeedAgenticRunApprovalModel,
+  LightspeedAgenticRunGVK,
+  AgenticRunApprovalK8s,
+  AgenticRunK8s,
+  AgenticRunPhase,
   RemediationOption,
   ResultCondition,
   StepResultRef,
   VerificationResultGVK,
   VerificationResultK8s,
   derivePhaseFromConditions,
-} from '../models/proposal';
+} from '../models/agenticrun';
 import { buildApprovalPatch } from '../utils/approval';
 import {
-  ProposalView,
+  AgenticRunView,
   RootCauseView,
   RemediationOptionView,
   ExecutionView,
   VerificationView,
   TimelineEvent,
   SandboxView,
-} from '../models/proposal-views';
-import { PROPOSAL_LABEL_SOURCE, PROPOSAL_NAMESPACE, RESULT_LABEL_PROPOSAL } from '../constants';
+} from '../models/agenticrun-views';
+import { RUN_LABEL_SOURCE, RUN_NAMESPACE, RESULT_LABEL_RUN } from '../constants';
 
 // Assumes the operator names the sandbox pod identically to the SandboxClaim CR.
 // If the operator decouples these names, log streaming will need the actual pod name from the API.
 const mapSandbox = (s?: { claimName?: string; namespace?: string }): SandboxView | undefined =>
-  s?.claimName ? { podName: s.claimName, namespace: s.namespace || PROPOSAL_NAMESPACE } : undefined;
+  s?.claimName ? { podName: s.claimName, namespace: s.namespace || RUN_NAMESPACE } : undefined;
 
 export const mapRootCause = (
   options: RemediationOption[] | undefined,
@@ -141,19 +141,19 @@ const condVariant = (reason?: string): TimelineEvent['variant'] => {
 };
 
 export const mapTimeline = (
-  proposal: ProposalK8s,
-  phase: ProposalPhase,
+  run: AgenticRunK8s,
+  phase: AgenticRunPhase,
   analysis?: AnalysisResultK8s,
   execution?: ExecutionResultK8s,
   verification?: VerificationResultK8s,
-  approval?: ProposalApprovalK8s,
+  approval?: AgenticRunApprovalK8s,
 ): TimelineEvent[] => {
   const events: TimelineEvent[] = [];
 
-  if (proposal.metadata?.creationTimestamp) {
+  if (run.metadata?.creationTimestamp) {
     events.push({
-      label: 'Proposal created',
-      timestamp: proposal.metadata.creationTimestamp,
+      label: 'Run created',
+      timestamp: run.metadata.creationTimestamp,
       variant: 'success',
     });
   }
@@ -161,7 +161,7 @@ export const mapTimeline = (
   const conditionSources: {
     conditions: ResultCondition[] | undefined;
     label: string;
-    currentPhase: ProposalPhase;
+    currentPhase: AgenticRunPhase;
     failureReason?: string;
   }[] = [
     { conditions: analysis?.status?.conditions, label: 'Analysis', currentPhase: 'Analyzing' },
@@ -214,10 +214,10 @@ export const mapTimeline = (
     });
   }
 
-  for (const cond of proposal.status?.conditions ?? []) {
+  for (const cond of run.status?.conditions ?? []) {
     if (cond.type === 'Denied' && cond.status === 'True') {
       events.push({
-        label: 'Proposal denied',
+        label: 'Run denied',
         description: cond.message || undefined,
         timestamp: cond.lastTransitionTime,
         variant: 'danger',
@@ -263,16 +263,16 @@ export const filterLatest = <T extends K8sResourceCommon>(
   });
 };
 
-const mapToProposalView = (
-  proposal: ProposalK8s | undefined,
+const mapToAgenticRunView = (
+  run: AgenticRunK8s | undefined,
   analysis: AnalysisResultK8s | undefined,
   execution: ExecutionResultK8s | undefined,
   verification: VerificationResultK8s | undefined,
-  approval: ProposalApprovalK8s | undefined,
-): ProposalView | undefined => {
-  if (!proposal?.metadata?.name) return undefined;
+  approval: AgenticRunApprovalK8s | undefined,
+): AgenticRunView | undefined => {
+  if (!run?.metadata?.name) return undefined;
 
-  const phase = derivePhaseFromConditions(proposal.status?.conditions);
+  const phase = derivePhaseFromConditions(run.status?.conditions);
   const options = analysis?.status?.options;
   const failureReason =
     analysis?.status?.failureReason ??
@@ -281,37 +281,37 @@ const mapToProposalView = (
 
   return {
     phase,
-    request: proposal.spec?.request ?? '',
-    source: proposal.metadata?.labels?.[PROPOSAL_LABEL_SOURCE],
-    advisory: !proposal.spec?.execution,
-    targetNamespaces: proposal.spec?.targetNamespaces,
+    request: run.spec?.request ?? '',
+    source: run.metadata?.labels?.[RUN_LABEL_SOURCE],
+    advisory: !run.spec?.execution,
+    targetNamespaces: run.spec?.targetNamespaces,
     failureReason,
     rootCause: mapRootCause(options),
     analysisCreatedAt: analysis?.metadata?.creationTimestamp,
     analysisStartedAt: (analysis?.status?.conditions ?? []).find((c) => c.type === 'Started')
       ?.lastTransitionTime,
-    analysisSandbox: mapSandbox(proposal.status?.steps?.analysis?.sandbox),
+    analysisSandbox: mapSandbox(run.status?.steps?.analysis?.sandbox),
     executionStartedAt: (execution?.status?.conditions ?? []).find((c) => c.type === 'Started')
       ?.lastTransitionTime,
-    executionSandbox: mapSandbox(proposal.status?.steps?.execution?.sandbox),
+    executionSandbox: mapSandbox(run.status?.steps?.execution?.sandbox),
     verificationStartedAt: (verification?.status?.conditions ?? []).find(
       (c) => c.type === 'Started',
     )?.lastTransitionTime,
-    verificationSandbox: mapSandbox(proposal.status?.steps?.verification?.sandbox),
+    verificationSandbox: mapSandbox(run.status?.steps?.verification?.sandbox),
     executedOptionIndex: (approval?.spec?.stages ?? []).find((s) => s.type === 'Execution')
       ?.execution?.option,
     options: (options ?? []).map((opt, i) => mapOption(opt, i)),
-    execution: mapExecution(options, execution, proposal.status?.steps?.execution?.sandbox),
-    verification: mapVerification(verification, proposal.status?.steps?.verification?.sandbox),
-    timeline: mapTimeline(proposal, phase, analysis, execution, verification, approval),
+    execution: mapExecution(options, execution, run.status?.steps?.execution?.sandbox),
+    verification: mapVerification(verification, run.status?.steps?.verification?.sandbox),
+    timeline: mapTimeline(run, phase, analysis, execution, verification, approval),
   };
 };
 
-export interface UseProposalReturn {
-  proposal: K8sResourceCommon | undefined;
-  view: ProposalView | undefined;
-  proposalLoaded: boolean;
-  proposalError: Error | undefined;
+export interface UseAgenticRunReturn {
+  run: K8sResourceCommon | undefined;
+  view: AgenticRunView | undefined;
+  runLoaded: boolean;
+  runError: Error | undefined;
   resultsLoaded: boolean;
   resultsError: Error | undefined;
   canApprove: boolean;
@@ -323,14 +323,14 @@ export interface UseProposalReturn {
   clearMutationError: () => void;
 }
 
-export const useProposal = (
+export const useAgenticRun = (
   name: string,
-  namespace: string = PROPOSAL_NAMESPACE,
-): UseProposalReturn => {
+  namespace: string = RUN_NAMESPACE,
+): UseAgenticRunReturn => {
   const watchEnabled = !!name;
 
-  const [proposal, proposalLoaded, proposalError] = useK8sWatchResource<ProposalK8s>(
-    watchEnabled ? { groupVersionKind: LightspeedProposalGVK, name, namespace } : null,
+  const [run, runLoaded, runError] = useK8sWatchResource<AgenticRunK8s>(
+    watchEnabled ? { groupVersionKind: LightspeedAgenticRunGVK, name, namespace } : null,
   );
 
   const [analysisResults, analysisLoaded, analysisError] = useK8sWatchResource<AnalysisResultK8s[]>(
@@ -339,7 +339,7 @@ export const useProposal = (
           groupVersionKind: AnalysisResultGVK,
           namespace,
           isList: true,
-          selector: { matchLabels: { [RESULT_LABEL_PROPOSAL]: name } },
+          selector: { matchLabels: { [RESULT_LABEL_RUN]: name } },
         }
       : null,
   );
@@ -352,7 +352,7 @@ export const useProposal = (
           groupVersionKind: ExecutionResultGVK,
           namespace,
           isList: true,
-          selector: { matchLabels: { [RESULT_LABEL_PROPOSAL]: name } },
+          selector: { matchLabels: { [RESULT_LABEL_RUN]: name } },
         }
       : null,
   );
@@ -365,24 +365,24 @@ export const useProposal = (
           groupVersionKind: VerificationResultGVK,
           namespace,
           isList: true,
-          selector: { matchLabels: { [RESULT_LABEL_PROPOSAL]: name } },
+          selector: { matchLabels: { [RESULT_LABEL_RUN]: name } },
         }
       : null,
   );
 
-  const [approval, approvalLoaded, approvalError] = useK8sWatchResource<ProposalApprovalK8s>(
+  const [approval, approvalLoaded, approvalError] = useK8sWatchResource<AgenticRunApprovalK8s>(
     watchEnabled
       ? {
-          groupVersionKind: LightspeedProposalApprovalGVK,
+          groupVersionKind: LightspeedAgenticRunApprovalGVK,
           name,
           namespace,
         }
       : null,
   );
 
-  const analysisRefs = proposal?.status?.steps?.analysis?.results;
-  const executionRefs = proposal?.status?.steps?.execution?.results;
-  const verificationRefs = proposal?.status?.steps?.verification?.results;
+  const analysisRefs = run?.status?.steps?.analysis?.results;
+  const executionRefs = run?.status?.steps?.execution?.results;
+  const verificationRefs = run?.status?.steps?.verification?.results;
 
   const analysis = useMemo(
     () => filterLatest(analysisResults, analysisRefs),
@@ -398,8 +398,8 @@ export const useProposal = (
   );
 
   const view = useMemo(
-    () => mapToProposalView(proposal, analysis, execution, verification, approval),
-    [proposal, analysis, execution, verification, approval],
+    () => mapToAgenticRunView(run, analysis, execution, verification, approval),
+    [run, analysis, execution, verification, approval],
   );
 
   const resultsLoaded = analysisLoaded && executionLoaded && verificationLoaded && approvalLoaded;
@@ -412,7 +412,7 @@ export const useProposal = (
 
   const [canApprove, canApproveLoading] = useAccessReview({
     group: 'agentic.openshift.io',
-    resource: 'proposalapprovals',
+    resource: 'agenticrunapprovals',
     verb: 'patch',
     namespace: approval?.metadata?.namespace ?? namespace,
   });
@@ -424,7 +424,7 @@ export const useProposal = (
   const approveExecution = useCallback(
     async (selectedOption: number): Promise<boolean> => {
       if (!canApprove) return false;
-      if (!proposal || !approval) {
+      if (!run || !approval) {
         setMutationError('Approval resource is not available yet');
         return false;
       }
@@ -432,10 +432,10 @@ export const useProposal = (
       setMutationError(undefined);
       try {
         await k8sPatch({
-          model: LightspeedProposalApprovalModel,
+          model: LightspeedAgenticRunApprovalModel,
           resource: {
             metadata: {
-              name: proposal.metadata?.name,
+              name: run.metadata?.name,
               namespace,
             },
           },
@@ -452,12 +452,12 @@ export const useProposal = (
         setMutationInProgress(false);
       }
     },
-    [proposal, approval, namespace, canApprove],
+    [run, approval, namespace, canApprove],
   );
 
   const denyExecution = useCallback(async (): Promise<boolean> => {
     if (!canApprove) return false;
-    if (!proposal || !approval) {
+    if (!run || !approval) {
       setMutationError('Approval resource is not available yet');
       return false;
     }
@@ -465,10 +465,10 @@ export const useProposal = (
     setMutationError(undefined);
     try {
       await k8sPatch({
-        model: LightspeedProposalApprovalModel,
+        model: LightspeedAgenticRunApprovalModel,
         resource: {
           metadata: {
-            name: proposal.metadata?.name,
+            name: run.metadata?.name,
             namespace,
           },
         },
@@ -481,13 +481,13 @@ export const useProposal = (
     } finally {
       setMutationInProgress(false);
     }
-  }, [proposal, approval, namespace, canApprove]);
+  }, [run, approval, namespace, canApprove]);
 
   return {
-    proposal: proposal as K8sResourceCommon | undefined,
+    run: run as K8sResourceCommon | undefined,
     view,
-    proposalLoaded,
-    proposalError: proposalError as Error | undefined,
+    runLoaded,
+    runError: runError as Error | undefined,
     resultsLoaded,
     resultsError: resultsError as Error | undefined,
     canApprove,

@@ -23,22 +23,22 @@ import {
 import { DocumentTitle, ResourceIcon, Timestamp } from '@openshift-console/dynamic-plugin-sdk';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
-import { useProposal } from '../../hooks/useProposal';
-import { LightspeedProposalGVK } from '../../models/proposal';
-import type { ProposalView } from '../../models/proposal-views';
-import { TERMINAL_PHASES } from '../../models/proposal-views';
-import { ProposalPhaseLabel } from './detail/ProposalPhaseLabel';
+import { useAgenticRun } from '../../hooks/useAgenticRun';
+import { LightspeedAgenticRunGVK } from '../../models/agenticrun';
+import type { AgenticRunView } from '../../models/agenticrun-views';
+import { TERMINAL_PHASES } from '../../models/agenticrun-views';
+import { RunPhaseLabel } from './detail/RunPhaseLabel';
 import { AnalysisSummary } from './detail/AnalysisSummary';
 import { RemediationOptionCard } from './detail/RemediationOptionCard';
 import { ExecutionSummary } from './detail/ExecutionSummary';
 import { VerificationSummary } from './detail/VerificationSummary';
 import { StageInProgress } from './detail/StageInProgress';
-import { ProposalTimeline } from './detail/ProposalTimeline';
+import { RunTimeline } from './detail/RunTimeline';
 import { ConfirmationModal } from '../ConfirmationModal';
 import StatusGuard from '../StatusGuard';
 import AgenticLayout from '../AgenticLayout';
 
-const ProposalDetailPage: FC = () => {
+const RunDetailPage: FC = () => {
   const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
   const navigate = useNavigate();
   const params = useParams<{ ns: string; name: string }>();
@@ -46,10 +46,10 @@ const ProposalDetailPage: FC = () => {
   const namespace = params.ns;
 
   const {
-    proposal,
+    run,
     view,
-    proposalLoaded,
-    proposalError,
+    runLoaded,
+    runError,
     resultsLoaded,
     resultsError,
     canApprove,
@@ -58,7 +58,7 @@ const ProposalDetailPage: FC = () => {
     mutationInProgress,
     mutationError,
     clearMutationError,
-  } = useProposal(name, namespace);
+  } = useAgenticRun(name, namespace);
 
   const phaseKey = view?.phase ?? 'unknown';
   const [selectedOption, setSelectedOption] = useState(0);
@@ -90,7 +90,7 @@ const ProposalDetailPage: FC = () => {
     if (success) setExecuteOptionIndex(null);
   }, [approveExecution, executeOptionIndex]);
 
-  const renderRemediationHub = (v: ProposalView): ReactNode => {
+  const renderRemediationHub = (v: AgenticRunView): ReactNode => {
     switch (v.phase) {
       case 'Pending':
       case 'Analyzing':
@@ -125,7 +125,7 @@ const ProposalDetailPage: FC = () => {
                 variant="info"
                 isInline
                 title={t(
-                  'This is an advisory-only proposal. Review the recommendations below and apply changes externally.',
+                  'This is an advisory-only run. Review the recommendations below and apply changes externally.',
                 )}
               />
             )}
@@ -231,13 +231,13 @@ const ProposalDetailPage: FC = () => {
   return (
     <AgenticLayout>
       <DocumentTitle>
-        {t('{{name}} details', { name: proposal?.metadata?.name || t('Proposal') })}
+        {t('{{name}} details', { name: run?.metadata?.name || t('Run') })}
       </DocumentTitle>
       <StatusGuard
-        data={proposal?.metadata?.name ? proposal : undefined}
-        label={t('Proposal')}
-        loaded={proposalLoaded}
-        loadError={proposalError}
+        data={run?.metadata?.name ? run : undefined}
+        label={t('Run')}
+        loaded={runLoaded}
+        loadError={runError}
       >
         <PageGroup>
           <PageSection type="breadcrumb" hasBodyWrapper={false}>
@@ -246,12 +246,12 @@ const ProposalDetailPage: FC = () => {
                 to="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  navigate('/lightspeed/proposals');
+                  navigate('/lightspeed/runs');
                 }}
               >
                 {t('AI Hub')}
               </BreadcrumbItem>
-              <BreadcrumbItem isActive>{proposal?.metadata?.name ?? name}</BreadcrumbItem>
+              <BreadcrumbItem isActive>{run?.metadata?.name ?? name}</BreadcrumbItem>
             </Breadcrumb>
           </PageSection>
           <PageSection hasBodyWrapper={false}>
@@ -259,17 +259,17 @@ const ProposalDetailPage: FC = () => {
               <Flex direction={{ default: 'column' }} gap={{ default: 'gapSm' }}>
                 <Flex spaceItems={{ default: 'spaceItemsSm' }}>
                   <FlexItem>
-                    <ResourceIcon groupVersionKind={LightspeedProposalGVK} />
+                    <ResourceIcon groupVersionKind={LightspeedAgenticRunGVK} />
                   </FlexItem>
                   <FlexItem>
-                    <Title headingLevel="h1">{proposal?.metadata?.name}</Title>
+                    <Title headingLevel="h1">{run?.metadata?.name}</Title>
                   </FlexItem>
                 </Flex>
                 {view && (
                   <FlexItem>
                     <Flex spaceItems={{ default: 'spaceItemsSm' }}>
                       <FlexItem>
-                        <ProposalPhaseLabel phase={view.phase} />
+                        <RunPhaseLabel phase={view.phase} />
                       </FlexItem>
                       {view.source && (
                         <FlexItem>
@@ -289,7 +289,7 @@ const ProposalDetailPage: FC = () => {
                 <FlexItem>
                   <Content component={ContentVariants.small}>
                     {t('Created')}{' '}
-                    <Timestamp simple timestamp={proposal?.metadata?.creationTimestamp} />
+                    <Timestamp simple timestamp={run?.metadata?.creationTimestamp} />
                   </Content>
                 </FlexItem>
                 {view?.request && (
@@ -370,7 +370,7 @@ const ProposalDetailPage: FC = () => {
               <Divider />
               <PageSection hasBodyWrapper={false}>
                 <Title headingLevel="h4">{t('Timeline')}</Title>
-                <ProposalTimeline events={view.timeline} />
+                <RunTimeline events={view.timeline} />
               </PageSection>
             </>
           )}
@@ -397,4 +397,4 @@ const ProposalDetailPage: FC = () => {
   );
 };
 
-export default ProposalDetailPage;
+export default RunDetailPage;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { derivePhaseFromConditions, getPhaseDisplay } from './proposal';
+import { derivePhaseFromConditions, getPhaseDisplay } from './agenticrun';
 import { cond } from '../test-helpers';
 
 describe('derivePhaseFromConditions', () => {

@@ -1,21 +1,21 @@
 import {
   ApprovalStage,
   ApprovalStageType,
-  LightspeedProposalApproval,
-  ProposalCondition,
-  ProposalPhase,
-} from '../models/proposal';
-import { TERMINAL_PHASES } from '../models/proposal-views';
+  LightspeedAgenticRunApproval,
+  AgenticRunCondition,
+  AgenticRunPhase,
+} from '../models/agenticrun';
+import { TERMINAL_PHASES } from '../models/agenticrun-views';
 
 export function findStage(
-  approval: LightspeedProposalApproval | undefined,
+  approval: LightspeedAgenticRunApproval | undefined,
   stageType: ApprovalStageType,
 ): ApprovalStage | undefined {
   return approval?.spec?.stages?.find((s) => s.type === stageType);
 }
 
 export function getStageStatus(
-  approval: LightspeedProposalApproval | undefined,
+  approval: LightspeedAgenticRunApproval | undefined,
   stageType: ApprovalStageType,
 ): 'approved' | 'denied' | 'pending' {
   const stage = findStage(approval, stageType);
@@ -24,10 +24,10 @@ export function getStageStatus(
 }
 
 export function stageNeedsApproval(
-  approval: LightspeedProposalApproval | undefined,
+  approval: LightspeedAgenticRunApproval | undefined,
   stageType: ApprovalStageType,
-  conditions: ProposalCondition[] | undefined,
-  phase: ProposalPhase,
+  conditions: AgenticRunCondition[] | undefined,
+  phase: AgenticRunPhase,
 ): boolean {
   if (!approval) return false;
   if (findStage(approval, stageType)) return false;
@@ -54,7 +54,7 @@ export function stageNeedsApproval(
 type PatchOp = { op: 'add' | 'replace'; path: string; value: unknown };
 
 export function buildApprovalPatch(
-  approval: LightspeedProposalApproval | undefined,
+  approval: LightspeedAgenticRunApproval | undefined,
   stageType: ApprovalStageType,
   denied: boolean,
   options?: { maxAttempts?: number; option?: number; agent?: string },

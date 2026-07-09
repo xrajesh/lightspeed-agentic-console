@@ -17,7 +17,7 @@ import {
   LightspeedApprovalPolicyGVK,
   LightspeedApprovalPolicyModel,
   SandboxStepName,
-} from '../../models/proposal';
+} from '../../models/agenticrun';
 
 const STAGES: SandboxStepName[] = ['Analysis', 'Execution', 'Verification', 'Escalation'];
 
@@ -95,7 +95,7 @@ const ApprovalPolicyTab: React.FC = () => {
             metadata: { name: 'cluster' },
             spec: {
               ...spec,
-              maxConcurrentProposals: 5,
+              maxConcurrentAgenticRuns: 5,
             },
           },
         });

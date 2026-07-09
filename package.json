@@ -1,7 +1,7 @@
 {
   "name": "lightspeed-agentic-console-plugin",
   "version": "0.0.1",
-  "description": "OpenShift Lightspeed Agentic Console Plugin — proposals UI for AI-driven cluster operations",
+  "description": "OpenShift Lightspeed Agentic Console Plugin — runs UI for AI-driven cluster operations",
   "private": true,
   "license": "Apache-2.0",
   "repository": {
@@ -72,10 +72,10 @@
     "name": "lightspeed-agentic-console-plugin",
     "version": "0.0.1",
     "displayName": "OpenShift Lightspeed Agentic Console Plugin",
-    "description": "AI-driven proposals UI for OpenShift cluster operations",
+    "description": "AI-driven runs UI for OpenShift cluster operations",
     "exposedModules": {
-      "ProposalListPage": "./components/proposals/ProposalListPage",
-      "ProposalDetailPage": "./components/proposals/ProposalDetailPage",
+      "RunListPage": "./components/runs/RunListPage",
+      "RunDetailPage": "./components/runs/RunDetailPage",
       "ConfigurationPage": "./components/configuration/ConfigurationPage"
     },
     "dependencies": {

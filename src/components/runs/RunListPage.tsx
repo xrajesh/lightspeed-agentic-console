@@ -21,13 +21,13 @@ import { CogIcon, SearchIcon } from '@patternfly/react-icons';
 import {
   derivePhaseFromConditions,
   getPhaseDisplay,
-  LightspeedProposalGVK,
-  ProposalCondition,
-  ProposalK8s,
-} from '../../models/proposal';
+  LightspeedAgenticRunGVK,
+  AgenticRunCondition,
+  AgenticRunK8s,
+} from '../../models/agenticrun';
 import AgenticLayout from '../AgenticLayout';
 
-const columns: TableColumn<ProposalK8s>[] = [
+const columns: TableColumn<AgenticRunK8s>[] = [
   { id: 'name', sort: 'metadata.name', title: 'Name' },
   { id: 'phase', title: 'Phase' },
   { id: 'request', title: 'Request' },
@@ -35,11 +35,11 @@ const columns: TableColumn<ProposalK8s>[] = [
   { id: 'age', sort: 'metadata.creationTimestamp', title: 'Age' },
 ];
 
-const filters: RowFilter<ProposalK8s>[] = [
+const filters: RowFilter<AgenticRunK8s>[] = [
   {
     filter: (filterValue, obj) => {
       const selected = filterValue?.selected || [];
-      const phase = derivePhaseFromConditions(obj?.status?.conditions as ProposalCondition[]);
+      const phase = derivePhaseFromConditions(obj?.status?.conditions as AgenticRunCondition[]);
       return !selected.length || selected.includes(phase);
     },
     filterGroupName: 'Phase',
@@ -55,16 +55,16 @@ const filters: RowFilter<ProposalK8s>[] = [
       { id: 'Escalated', title: 'Escalated' },
       { id: 'EmergencyStopped', title: 'Emergency Stopped' },
     ],
-    reducer: (obj) => derivePhaseFromConditions(obj?.status?.conditions as ProposalCondition[]),
-    type: 'proposal-phase',
+    reducer: (obj) => derivePhaseFromConditions(obj?.status?.conditions as AgenticRunCondition[]),
+    type: 'run-phase',
   },
 ];
 
-const ProposalRow: React.FC<RowProps<ProposalK8s>> = ({ activeColumnIDs, obj }) => {
+const RunRow: React.FC<RowProps<AgenticRunK8s>> = ({ activeColumnIDs, obj }) => {
   const phase = getPhaseDisplay(
-    derivePhaseFromConditions(obj.status?.conditions as ProposalCondition[]),
+    derivePhaseFromConditions(obj.status?.conditions as AgenticRunCondition[]),
   );
-  const detailPath = `/lightspeed/proposals/${obj.metadata.namespace}/${obj.metadata.name}`;
+  const detailPath = `/lightspeed/runs/${obj.metadata.namespace}/${obj.metadata.name}`;
   const requestPreview =
     obj.spec.request.length > 80 ? `${obj.spec.request.substring(0, 80)}...` : obj.spec.request;
 
@@ -73,7 +73,7 @@ const ProposalRow: React.FC<RowProps<ProposalK8s>> = ({ activeColumnIDs, obj }) 
       <TableData activeColumnIDs={activeColumnIDs} id="name">
         <Link to={detailPath}>
           <ResourceLink
-            groupVersionKind={LightspeedProposalGVK}
+            groupVersionKind={LightspeedAgenticRunGVK}
             linkTo={false}
             name={obj.metadata.name}
             namespace={obj.metadata.namespace}
@@ -96,13 +96,13 @@ const ProposalRow: React.FC<RowProps<ProposalK8s>> = ({ activeColumnIDs, obj }) 
   );
 };
 
-const NoProposalsMsg: React.FC = () => {
+const NoRunsMsg: React.FC = () => {
   const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
   return (
-    <EmptyState headingLevel="h2" icon={SearchIcon} titleText={t('No proposals')}>
+    <EmptyState headingLevel="h2" icon={SearchIcon} titleText={t('No runs')}>
       <EmptyStateBody>
         {t(
-          'Proposals are created by adapters or by user request. No proposals have been created yet.',
+          'Runs are created by adapters or by user request. No runs have been created yet.',
         )}
       </EmptyStateBody>
     </EmptyState>
@@ -114,23 +114,23 @@ const FilteredEmptyMsg: React.FC = () => {
   return (
     <EmptyState headingLevel="h2" icon={SearchIcon} titleText={t('No results found')}>
       <EmptyStateBody>
-        {t('No proposals match the current filters. Try adjusting your filters.')}
+        {t('No runs match the current filters. Try adjusting your filters.')}
       </EmptyStateBody>
     </EmptyState>
   );
 };
 
-const ProposalListPage: React.FC = () => {
+const RunListPage: React.FC = () => {
   const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
   const navigate = useNavigate();
 
-  const [proposals, loaded, loadError] = useK8sWatchResource<ProposalK8s[]>({
-    groupVersionKind: LightspeedProposalGVK,
+  const [runs, loaded, loadError] = useK8sWatchResource<AgenticRunK8s[]>({
+    groupVersionKind: LightspeedAgenticRunGVK,
     isList: true,
     namespaced: true,
   });
 
-  const [data, filteredData, onFilterChange] = useListPageFilter(proposals, filters);
+  const [data, filteredData, onFilterChange] = useListPageFilter(runs, filters);
 
   return (
     <AgenticLayout>
@@ -150,14 +150,14 @@ const ProposalListPage: React.FC = () => {
           onFilterChange={onFilterChange}
           rowFilters={filters}
         />
-        <VirtualizedTable<ProposalK8s>
+        <VirtualizedTable<AgenticRunK8s>
           columns={columns}
           data={filteredData}
           EmptyMsg={FilteredEmptyMsg}
           loaded={loaded}
           loadError={loadError}
-          NoDataEmptyMsg={NoProposalsMsg}
-          Row={ProposalRow}
+          NoDataEmptyMsg={NoRunsMsg}
+          Row={RunRow}
           unfilteredData={data}
         />
       </ListPageBody>
@@ -165,4 +165,4 @@ const ProposalListPage: React.FC = () => {
   );
 };
 
-export default ProposalListPage;
+export default RunListPage;

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { ApprovalStage, derivePhaseFromConditions, ProposalCondition } from '../models/proposal';
+import { ApprovalStage, derivePhaseFromConditions, AgenticRunCondition } from '../models/agenticrun';
 import { buildApprovalPatch, findStage, getStageStatus, stageNeedsApproval } from './approval';
 import { cond, makeApproval, makeApprovalNoSpec } from '../test-helpers';
 
-function phase(conditions?: ProposalCondition[]) {
+function phase(conditions?: AgenticRunCondition[]) {
   return derivePhaseFromConditions(conditions);
 }
 

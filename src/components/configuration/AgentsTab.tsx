@@ -24,7 +24,7 @@ import {
   LightspeedAgentGVK,
   LightspeedAgentModel,
   LightspeedLLMProviderGVK,
-} from '../../models/proposal';
+} from '../../models/agenticrun';
 import AgentForm from './AgentForm';
 
 const AgentsTab: React.FC = () => {

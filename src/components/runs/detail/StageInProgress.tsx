@@ -1,6 +1,6 @@
 import { Card, CardBody, CardHeader, Flex, FlexItem, Spinner, Title } from '@patternfly/react-core';
 import type { FC } from 'react';
-import { SandboxView } from '../../../models/proposal-views';
+import { SandboxView } from '../../../models/agenticrun-views';
 import { SandboxLogViewer } from './SandboxLogViewer';
 
 interface StageInProgressProps {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
-import { ExecutionActionView, SandboxView } from '../models/proposal-views';
-import { buildPodLogUrl } from '../utils/proposal-utils';
+import { ExecutionActionView, SandboxView } from '../models/agenticrun-views';
+import { buildPodLogUrl } from '../utils/agenticrun-utils';
 
 interface ExecutionLogActionsResult {
   actions: ExecutionActionView[];

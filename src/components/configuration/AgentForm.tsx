@@ -11,7 +11,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 
-import { LLMProviderK8s } from '../../models/proposal';
+import { LLMProviderK8s } from '../../models/agenticrun';
 
 type AgentFormProps = {
   providers: LLMProviderK8s[];

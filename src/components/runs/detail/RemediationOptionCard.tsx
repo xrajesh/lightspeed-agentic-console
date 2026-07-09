@@ -23,9 +23,9 @@ import type { FC } from 'react';
 import * as React from 'react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RemediationOptionView } from '../../../models/proposal-views';
-import { getRiskColor } from '../../../models/proposal';
-import { getReversibilityColor } from '../../../utils/proposal-utils';
+import { RemediationOptionView } from '../../../models/agenticrun-views';
+import { getRiskColor } from '../../../models/agenticrun';
+import { getReversibilityColor } from '../../../utils/agenticrun-utils';
 import './detail.css';
 
 interface RemediationOptionCardProps {
@@ -222,7 +222,7 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
                   <FlexItem>
                     <Tooltip
                       content={t(
-                        'You must be a member of system:cluster-admins to approve or deny proposals.',
+                        'You must be a member of system:cluster-admins to approve or deny runs.',
                       )}
                       trigger={!canApprove && !mutationInProgress ? undefined : 'manual'}
                     >
@@ -241,7 +241,7 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
                   <FlexItem>
                     <Tooltip
                       content={t(
-                        'You must be a member of system:cluster-admins to approve or deny proposals.',
+                        'You must be a member of system:cluster-admins to approve or deny runs.',
                       )}
                       trigger={!canApprove && !mutationInProgress ? undefined : 'manual'}
                     >

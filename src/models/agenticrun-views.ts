@@ -1,8 +1,8 @@
-import { AgentAction, ProposalPhase } from './proposal';
+import { AgentAction, AgenticRunPhase } from './agenticrun';
 
-export type { ProposalPhase } from './proposal';
+export type { AgenticRunPhase } from './agenticrun';
 
-export const TERMINAL_PHASES: ProposalPhase[] = [
+export const TERMINAL_PHASES: AgenticRunPhase[] = [
   'Completed',
   'Failed',
   'Denied',
@@ -82,8 +82,8 @@ export interface ExecutionView {
   executionStartedAt?: string;
 }
 
-export interface ProposalView {
-  phase: ProposalPhase;
+export interface AgenticRunView {
+  phase: AgenticRunPhase;
   request: string;
   source?: string;
   advisory?: boolean;

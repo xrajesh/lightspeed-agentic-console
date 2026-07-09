@@ -13,16 +13,16 @@ import {
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ProposalPhase,
+  AgenticRunPhase,
   RootCauseView,
   SandboxView,
   TERMINAL_PHASES,
-} from '../../../models/proposal-views';
+} from '../../../models/agenticrun-views';
 import { SandboxLogViewer } from './SandboxLogViewer';
 
 interface AnalysisSummaryProps {
   rootCause?: RootCauseView;
-  phase: ProposalPhase;
+  phase: AgenticRunPhase;
   analysisSandbox?: SandboxView;
   analysisStartedAt?: string;
 }

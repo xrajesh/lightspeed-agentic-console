@@ -61,7 +61,7 @@ const globalSetup = async (config: FullConfig) => {
   // Wait for the agentic console plugin to be ready by navigating to its route and waiting for the
   // page to render. The console may reload multiple times after plugin installation, so we poll
   // until the page is stable.
-  await page.goto(`${baseURL}/lightspeed/proposals`);
+  await page.goto(`${baseURL}/lightspeed/runs`);
   await page.waitForLoadState('networkidle', { timeout: 2 * MINUTE });
 
   const LOAD_MAX_POLLS = 36;
@@ -79,7 +79,7 @@ const globalSetup = async (config: FullConfig) => {
     }
     stableCount = 0;
     await page.waitForTimeout(LOAD_POLL_INTERVAL);
-    await page.goto(`${baseURL}/lightspeed/proposals`);
+    await page.goto(`${baseURL}/lightspeed/runs`);
     await page.waitForLoadState('networkidle', { timeout: 2 * MINUTE });
   }
 

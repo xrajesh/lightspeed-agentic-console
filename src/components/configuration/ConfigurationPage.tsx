@@ -30,7 +30,7 @@ const ConfigurationPage: React.FC = () => {
             to="#"
             onClick={(e) => {
               e.preventDefault();
-              navigate('/lightspeed/proposals');
+              navigate('/lightspeed/runs');
             }}
           >
             {t('AI Hub')}
@@ -62,7 +62,7 @@ const ConfigurationPage: React.FC = () => {
             <div className="ols-plugin__config-tab-content">
               <p className="ols-plugin__config-tab-description">
                 {t(
-                  'Large language model providers available to agents for proposal analysis and execution.',
+                  'Large language model providers available to agents for run analysis and execution.',
                 )}
               </p>
               <LLMProvidersTab />
@@ -72,7 +72,7 @@ const ConfigurationPage: React.FC = () => {
             <div className="ols-plugin__config-tab-content">
               <p className="ols-plugin__config-tab-description">
                 {t(
-                  'Agent tiers define the model and settings used at each stage of a proposal workflow.',
+                  'Agent tiers define the model and settings used at each stage of a run workflow.',
                 )}
               </p>
               <AgentsTab />

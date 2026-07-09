@@ -1,17 +1,17 @@
 import { describe, expect, test } from 'vitest';
 import {
-  ProposalCondition,
+  AgenticRunCondition,
   RemediationOption,
   ExecutionResultK8s,
   derivePhaseFromConditions,
-} from '../models/proposal';
-import { mapRootCause, mapOption, mapExecution, filterLatest } from './useProposal';
+} from '../models/agenticrun';
+import { mapRootCause, mapOption, mapExecution, filterLatest } from './useAgenticRun';
 
 const makeCondition = (
   type: string,
   status: 'True' | 'False' | 'Unknown',
   reason?: string,
-): ProposalCondition => ({ type, status, ...(reason ? { reason } : {}) });
+): AgenticRunCondition => ({ type, status, ...(reason ? { reason } : {}) });
 
 const makeOption = (overrides?: Partial<RemediationOption>): RemediationOption => ({
   title: 'Restart pod',
@@ -202,7 +202,7 @@ describe('mapExecution', () => {
       apiVersion: 'agentic.openshift.io/v1alpha1',
       kind: 'ExecutionResult',
       metadata: { name: 'exec-1', namespace: 'default' },
-      spec: { proposalName: 'p1' },
+      spec: { agenticRunName: 'p1' },
       status: {
         conditions: [
           {
@@ -228,7 +228,7 @@ describe('mapExecution', () => {
       apiVersion: 'agentic.openshift.io/v1alpha1',
       kind: 'ExecutionResult',
       metadata: { name: 'exec-1', namespace: 'default' },
-      spec: { proposalName: 'p1' },
+      spec: { agenticRunName: 'p1' },
       status: {
         actionsTaken: [{ type: 'patch', description: 'Patched', outcome: 'Succeeded' }],
       },
@@ -244,7 +244,7 @@ describe('mapExecution', () => {
       apiVersion: 'agentic.openshift.io/v1alpha1',
       kind: 'ExecutionResult',
       metadata: { name: 'exec-1', namespace: 'default' },
-      spec: { proposalName: 'p1' },
+      spec: { agenticRunName: 'p1' },
       status: {},
     };
 

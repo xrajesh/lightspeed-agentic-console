@@ -1,4 +1,4 @@
-// Placeholder — replace with real proposal e2e tests
+// Placeholder — replace with real run e2e tests
 import { expect, test } from '../support/fixtures';
 
 test('playwright runs', async () => {

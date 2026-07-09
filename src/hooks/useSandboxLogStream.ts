@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
-import { SandboxView } from '../models/proposal-views';
-import { buildPodLogUrl } from '../utils/proposal-utils';
+import { SandboxView } from '../models/agenticrun-views';
+import { buildPodLogUrl } from '../utils/agenticrun-utils';
 
 const MAX_RAW_LINES = 20000;
 const RECONNECT_BASE_MS = 1000;

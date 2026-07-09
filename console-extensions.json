@@ -3,15 +3,15 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": "/lightspeed/proposals",
-      "component": { "$codeRef": "ProposalListPage" }
+      "path": "/lightspeed/runs",
+      "component": { "$codeRef": "RunListPage" }
     }
   },
   {
     "type": "console.page/route",
     "properties": {
-      "path": "/lightspeed/proposals/:ns/:name",
-      "component": { "$codeRef": "ProposalDetailPage" }
+      "path": "/lightspeed/runs/:ns/:name",
+      "component": { "$codeRef": "RunDetailPage" }
     }
   },
   {
@@ -25,9 +25,9 @@
   {
     "type": "console.navigation/href",
     "properties": {
-      "id": "lightspeedproposals",
+      "id": "lightspeedruns",
       "name": "%plugin__lightspeed-agentic-console-plugin~AI Hub%",
-      "href": "/lightspeed/proposals",
+      "href": "/lightspeed/runs",
       "perspective": "admin",
       "section": "administration"
     }

@@ -9,7 +9,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 
-import { LLMProviderType } from '../../models/proposal';
+import { LLMProviderType } from '../../models/agenticrun';
 
 const PROVIDER_TYPES: { value: LLMProviderType; label: string }[] = [
   { value: 'Anthropic', label: 'Anthropic' },
