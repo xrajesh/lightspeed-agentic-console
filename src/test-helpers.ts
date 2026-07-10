@@ -1,4 +1,8 @@
-import { ApprovalStage, LightspeedAgenticRunApproval, AgenticRunCondition } from './models/agenticrun';
+import {
+  ApprovalStage,
+  LightspeedAgenticRunApproval,
+  AgenticRunCondition,
+} from './models/agenticrun';
 
 export function cond(
   type: string,
