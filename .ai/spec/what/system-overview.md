@@ -32,7 +32,7 @@ The OpenShift Lightspeed Agentic Console Plugin is a dynamic plugin that loads i
 
 ## Constraints
 
-- React 17 (matches console's React version) — do not upgrade to React 18.
+- React 18 (matches console's React version).
 - PatternFly 6 — use PF components and CSS variables exclusively. No hex colors.
 - No naked element selectors or `.pf-`/`.co-` prefixed classes in CSS.
 - TypeScript strict mode is off (`strict: false`) but `noUnusedLocals` is enforced.
