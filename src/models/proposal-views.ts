@@ -1,4 +1,4 @@
-import { ProposalPhase } from './proposal';
+import { AgentAction, ProposalPhase } from './proposal';
 
 export type { ProposalPhase } from './proposal';
 
@@ -30,7 +30,7 @@ export interface RemediationOptionView {
   reversibility?: string;
   risk?: string;
   estimatedImpact?: string;
-  actions?: { type: string; description: string }[];
+  actions?: AgentAction[];
   rollbackDescription?: string;
   rollbackCommand?: string;
   verificationDescription?: string;

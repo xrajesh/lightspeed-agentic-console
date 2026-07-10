@@ -317,6 +317,7 @@ export type AgentDiagnosis = {
 };
 
 export type AgentAction = {
+  command?: string;
   type: string;
   description: string;
 };
