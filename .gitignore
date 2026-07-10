@@ -1,6 +1,6 @@
-**/node_modules
-**/dist
-**/.DS_Store
 .devcontainer/dev.env
+.DS_Store
+dist/
 gui_test_screenshots/
 integration-tests/.auth/
+node_modules/
