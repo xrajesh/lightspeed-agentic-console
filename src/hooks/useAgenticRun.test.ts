@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'vitest';
 import {
   AgenticRunCondition,
-  RemediationOption,
-  ExecutionResultK8s,
   derivePhaseFromConditions,
+  ExecutionResultK8s,
+  RemediationOption,
 } from '../models/agenticrun';
-import { mapRootCause, mapOption, mapExecution, filterLatest } from './useAgenticRun';
+import { filterLatest, mapExecution, mapOption, mapRootCause } from './useAgenticRun';
 
 const makeCondition = (
   type: string,

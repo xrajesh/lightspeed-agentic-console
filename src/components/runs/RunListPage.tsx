@@ -19,11 +19,11 @@ import { Button, EmptyState, EmptyStateBody, Label } from '@patternfly/react-cor
 import { CogIcon, SearchIcon } from '@patternfly/react-icons';
 
 import {
+  AgenticRunCondition,
+  AgenticRunK8s,
   derivePhaseFromConditions,
   getPhaseDisplay,
   LightspeedAgenticRunGVK,
-  AgenticRunCondition,
-  AgenticRunK8s,
 } from '../../models/agenticrun';
 import AgenticLayout from '../AgenticLayout';
 

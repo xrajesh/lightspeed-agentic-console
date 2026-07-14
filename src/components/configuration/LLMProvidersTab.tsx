@@ -19,9 +19,9 @@ import { EllipsisVIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import {
-  LLMProviderK8s,
   LightspeedLLMProviderGVK,
   LightspeedLLMProviderModel,
+  LLMProviderK8s,
 } from '../../models/agenticrun';
 import LLMProviderForm from './LLMProviderForm';
 
