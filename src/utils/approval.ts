@@ -7,28 +7,26 @@ import {
 } from '../models/agenticrun';
 import { TERMINAL_PHASES } from '../models/agenticrun-views';
 
-export function findStage(
+export const findStage = (
   approval: LightspeedAgenticRunApproval | undefined,
   stageType: ApprovalStageType,
-): ApprovalStage | undefined {
-  return approval?.spec?.stages?.find((s) => s.type === stageType);
-}
+): ApprovalStage | undefined => approval?.spec?.stages?.find((s) => s.type === stageType);
 
-export function getStageStatus(
+export const getStageStatus = (
   approval: LightspeedAgenticRunApproval | undefined,
   stageType: ApprovalStageType,
-): 'approved' | 'denied' | 'pending' {
+): 'approved' | 'denied' | 'pending' => {
   const stage = findStage(approval, stageType);
   if (!stage) return 'pending';
   return stage.decision === 'Denied' ? 'denied' : 'approved';
-}
+};
 
-export function stageNeedsApproval(
+export const stageNeedsApproval = (
   approval: LightspeedAgenticRunApproval | undefined,
   stageType: ApprovalStageType,
   conditions: AgenticRunCondition[] | undefined,
   phase: AgenticRunPhase,
-): boolean {
+): boolean => {
   if (!approval) return false;
   if (findStage(approval, stageType)) return false;
   if (TERMINAL_PHASES.includes(phase)) return false;
@@ -49,16 +47,16 @@ export function stageNeedsApproval(
     default:
       return false;
   }
-}
+};
 
 type PatchOp = { op: 'add' | 'replace'; path: string; value: unknown };
 
-export function buildApprovalPatch(
+export const buildApprovalPatch = (
   approval: LightspeedAgenticRunApproval | undefined,
   stageType: ApprovalStageType,
   denied: boolean,
   options?: { maxAttempts?: number; option?: number; agent?: string },
-): PatchOp[] {
+): PatchOp[] => {
   const stage: ApprovalStage = { type: stageType };
   if (denied) stage.decision = 'Denied';
 
@@ -89,4 +87,4 @@ export function buildApprovalPatch(
     return [{ op: 'add', path: '/spec/stages', value: [stage] }];
   }
   return [{ op: 'add', path: '/spec', value: { stages: [stage] } }];
-}
+};
