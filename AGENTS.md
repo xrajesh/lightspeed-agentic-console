@@ -217,6 +217,21 @@ See [Console Plugin SDK README](https://github.com/openshift/console/tree/master
 - **Test changes?** Run locally with `npm start` + `npm run start-console`, add Playwright tests
 - **Deploy?** Build image, push to registry, deploy to cluster
 
-## Risk Levels
+## Git and PR Workflow
 
-Risk levels are enforced via a PreToolUse hook before every Jira create/edit call. The rubric and classification examples live in [lightspeed-team-harness/hooks/risk-rubric.md](https://github.com/openshift/lightspeed-team-harness/blob/main/hooks/risk-rubric.md).
+### Commit Messages
+- Start with the Jira ticket reference: `OLS-XXXX description`
+- Keep the first line under 72 characters
+- Use imperative mood
+
+### Pull Requests
+This repo uses a **fork-based workflow**:
+
+1. **Push to your fork**, not to `origin` (openshift/lightspeed-agentic-console)
+2. **Create the PR** against `origin/main` using your fork's branch:
+   ```bash
+   git push <your-fork-remote> <branch>
+   gh pr create --repo openshift/lightspeed-agentic-console --head <your-github-user>:<branch> --base main
+   ```
+3. **PR title** must start with the Jira reference: `OLS-XXXX description`
+4. **Squash commits** before pushing
