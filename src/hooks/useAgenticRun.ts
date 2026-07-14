@@ -1,42 +1,42 @@
-import { useMemo, useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   HttpError,
-  K8sResourceCommon,
   k8sPatch,
+  K8sResourceCommon,
   useAccessReview,
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import {
+  AgenticRunApprovalK8s,
+  AgenticRunK8s,
+  AgenticRunPhase,
   AnalysisResultGVK,
   AnalysisResultK8s,
+  derivePhaseFromConditions,
   ExecutionResultGVK,
   ExecutionResultK8s,
   LightspeedAgenticRunApprovalGVK,
   LightspeedAgenticRunApprovalModel,
   LightspeedAgenticRunGVK,
-  AgenticRunApprovalK8s,
-  AgenticRunK8s,
-  AgenticRunPhase,
   RemediationOption,
   ResultCondition,
   StepResultRef,
   VerificationResultGVK,
   VerificationResultK8s,
-  derivePhaseFromConditions,
 } from '../models/agenticrun';
 import { buildApprovalPatch } from '../utils/approval';
 import {
   AgenticRunView,
-  RootCauseView,
-  RemediationOptionView,
   ExecutionView,
-  VerificationView,
-  TimelineEvent,
+  RemediationOptionView,
+  RootCauseView,
   SandboxView,
+  TimelineEvent,
+  VerificationView,
 } from '../models/agenticrun-views';
-import { RUN_LABEL_SOURCE, RUN_NAMESPACE, RESULT_LABEL_RUN } from '../constants';
+import { RESULT_LABEL_RUN, RUN_LABEL_SOURCE, RUN_NAMESPACE } from '../constants';
 
 // Assumes the operator names the sandbox pod identically to the SandboxClaim CR.
 // If the operator decouples these names, log streaming will need the actual pod name from the API.

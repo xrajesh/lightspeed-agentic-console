@@ -11,8 +11,8 @@ import {
 } from '@patternfly/react-core';
 
 import {
-  ApprovalPolicyK8s,
   ApprovalMode,
+  ApprovalPolicyK8s,
   ApprovalPolicyStage,
   LightspeedApprovalPolicyGVK,
   LightspeedApprovalPolicyModel,

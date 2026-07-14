@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  AgenticRunCondition,
   ApprovalStage,
   derivePhaseFromConditions,
-  AgenticRunCondition,
 } from '../models/agenticrun';
 import { buildApprovalPatch, findStage, getStageStatus, stageNeedsApproval } from './approval';
 import { cond, makeApproval, makeApprovalNoSpec } from '../test-helpers';

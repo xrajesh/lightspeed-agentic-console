@@ -1,9 +1,9 @@
 import {
+  AgenticRunCondition,
+  AgenticRunPhase,
   ApprovalStage,
   ApprovalStageType,
   LightspeedAgenticRunApproval,
-  AgenticRunCondition,
-  AgenticRunPhase,
 } from '../models/agenticrun';
 import { TERMINAL_PHASES } from '../models/agenticrun-views';
 

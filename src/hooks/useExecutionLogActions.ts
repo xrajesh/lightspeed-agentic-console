@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
 import { ExecutionActionView, SandboxView } from '../models/agenticrun-views';
 import { buildPodLogUrl } from '../utils/agenticrun-utils';

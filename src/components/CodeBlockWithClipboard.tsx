@@ -6,7 +6,7 @@ import {
   ExpandableSection,
   ExpandableSectionToggle,
 } from '@patternfly/react-core';
-import { useId, useState, type FC } from 'react';
+import { type FC, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface CodeBlockWithClipboardProps {

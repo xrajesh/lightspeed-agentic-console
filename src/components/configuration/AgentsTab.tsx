@@ -20,10 +20,10 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import {
   AgentK8s,
-  LLMProviderK8s,
   LightspeedAgentGVK,
   LightspeedAgentModel,
   LightspeedLLMProviderGVK,
+  LLMProviderK8s,
 } from '../../models/agenticrun';
 import AgentForm from './AgentForm';
 

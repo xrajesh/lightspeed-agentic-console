@@ -1,7 +1,7 @@
 import {
+  AgenticRunCondition,
   ApprovalStage,
   LightspeedAgenticRunApproval,
-  AgenticRunCondition,
 } from './models/agenticrun';
 
 export function cond(
