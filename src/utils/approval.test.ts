@@ -8,9 +8,7 @@ import {
 import { buildApprovalPatch, findStage, getStageStatus, stageNeedsApproval } from './approval';
 import { cond, makeApproval, makeApprovalNoSpec } from '../test-helpers';
 
-function phase(conditions?: AgenticRunCondition[]) {
-  return derivePhaseFromConditions(conditions);
-}
+const phase = (conditions?: AgenticRunCondition[]) => derivePhaseFromConditions(conditions);
 
 describe('findStage', () => {
   it('returns undefined when approval is undefined', () => {
