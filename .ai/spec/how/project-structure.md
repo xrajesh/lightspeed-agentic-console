@@ -20,6 +20,7 @@
 | `src/components/proposals/detail/StageInProgress.tsx` | `StageInProgress` | In-progress stage card with embedded log viewer |
 | `src/components/proposals/detail/SandboxLogViewer.tsx` | `SandboxLogViewer` | Expandable log viewer with streaming and search |
 | `src/components/AgenticLayout.tsx` | `AgenticLayout` | Watches `AgenticOLSConfig` CR; renders a system-suspended danger banner above page content when `spec.suspended` is true |
+| `src/components/CodeBlockWithClipboard.tsx` | `CodeBlockWithClipboard` | Reusable code block with clipboard copy button and expandable truncation for long content |
 | `src/components/ConfirmationModal.tsx` | `ConfirmationModal` | Reusable confirmation modal with confirm/cancel actions, loading state, and inline error display |
 | `src/components/StatusGuard.tsx` | `StatusGuard` | Loading/error/empty gate using PatternFly `ErrorState`; replaces internal console `StatusBox` |
 | `src/models/proposal-views.ts` | `ProposalView`, `RemediationOptionView`, `ExecutionView`, `VerificationView`, `SandboxView`, `TimelineEvent`, `TERMINAL_PHASES` | View-model types for the detail page (output of `useProposal` mapping layer) |

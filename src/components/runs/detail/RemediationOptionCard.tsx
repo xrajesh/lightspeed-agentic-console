@@ -4,7 +4,6 @@ import {
   CardBody,
   CardHeader,
   CardTitle,
-  ClipboardCopy,
   Content,
   ContentVariants,
   DescriptionList,
@@ -27,6 +26,7 @@ import { getRiskColor } from '../../../models/agenticrun';
 import { RemediationOptionView } from '../../../models/agenticrun-views';
 import { getReversibilityColor } from '../../../utils/agenticrun-utils';
 import { renderMarkdown } from '../../../utils/markdown';
+import { CodeBlockWithClipboard } from '../../CodeBlockWithClipboard';
 import './detail.css';
 
 interface RemediationOptionCardProps {
@@ -178,11 +178,7 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
                           __html: renderMarkdown(action.description),
                         }}
                       />
-                      {action.command && (
-                        <ClipboardCopy isReadOnly isCode isBlock>
-                          {action.command}
-                        </ClipboardCopy>
-                      )}
+                      {action.command && <CodeBlockWithClipboard code={action.command} />}
                     </Content>
                   ))}
                 </Content>
@@ -200,11 +196,7 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
                     }}
                   />
                 )}
-                {option.rollbackCommand && (
-                  <ClipboardCopy isReadOnly isBlock>
-                    {option.rollbackCommand}
-                  </ClipboardCopy>
-                )}
+                {option.rollbackCommand && <CodeBlockWithClipboard code={option.rollbackCommand} />}
               </FlexItem>
             )}
 
@@ -224,11 +216,7 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
                     <DescriptionListGroup key={i}>
                       <DescriptionListTerm>{step.name}</DescriptionListTerm>
                       <DescriptionListDescription>
-                        {step.command && (
-                          <ClipboardCopy isReadOnly isCode isBlock>
-                            {step.command}
-                          </ClipboardCopy>
-                        )}
+                        {step.command && <CodeBlockWithClipboard code={step.command} />}
                         {step.expected && (
                           <Content component={ContentVariants.small}>
                             {t('Expected')}: {step.expected}

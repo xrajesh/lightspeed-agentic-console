@@ -3,7 +3,6 @@ import {
   Card,
   CardBody,
   CardHeader,
-  ClipboardCopy,
   Content,
   ContentVariants,
   DescriptionList,
@@ -23,6 +22,7 @@ import {
 } from '@patternfly/react-icons';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { CodeBlockWithClipboard } from '../../CodeBlockWithClipboard';
 import { useExecutionLogActions } from '../../../hooks/useExecutionLogActions';
 import { ExecutionView } from '../../../models/agenticrun-views';
 import { getOutcomeStatus } from '../../../utils/agenticrun-utils';
@@ -150,9 +150,7 @@ export const ExecutionSummary: FC<ExecutionSummaryProps> = ({ execution }) => {
                           )}
                           {action.output && (
                             <FlexItem>
-                              <ClipboardCopy isReadOnly isCode isBlock>
-                                {action.output}
-                              </ClipboardCopy>
+                              <CodeBlockWithClipboard code={action.output} />
                             </FlexItem>
                           )}
                         </Flex>
