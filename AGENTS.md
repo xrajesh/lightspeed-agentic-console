@@ -95,11 +95,13 @@ integration-tests/     # Playwright e2e tests
 4. Navigate to http://localhost:9000/example
 
 ### Code Quality
-- `npm run lint` - runs eslint, prettier, and stylelint (with --fix)
+- `npm run lint` - checks eslint and stylelint (no auto-fix)
+- `npm run lint-fix` - checks and auto-fixes eslint and stylelint issues
 - Linting is mandatory before commits
 - Follow existing code patterns in the repo
 
 ### Testing
+- `npm run test-unit` - runs unit tests (vitest)
 - `npm run test-e2e` - runs Playwright tests
 - `npm run test-e2e-headless` - runs Playwright tests with list reporter
 - Add e2e tests for new pages/features
