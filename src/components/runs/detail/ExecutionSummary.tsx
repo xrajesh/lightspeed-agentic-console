@@ -26,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { useExecutionLogActions } from '../../../hooks/useExecutionLogActions';
 import { ExecutionView } from '../../../models/agenticrun-views';
 import { getOutcomeStatus } from '../../../utils/agenticrun-utils';
+import { renderMarkdown } from '../../../utils/markdown';
 import { SandboxLogViewer } from './SandboxLogViewer';
 
 interface ExecutionSummaryProps {
@@ -77,14 +78,22 @@ export const ExecutionSummary: FC<ExecutionSummaryProps> = ({ execution }) => {
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('Original root cause')}</DescriptionListTerm>
                   <DescriptionListDescription>
-                    {execution.originalRootCause}
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: renderMarkdown(execution.originalRootCause),
+                      }}
+                    />
                   </DescriptionListDescription>
                 </DescriptionListGroup>
                 {execution.remediationDelta && (
                   <DescriptionListGroup>
                     <DescriptionListTerm>{t('Remediation delta')}</DescriptionListTerm>
                     <DescriptionListDescription>
-                      {execution.remediationDelta}
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: renderMarkdown(execution.remediationDelta),
+                        }}
+                      />
                     </DescriptionListDescription>
                   </DescriptionListGroup>
                 )}
@@ -127,7 +136,12 @@ export const ExecutionSummary: FC<ExecutionSummaryProps> = ({ execution }) => {
                             </Flex>
                           </FlexItem>
                           <FlexItem>
-                            <Content component={ContentVariants.p}>{action.description}</Content>
+                            <Content
+                              component={ContentVariants.p}
+                              dangerouslySetInnerHTML={{
+                                __html: renderMarkdown(action.description),
+                              }}
+                            />
                           </FlexItem>
                           {action.error && (
                             <FlexItem>

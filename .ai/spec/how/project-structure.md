@@ -7,6 +7,7 @@
 | `src/models/proposal.ts` | All K8sModel definitions, GVK constants, CRD types, `derivePhaseFromConditions`, `getPhaseDisplay` | Central type definitions and phase logic |
 | `src/config.ts` | `getApiUrl` | API proxy URL construction |
 | `src/utils/approval.ts` | `findStage`, `getStageStatus`, `stageNeedsApproval`, `buildApprovalPatch` | Pure functions for approval logic |
+| `src/utils/markdown.ts` | `renderMarkdown`, `renderMarkdownInline` | Sanitized markdown rendering for AI-generated text (marked + DOMPurify). `renderMarkdown` emits block HTML; `renderMarkdownInline` emits inline HTML. All links are hardened with `target="_blank" rel="noopener noreferrer"`. |
 | `src/utils/proposal-utils.ts` | `buildPodLogUrl`, `getOutcomeStatus`, `getReversibilityColor` | Helpers for pod log URLs, outcome status mapping, reversibility colors |
 | `src/components/proposals/ProposalListPage.tsx` | `ProposalListPage` | Proposal list with virtualized table and phase filters |
 | `src/components/proposals/ProposalDetailPage.tsx` | `ProposalDetailsPage` | Section-based proposal detail page, delegates to `detail/` subcomponents |

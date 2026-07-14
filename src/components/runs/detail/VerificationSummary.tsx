@@ -17,6 +17,7 @@ import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons'
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { VerificationView } from '../../../models/agenticrun-views';
+import { renderMarkdown } from '../../../utils/markdown';
 import { SandboxLogViewer } from './SandboxLogViewer';
 
 interface VerificationSummaryProps {
@@ -61,7 +62,12 @@ export const VerificationSummary: FC<VerificationSummaryProps> = ({ verification
         <Flex direction={{ default: 'column' }} gap={{ default: 'gapLg' }}>
           {verification.summary && (
             <FlexItem>
-              <Content component={ContentVariants.p}>{verification.summary}</Content>
+              <Content
+                component={ContentVariants.p}
+                dangerouslySetInnerHTML={{
+                  __html: renderMarkdown(verification.summary),
+                }}
+              />
             </FlexItem>
           )}
 
@@ -95,7 +101,9 @@ export const VerificationSummary: FC<VerificationSummaryProps> = ({ verification
                         </FlexItem>
                       </Flex>
                     </DescriptionListTerm>
-                    <DescriptionListDescription>{check.value}</DescriptionListDescription>
+                    <DescriptionListDescription>
+                      <span dangerouslySetInnerHTML={{ __html: renderMarkdown(check.value) }} />
+                    </DescriptionListDescription>
                   </DescriptionListGroup>
                 ))}
               </DescriptionList>
@@ -105,7 +113,12 @@ export const VerificationSummary: FC<VerificationSummaryProps> = ({ verification
           {verification.failureReason && (
             <FlexItem>
               <Content component={ContentVariants.p}>
-                <strong>{t('Failure reason')}:</strong> {verification.failureReason}
+                <strong>{t('Failure reason')}:</strong>{' '}
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: renderMarkdown(verification.failureReason),
+                  }}
+                />
               </Content>
             </FlexItem>
           )}

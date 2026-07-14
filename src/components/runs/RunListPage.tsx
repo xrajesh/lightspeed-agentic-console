@@ -101,9 +101,7 @@ const NoRunsMsg: React.FC = () => {
   return (
     <EmptyState headingLevel="h2" icon={SearchIcon} titleText={t('No runs')}>
       <EmptyStateBody>
-        {t(
-          'Runs are created by adapters or by user request. No runs have been created yet.',
-        )}
+        {t('Runs are created by adapters or by user request. No runs have been created yet.')}
       </EmptyStateBody>
     </EmptyState>
   );

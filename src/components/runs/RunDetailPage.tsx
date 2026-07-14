@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import type { FC, ReactNode } from 'react';
+import { DocumentTitle, ResourceIcon, Timestamp } from '@openshift-console/dynamic-plugin-sdk';
 import {
   Alert,
   Breadcrumb,
@@ -20,23 +20,23 @@ import {
   Skeleton,
   Title,
 } from '@patternfly/react-core';
-import { DocumentTitle, ResourceIcon, Timestamp } from '@openshift-console/dynamic-plugin-sdk';
+import type { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { useAgenticRun } from '../../hooks/useAgenticRun';
 import { LightspeedAgenticRunGVK } from '../../models/agenticrun';
 import type { AgenticRunView } from '../../models/agenticrun-views';
 import { TERMINAL_PHASES } from '../../models/agenticrun-views';
-import { RunPhaseLabel } from './detail/RunPhaseLabel';
-import { AnalysisSummary } from './detail/AnalysisSummary';
-import { RemediationOptionCard } from './detail/RemediationOptionCard';
-import { ExecutionSummary } from './detail/ExecutionSummary';
-import { VerificationSummary } from './detail/VerificationSummary';
-import { StageInProgress } from './detail/StageInProgress';
-import { RunTimeline } from './detail/RunTimeline';
+import AgenticLayout from '../AgenticLayout';
 import { ConfirmationModal } from '../ConfirmationModal';
 import StatusGuard from '../StatusGuard';
-import AgenticLayout from '../AgenticLayout';
+import { AnalysisSummary } from './detail/AnalysisSummary';
+import { ExecutionSummary } from './detail/ExecutionSummary';
+import { RemediationOptionCard } from './detail/RemediationOptionCard';
+import { RunPhaseLabel } from './detail/RunPhaseLabel';
+import { RunTimeline } from './detail/RunTimeline';
+import { StageInProgress } from './detail/StageInProgress';
+import { VerificationSummary } from './detail/VerificationSummary';
 
 const RunDetailPage: FC = () => {
   const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
@@ -288,8 +288,7 @@ const RunDetailPage: FC = () => {
                 )}
                 <FlexItem>
                   <Content component={ContentVariants.small}>
-                    {t('Created')}{' '}
-                    <Timestamp simple timestamp={run?.metadata?.creationTimestamp} />
+                    {t('Created')} <Timestamp simple timestamp={run?.metadata?.creationTimestamp} />
                   </Content>
                 </FlexItem>
                 {view?.request && (

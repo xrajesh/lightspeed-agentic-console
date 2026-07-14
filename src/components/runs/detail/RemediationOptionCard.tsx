@@ -23,9 +23,10 @@ import type { FC } from 'react';
 import * as React from 'react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RemediationOptionView } from '../../../models/agenticrun-views';
 import { getRiskColor } from '../../../models/agenticrun';
+import { RemediationOptionView } from '../../../models/agenticrun-views';
 import { getReversibilityColor } from '../../../utils/agenticrun-utils';
+import { renderMarkdown } from '../../../utils/markdown';
 import './detail.css';
 
 interface RemediationOptionCardProps {
@@ -136,20 +137,30 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
           )}
           <FlexItem>
             <Content component={ContentVariants.p}>
-              <strong>{option.title}</strong>
+              <strong dangerouslySetInnerHTML={{ __html: renderMarkdown(option.title) }} />
             </Content>
           </FlexItem>
         </Flex>
       </CardHeader>
       {isExpanded && (
         <CardBody>
-          <Content component={ContentVariants.p}>{option.description}</Content>
+          <Content
+            component={ContentVariants.p}
+            dangerouslySetInnerHTML={{
+              __html: renderMarkdown(option.description),
+            }}
+          />
 
           <Flex gap={{ default: 'gapLg' }} direction={{ default: 'column' }}>
             {option.estimatedImpact && (
               <FlexItem>
                 <Title headingLevel="h5">{t('Estimated impact')}</Title>
-                <Content component={ContentVariants.p}>{option.estimatedImpact}</Content>
+                <Content
+                  component={ContentVariants.p}
+                  dangerouslySetInnerHTML={{
+                    __html: renderMarkdown(option.estimatedImpact),
+                  }}
+                />
               </FlexItem>
             )}
 
@@ -162,7 +173,11 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
                       <Label variant="outline" isCompact>
                         {action.type}
                       </Label>{' '}
-                      {action.description}
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: renderMarkdown(action.description),
+                        }}
+                      />
                       {action.command && (
                         <ClipboardCopy isReadOnly isCode isBlock>
                           {action.command}
@@ -178,7 +193,12 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
               <FlexItem>
                 <Title headingLevel="h5">{t('Rollback plan')}</Title>
                 {option.rollbackDescription && (
-                  <Content component={ContentVariants.p}>{option.rollbackDescription}</Content>
+                  <Content
+                    component={ContentVariants.p}
+                    dangerouslySetInnerHTML={{
+                      __html: renderMarkdown(option.rollbackDescription),
+                    }}
+                  />
                 )}
                 {option.rollbackCommand && (
                   <ClipboardCopy isReadOnly isBlock>
@@ -192,7 +212,12 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
               <FlexItem>
                 <Title headingLevel="h5">{t('Verification steps')}</Title>
                 {option.verificationDescription && (
-                  <Content component={ContentVariants.p}>{option.verificationDescription}</Content>
+                  <Content
+                    component={ContentVariants.p}
+                    dangerouslySetInnerHTML={{
+                      __html: renderMarkdown(option.verificationDescription),
+                    }}
+                  />
                 )}
                 <DescriptionList>
                   {option.verificationSteps.map((step, i) => (

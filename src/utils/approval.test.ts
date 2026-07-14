@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { ApprovalStage, derivePhaseFromConditions, AgenticRunCondition } from '../models/agenticrun';
+import {
+  ApprovalStage,
+  derivePhaseFromConditions,
+  AgenticRunCondition,
+} from '../models/agenticrun';
 import { buildApprovalPatch, findStage, getStageStatus, stageNeedsApproval } from './approval';
 import { cond, makeApproval, makeApprovalNoSpec } from '../test-helpers';
 

@@ -640,11 +640,7 @@ export const getRiskColor = (risk?: string): 'green' | 'orange' | 'red' | 'grey'
 };
 
 export type LLMProviderType =
-  | 'Anthropic'
-  | 'GoogleCloudVertex'
-  | 'OpenAI'
-  | 'AzureOpenAI'
-  | 'AWSBedrock';
+  'Anthropic' | 'GoogleCloudVertex' | 'OpenAI' | 'AzureOpenAI' | 'AWSBedrock';
 
 export type SecretRef = {
   name: string;
