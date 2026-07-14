@@ -6,6 +6,8 @@ import {
   useAccessReview,
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   AnalysisResultGVK,
   AnalysisResultK8s,
@@ -143,6 +145,7 @@ const condVariant = (reason?: string): TimelineEvent['variant'] => {
 export const mapTimeline = (
   run: AgenticRunK8s,
   phase: AgenticRunPhase,
+  t: TFunction,
   analysis?: AnalysisResultK8s,
   execution?: ExecutionResultK8s,
   verification?: VerificationResultK8s,
@@ -152,7 +155,7 @@ export const mapTimeline = (
 
   if (run.metadata?.creationTimestamp) {
     events.push({
-      label: 'Run created',
+      label: t('Run created'),
       timestamp: run.metadata.creationTimestamp,
       variant: 'success',
     });
@@ -164,16 +167,16 @@ export const mapTimeline = (
     currentPhase: AgenticRunPhase;
     failureReason?: string;
   }[] = [
-    { conditions: analysis?.status?.conditions, label: 'Analysis', currentPhase: 'Analyzing' },
+    { conditions: analysis?.status?.conditions, label: t('Analysis'), currentPhase: 'Analyzing' },
     {
       conditions: execution?.status?.conditions,
-      label: 'Execution',
+      label: t('Execution'),
       currentPhase: 'Executing',
       failureReason: execution?.status?.failureReason,
     },
     {
       conditions: verification?.status?.conditions,
-      label: 'Verification',
+      label: t('Verification'),
       currentPhase: 'Verifying',
       failureReason: verification?.status?.failureReason,
     },
@@ -183,7 +186,7 @@ export const mapTimeline = (
     for (const cond of conditions ?? []) {
       if (cond.type === 'Completed' && cond.status !== 'True') continue;
       events.push({
-        label: `${label} ${cond.type === 'Started' ? 'started' : cond.type === 'Completed' ? 'completed' : cond.type.toLowerCase()}`,
+        label: `${label} ${cond.type === 'Started' ? t('started') : cond.type === 'Completed' ? t('completed') : cond.type.toLowerCase()}`,
         description: cond.message || failureReason || undefined,
         timestamp: cond.lastTransitionTime,
         variant: condVariant(cond.reason),
@@ -198,16 +201,18 @@ export const mapTimeline = (
     approval?.spec?.approver?.approvedAt ?? execStartedCond?.lastTransitionTime;
   if (execStage?.decision === 'Denied') {
     events.push({
-      label: 'Execution denied',
+      label: approval?.spec?.approver?.username
+        ? t('Execution denied by {{username}}', { username: approval.spec.approver.username })
+        : t('Execution denied'),
       timestamp: approvalTimestamp,
       variant: 'danger',
     });
   } else if (execStage && execStartedCond) {
     events.push({
-      label: 'Execution approved',
+      label: t('Execution approved'),
       description:
         execStage.execution?.option !== undefined
-          ? `Option ${(execStage.execution.option ?? 0) + 1}`
+          ? t('Option {{number}}', { number: (execStage.execution.option ?? 0) + 1 })
           : undefined,
       timestamp: approvalTimestamp,
       variant: 'success',
@@ -217,7 +222,7 @@ export const mapTimeline = (
   for (const cond of run.status?.conditions ?? []) {
     if (cond.type === 'Denied' && cond.status === 'True') {
       events.push({
-        label: 'Run denied',
+        label: t('Run denied'),
         description: cond.message || undefined,
         timestamp: cond.lastTransitionTime,
         variant: 'danger',
@@ -225,7 +230,7 @@ export const mapTimeline = (
     }
     if (cond.type === 'EmergencyStopped' && cond.status === 'True') {
       events.push({
-        label: 'Emergency stopped',
+        label: t('Emergency stopped'),
         description: cond.message || undefined,
         timestamp: cond.lastTransitionTime,
         variant: 'danger',
@@ -269,6 +274,7 @@ const mapToAgenticRunView = (
   execution: ExecutionResultK8s | undefined,
   verification: VerificationResultK8s | undefined,
   approval: AgenticRunApprovalK8s | undefined,
+  t: TFunction,
 ): AgenticRunView | undefined => {
   if (!run?.metadata?.name) return undefined;
 
@@ -303,7 +309,7 @@ const mapToAgenticRunView = (
     options: (options ?? []).map((opt, i) => mapOption(opt, i)),
     execution: mapExecution(options, execution, run.status?.steps?.execution?.sandbox),
     verification: mapVerification(verification, run.status?.steps?.verification?.sandbox),
-    timeline: mapTimeline(run, phase, analysis, execution, verification, approval),
+    timeline: mapTimeline(run, phase, t, analysis, execution, verification, approval),
   };
 };
 
@@ -327,6 +333,7 @@ export const useAgenticRun = (
   name: string,
   namespace: string = RUN_NAMESPACE,
 ): UseAgenticRunReturn => {
+  const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
   const watchEnabled = !!name;
 
   const [run, runLoaded, runError] = useK8sWatchResource<AgenticRunK8s>(
@@ -398,8 +405,8 @@ export const useAgenticRun = (
   );
 
   const view = useMemo(
-    () => mapToAgenticRunView(run, analysis, execution, verification, approval),
-    [run, analysis, execution, verification, approval],
+    () => mapToAgenticRunView(run, analysis, execution, verification, approval, t),
+    [run, analysis, execution, verification, approval, t],
   );
 
   const resultsLoaded = analysisLoaded && executionLoaded && verificationLoaded && approvalLoaded;
@@ -420,12 +427,17 @@ export const useAgenticRun = (
   const [mutationInProgress, setMutationInProgress] = useState(false);
   const [mutationError, setMutationError] = useState<string>();
   const clearMutationError = useCallback(() => setMutationError(undefined), []);
-
-  const approveExecution = useCallback(
-    async (selectedOption: number): Promise<boolean> => {
-      if (!canApprove) return false;
+  const runApprovalMutation = useCallback(
+    async (
+      patchData: ReturnType<typeof buildApprovalPatch>,
+      fallbackError: string,
+    ): Promise<boolean> => {
+      if (!canApprove) {
+        setMutationError(t("You don't have permission to approve or deny runs."));
+        return false;
+      }
       if (!run || !approval) {
-        setMutationError('Approval resource is not available yet');
+        setMutationError(t('Approval resource is not available yet.'));
         return false;
       }
       setMutationInProgress(true);
@@ -439,49 +451,39 @@ export const useAgenticRun = (
               namespace,
             },
           },
-          data: buildApprovalPatch(approval, 'Execution', false, {
-            option: selectedOption,
-            maxAttempts: 1,
-          }),
+          data: patchData,
         });
         return true;
       } catch (err) {
-        setMutationError((err as Error)?.message || 'Failed to approve execution');
+        setMutationError((err as Error)?.message || fallbackError);
         return false;
       } finally {
         setMutationInProgress(false);
       }
     },
-    [run, approval, namespace, canApprove],
+    [run, approval, namespace, canApprove, t],
   );
 
-  const denyExecution = useCallback(async (): Promise<boolean> => {
-    if (!canApprove) return false;
-    if (!run || !approval) {
-      setMutationError('Approval resource is not available yet');
-      return false;
-    }
-    setMutationInProgress(true);
-    setMutationError(undefined);
-    try {
-      await k8sPatch({
-        model: LightspeedAgenticRunApprovalModel,
-        resource: {
-          metadata: {
-            name: run.metadata?.name,
-            namespace,
-          },
-        },
-        data: buildApprovalPatch(approval, 'Execution', true),
-      });
-      return true;
-    } catch (err) {
-      setMutationError((err as Error)?.message || 'Failed to deny execution');
-      return false;
-    } finally {
-      setMutationInProgress(false);
-    }
-  }, [run, approval, namespace, canApprove]);
+  const approveExecution = useCallback(
+    async (selectedOption: number): Promise<boolean> =>
+      runApprovalMutation(
+        buildApprovalPatch(approval, 'Execution', false, {
+          option: selectedOption,
+          maxAttempts: 1,
+        }),
+        t('Failed to approve execution.'),
+      ),
+    [approval, runApprovalMutation, t],
+  );
+
+  const denyExecution = useCallback(
+    async (): Promise<boolean> =>
+      runApprovalMutation(
+        buildApprovalPatch(approval, 'Execution', true),
+        t('Failed to deny execution.'),
+      ),
+    [approval, runApprovalMutation, t],
+  );
 
   return {
     run: run as K8sResourceCommon | undefined,

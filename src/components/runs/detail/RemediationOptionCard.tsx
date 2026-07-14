@@ -15,7 +15,6 @@ import {
   Label,
   Spinner,
   Title,
-  Tooltip,
 } from '@patternfly/react-core';
 import { AngleDownIcon, AngleRightIcon, DownloadIcon } from '@patternfly/react-icons';
 import type { FC } from 'react';
@@ -26,6 +25,7 @@ import { getRiskColor } from '../../../models/agenticrun';
 import { RemediationOptionView } from '../../../models/agenticrun-views';
 import { getReversibilityColor } from '../../../utils/agenticrun-utils';
 import { renderMarkdown } from '../../../utils/markdown';
+import { ApprovalGatedButton } from '../../ApprovalGatedButton';
 import { CodeBlockWithClipboard } from '../../CodeBlockWithClipboard';
 import './detail.css';
 
@@ -36,7 +36,6 @@ interface RemediationOptionCardProps {
   onSelect: () => void;
   onToggleExpand: () => void;
   onExecute?: () => void;
-  onDeny?: () => void;
   canApprove?: boolean;
   canApproveLoading?: boolean;
   readOnly?: boolean;
@@ -51,8 +50,7 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
   onSelect,
   onToggleExpand,
   onExecute,
-  onDeny,
-  canApprove = true,
+  canApprove = false,
   canApproveLoading,
   readOnly,
   showSpinner,
@@ -233,41 +231,14 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
               <Flex spaceItems={{ default: 'spaceItemsSm' }}>
                 {onExecute && (
                   <FlexItem>
-                    <Tooltip
-                      content={t(
-                        'You must be a member of system:cluster-admins to approve or deny runs.',
-                      )}
-                      trigger={!canApprove && !mutationInProgress ? undefined : 'manual'}
+                    <ApprovalGatedButton
+                      canApprove={canApprove}
+                      canApproveLoading={canApproveLoading}
+                      mutationInProgress={mutationInProgress}
+                      onClick={onExecute}
                     >
-                      <Button
-                        variant="primary"
-                        onClick={onExecute}
-                        isLoading={canApproveLoading || mutationInProgress}
-                        isAriaDisabled={!canApprove || mutationInProgress}
-                      >
-                        {t('Execute remediation')}
-                      </Button>
-                    </Tooltip>
-                  </FlexItem>
-                )}
-                {onDeny && (
-                  <FlexItem>
-                    <Tooltip
-                      content={t(
-                        'You must be a member of system:cluster-admins to approve or deny runs.',
-                      )}
-                      trigger={!canApprove && !mutationInProgress ? undefined : 'manual'}
-                    >
-                      <Button
-                        variant="secondary"
-                        isDanger
-                        onClick={onDeny}
-                        isLoading={canApproveLoading}
-                        isAriaDisabled={!canApprove || mutationInProgress}
-                      >
-                        {t('Deny')}
-                      </Button>
-                    </Tooltip>
+                      {t('Execute remediation')}
+                    </ApprovalGatedButton>
                   </FlexItem>
                 )}
                 <FlexItem>
