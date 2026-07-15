@@ -14,6 +14,7 @@ export const getOutcomeStatus = (outcome: string): 'success' | 'danger' | 'warni
   switch (outcome) {
     case 'Succeeded':
     case 'Improved':
+    case 'Unchanged':
       return 'success';
     case 'Failed':
     case 'Degraded':
