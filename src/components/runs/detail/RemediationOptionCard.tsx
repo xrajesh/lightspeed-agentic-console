@@ -24,9 +24,9 @@ import { useTranslation } from 'react-i18next';
 import { getRiskColor } from '../../../models/agenticrun';
 import { RemediationOptionView } from '../../../models/agenticrun-views';
 import { getReversibilityColor } from '../../../utils/agenticrun-utils';
-import { renderMarkdown } from '../../../utils/markdown';
 import { ApprovalGatedButton } from '../../ApprovalGatedButton';
 import { CodeBlockWithClipboard } from '../../CodeBlockWithClipboard';
+import { MarkdownContent } from '../../MarkdownContent';
 import './detail.css';
 
 interface RemediationOptionCardProps {
@@ -134,48 +134,34 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
             </FlexItem>
           )}
           <FlexItem>
-            <Content component={ContentVariants.p}>
-              <strong dangerouslySetInnerHTML={{ __html: renderMarkdown(option.title) }} />
-            </Content>
+            <Title headingLevel="h5">
+              <MarkdownContent text={option.title} component="span" inline />
+            </Title>
           </FlexItem>
         </Flex>
       </CardHeader>
       {isExpanded && (
         <CardBody>
-          <Content
-            component={ContentVariants.p}
-            dangerouslySetInnerHTML={{
-              __html: renderMarkdown(option.description),
-            }}
-          />
+          <MarkdownContent text={option.description} />
 
           <Flex gap={{ default: 'gapLg' }} direction={{ default: 'column' }}>
             {option.estimatedImpact && (
               <FlexItem>
-                <Title headingLevel="h5">{t('Estimated impact')}</Title>
-                <Content
-                  component={ContentVariants.p}
-                  dangerouslySetInnerHTML={{
-                    __html: renderMarkdown(option.estimatedImpact),
-                  }}
-                />
+                <Title headingLevel="h6">{t('Estimated impact')}</Title>
+                <MarkdownContent text={option.estimatedImpact} />
               </FlexItem>
             )}
 
             {option.actions && option.actions.length > 0 && (
               <FlexItem>
-                <Title headingLevel="h5">{t('Remediation script')}</Title>
+                <Title headingLevel="h6">{t('Remediation script')}</Title>
                 <Content component="ol">
                   {option.actions.map((action, i) => (
                     <Content component="li" key={i}>
                       <Label variant="outline" isCompact>
                         {action.type}
                       </Label>{' '}
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: renderMarkdown(action.description),
-                        }}
-                      />
+                      <MarkdownContent text={action.description} />
                       {action.command && <CodeBlockWithClipboard code={action.command} />}
                     </Content>
                   ))}
@@ -185,14 +171,9 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
 
             {(option.rollbackDescription || option.rollbackCommand) && (
               <FlexItem>
-                <Title headingLevel="h5">{t('Rollback plan')}</Title>
+                <Title headingLevel="h6">{t('Rollback plan')}</Title>
                 {option.rollbackDescription && (
-                  <Content
-                    component={ContentVariants.p}
-                    dangerouslySetInnerHTML={{
-                      __html: renderMarkdown(option.rollbackDescription),
-                    }}
-                  />
+                  <MarkdownContent text={option.rollbackDescription} />
                 )}
                 {option.rollbackCommand && <CodeBlockWithClipboard code={option.rollbackCommand} />}
               </FlexItem>
@@ -200,14 +181,9 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
 
             {option.verificationSteps && option.verificationSteps.length > 0 && (
               <FlexItem>
-                <Title headingLevel="h5">{t('Verification steps')}</Title>
+                <Title headingLevel="h6">{t('Verification steps')}</Title>
                 {option.verificationDescription && (
-                  <Content
-                    component={ContentVariants.p}
-                    dangerouslySetInnerHTML={{
-                      __html: renderMarkdown(option.verificationDescription),
-                    }}
-                  />
+                  <MarkdownContent text={option.verificationDescription} />
                 )}
                 <DescriptionList>
                   {option.verificationSteps.map((step, i) => (

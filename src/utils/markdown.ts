@@ -11,5 +11,9 @@ purify.addHook('afterSanitizeAttributes', (node) => {
 });
 
 export const renderMarkdown = (text: string): string => {
-  return purify.sanitize(marked.parseInline(text ?? '', { async: false }));
+  return purify.sanitize(marked.parse(text ?? '', { async: false }) as string);
+};
+
+export const renderMarkdownInline = (text: string): string => {
+  return purify.sanitize(marked.parseInline(text ?? '', { async: false }) as string);
 };

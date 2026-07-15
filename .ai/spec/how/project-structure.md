@@ -7,7 +7,7 @@
 | `src/models/proposal.ts` | All K8sModel definitions, GVK constants, CRD types, `derivePhaseFromConditions`, `getPhaseDisplay` | Central type definitions and phase logic |
 | `src/config.ts` | `getApiUrl` | API proxy URL construction |
 | `src/utils/approval.ts` | `findStage`, `getStageStatus`, `stageNeedsApproval`, `buildApprovalPatch` | Pure functions for approval logic |
-| `src/utils/markdown.ts` | `renderMarkdown`, `renderMarkdownInline` | Sanitized markdown rendering for AI-generated text (marked + DOMPurify). `renderMarkdown` emits block HTML; `renderMarkdownInline` emits inline HTML. All links are hardened with `target="_blank" rel="noopener noreferrer"`. |
+| `src/utils/markdown.ts` | `renderMarkdown`, `renderMarkdownInline` | Low-level sanitized markdown rendering (marked + DOMPurify). `renderMarkdown` emits block HTML via `marked.parse`; `renderMarkdownInline` emits inline HTML via `marked.parseInline`. All links are hardened with `target="_blank" rel="noopener noreferrer"`. Prefer `MarkdownContent` component over direct calls. |
 | `src/utils/proposal-utils.ts` | `buildPodLogUrl`, `getOutcomeStatus`, `getReversibilityColor` | Helpers for pod log URLs, outcome status mapping, reversibility colors |
 | `src/components/proposals/ProposalListPage.tsx` | `ProposalListPage` | Proposal list with virtualized table and phase filters |
 | `src/components/proposals/ProposalDetailPage.tsx` | `ProposalDetailsPage` | Section-based proposal detail page, delegates to `detail/` subcomponents |
@@ -20,6 +20,7 @@
 | `src/components/proposals/detail/StageInProgress.tsx` | `StageInProgress` | In-progress stage card with embedded log viewer |
 | `src/components/proposals/detail/SandboxLogViewer.tsx` | `SandboxLogViewer` | Expandable log viewer with streaming and search |
 | `src/components/AgenticLayout.tsx` | `AgenticLayout` | Watches `AgenticOLSConfig` CR; renders a system-suspended danger banner above page content when `spec.suspended` is true |
+| `src/components/MarkdownContent.tsx` | `MarkdownContent` | Reusable component for rendering sanitized markdown. Wraps `renderMarkdown`/`renderMarkdownInline` with a block-level container (defaults to PatternFly `Content` div). Props: `text` (markdown string), `component` (wrapper element, default `Content`), `inline` (use inline parser for short text like titles). Prevents invalid nested HTML by binding the parse mode to the correct container. |
 | `src/components/CodeBlockWithClipboard.tsx` | `CodeBlockWithClipboard` | Reusable code block with clipboard copy button and expandable truncation for long content |
 | `src/components/ConfirmationModal.tsx` | `ConfirmationModal` | Reusable confirmation modal with confirm/cancel actions, loading state, and inline error display |
 | `src/components/StatusGuard.tsx` | `StatusGuard` | Loading/error/empty gate using PatternFly `ErrorState`; replaces internal console `StatusBox` |

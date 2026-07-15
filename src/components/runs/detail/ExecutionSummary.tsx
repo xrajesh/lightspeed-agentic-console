@@ -22,11 +22,11 @@ import {
 } from '@patternfly/react-icons';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CodeBlockWithClipboard } from '../../CodeBlockWithClipboard';
 import { useExecutionLogActions } from '../../../hooks/useExecutionLogActions';
 import { ExecutionView } from '../../../models/agenticrun-views';
 import { getOutcomeStatus } from '../../../utils/agenticrun-utils';
-import { renderMarkdown } from '../../../utils/markdown';
+import { CodeBlockWithClipboard } from '../../CodeBlockWithClipboard';
+import { MarkdownContent } from '../../MarkdownContent';
 import { SandboxLogViewer } from './SandboxLogViewer';
 
 interface ExecutionSummaryProps {
@@ -78,22 +78,14 @@ export const ExecutionSummary: FC<ExecutionSummaryProps> = ({ execution }) => {
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('Original root cause')}</DescriptionListTerm>
                   <DescriptionListDescription>
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: renderMarkdown(execution.originalRootCause),
-                      }}
-                    />
+                    <MarkdownContent text={execution.originalRootCause} />
                   </DescriptionListDescription>
                 </DescriptionListGroup>
                 {execution.remediationDelta && (
                   <DescriptionListGroup>
                     <DescriptionListTerm>{t('Remediation delta')}</DescriptionListTerm>
                     <DescriptionListDescription>
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: renderMarkdown(execution.remediationDelta),
-                        }}
-                      />
+                      <MarkdownContent text={execution.remediationDelta} />
                     </DescriptionListDescription>
                   </DescriptionListGroup>
                 )}
@@ -136,12 +128,7 @@ export const ExecutionSummary: FC<ExecutionSummaryProps> = ({ execution }) => {
                             </Flex>
                           </FlexItem>
                           <FlexItem>
-                            <Content
-                              component={ContentVariants.p}
-                              dangerouslySetInnerHTML={{
-                                __html: renderMarkdown(action.description),
-                              }}
-                            />
+                            <MarkdownContent text={action.description} />
                           </FlexItem>
                           {action.error && (
                             <FlexItem>

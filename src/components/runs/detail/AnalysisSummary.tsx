@@ -18,7 +18,7 @@ import {
   SandboxView,
   TERMINAL_PHASES,
 } from '../../../models/agenticrun-views';
-import { renderMarkdown } from '../../../utils/markdown';
+import { MarkdownContent } from '../../MarkdownContent';
 import { SandboxLogViewer } from './SandboxLogViewer';
 
 interface AnalysisSummaryProps {
@@ -105,14 +105,8 @@ export const AnalysisSummary: FC<AnalysisSummaryProps> = ({
                 )}
               </Flex>
             </Content>
-            <Content
-              component={ContentVariants.p}
-              dangerouslySetInnerHTML={{ __html: renderMarkdown(rootCause.cause) }}
-            />
-            <Content
-              component={ContentVariants.p}
-              dangerouslySetInnerHTML={{ __html: renderMarkdown(rootCause.detail) }}
-            />
+            <MarkdownContent text={rootCause.cause} />
+            <MarkdownContent text={rootCause.detail} />
 
             {analysisSandbox && (
               <SandboxLogViewer
