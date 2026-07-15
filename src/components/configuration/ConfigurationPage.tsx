@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router';
 import {
   Breadcrumb,
   BreadcrumbItem,
+  Flex,
+  FlexItem,
   PageSection,
   Tab,
   Tabs,
@@ -15,6 +17,7 @@ import ApprovalPolicyTab from './ApprovalPolicyTab';
 import LLMProvidersTab from './LLMProvidersTab';
 import AgentsTab from './AgentsTab';
 import AgenticLayout from '../AgenticLayout';
+import PreviewBadge from '../PreviewBadge';
 import './configuration.css';
 
 const ConfigurationPage: React.FC = () => {
@@ -39,7 +42,14 @@ const ConfigurationPage: React.FC = () => {
         </Breadcrumb>
       </PageSection>
       <PageSection>
-        <Title headingLevel="h1">{t('Configuration')}</Title>
+        <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
+          <FlexItem>
+            <Title headingLevel="h1">{t('Configuration')}</Title>
+          </FlexItem>
+          <FlexItem>
+            <PreviewBadge />
+          </FlexItem>
+        </Flex>
       </PageSection>
       <PageSection>
         <Tabs

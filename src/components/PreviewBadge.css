@@ -1,0 +1,8 @@
+/* Match the standard OpenShift console Dev Preview badge style */
+.ols-plugin__preview-badge {
+  --pf-v6-c-label--BackgroundColor: var(--pf-t--global--color--status--danger--default);
+  --pf-v6-c-label--BorderRadius: var(--pf-t--global--border--radius--small);
+  --pf-v6-c-label--Color: var(--pf-t--color--white);
+
+  margin-top: var(--pf-t--global--spacer--100);
+}

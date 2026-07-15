@@ -28,6 +28,7 @@ import { LightspeedAgenticRunGVK } from '../../models/agenticrun';
 import type { AgenticRunView } from '../../models/agenticrun-views';
 import { TERMINAL_PHASES } from '../../models/agenticrun-views';
 import AgenticLayout from '../AgenticLayout';
+import PreviewBadge from '../PreviewBadge';
 import { ApprovalGatedButton } from '../ApprovalGatedButton';
 import { ConfirmationModal } from '../ConfirmationModal';
 import StatusGuard from '../StatusGuard';
@@ -285,12 +286,18 @@ const RunDetailPage: FC = () => {
           <PageSection hasBodyWrapper={false}>
             <Content>
               <Flex direction={{ default: 'column' }} gap={{ default: 'gapSm' }}>
-                <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                <Flex
+                  spaceItems={{ default: 'spaceItemsSm' }}
+                  alignItems={{ default: 'alignItemsCenter' }}
+                >
                   <FlexItem>
                     <ResourceIcon groupVersionKind={LightspeedAgenticRunGVK} />
                   </FlexItem>
                   <FlexItem>
                     <Title headingLevel="h1">{run?.metadata?.name}</Title>
+                  </FlexItem>
+                  <FlexItem>
+                    <PreviewBadge />
                   </FlexItem>
                 </Flex>
                 {view && (

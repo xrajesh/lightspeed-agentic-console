@@ -26,6 +26,7 @@ import {
   LightspeedAgenticRunGVK,
 } from '../../models/agenticrun';
 import AgenticLayout from '../AgenticLayout';
+import PreviewBadge from '../PreviewBadge';
 
 const columns: TableColumn<AgenticRunK8s>[] = [
   { id: 'name', sort: 'metadata.name', title: 'Name' },
@@ -132,7 +133,7 @@ const RunListPage: React.FC = () => {
 
   return (
     <AgenticLayout>
-      <ListPageHeader title={t('AI Hub')}>
+      <ListPageHeader badge={<PreviewBadge />} title={t('AI Hub')}>
         <Button
           variant="plain"
           aria-label={t('Configuration')}
