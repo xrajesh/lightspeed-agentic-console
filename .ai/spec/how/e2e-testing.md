@@ -6,8 +6,8 @@
 Pipeline that runs as a Konflux integration test on every PR. It checks out the PR commit
 and runs three checks sequentially:
 
-1. `npm run lint` — ESLint, Prettier, and Stylelint
-2. `npm run test` — unit tests
+1. `npm run lint` — ESLint and Stylelint
+2. `npm run test-unit` — unit tests
 3. `npm run i18n` — verifies locale files are up to date
 
 The pipeline uses the Playwright base image (`mcr.microsoft.com/playwright`) for its Node.js

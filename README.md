@@ -68,14 +68,14 @@ Then use `(Ctrl+Shift+P) => Remote Containers: Open Folder in Container...` and 
 ### Running tests
 
 ```sh
-npm test              # unit tests (vitest)
-npm run test:watch    # watch mode
+npm run test-unit     # unit tests (vitest)
+npm run test-watch    # watch mode
 ```
 
 ### Linting
 
 ```sh
-npm run lint
+npm run lint-fix
 ```
 
 Stylelint enforces rules to prevent breaking console styles:
