@@ -194,6 +194,8 @@ See [Console Plugin SDK README](https://github.com/openshift/console/tree/master
 - Prefer named exports for components
 - Use `React.FC` or explicit return types
 - CSS-in-files (not CSS-in-JS)
+- Use [sentence case](https://www.patternfly.org/ux-writing/capitalization/) for all titles,
+  headings, and UI text (capitalize only the first word and proper nouns)
 
 ## Testing Strategy
 
