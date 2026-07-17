@@ -15,8 +15,17 @@ import {
   useListPageFilter,
   VirtualizedTable,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { Button, EmptyState, EmptyStateBody, Label } from '@patternfly/react-core';
+import {
+  Button,
+  Content,
+  ContentVariants,
+  EmptyState,
+  EmptyStateBody,
+  Icon,
+  Label,
+} from '@patternfly/react-core';
 import { CogIcon, SearchIcon } from '@patternfly/react-icons';
+import RhUiInformationFillIcon from '@patternfly/react-icons/dist/esm/icons/rh-ui-information-fill-icon';
 
 import {
   AgenticRunCondition,
@@ -133,11 +142,29 @@ const RunListPage: React.FC = () => {
 
   return (
     <AgenticLayout>
-      <ListPageHeader badge={<PreviewBadge />} title={t('AI Hub')}>
+      <ListPageHeader
+        badge={<PreviewBadge />}
+        helpText={
+          <>
+            <Content component={ContentVariants.p}>
+              {t(
+                'Speed up incident response with automated investigations, evidence collection, and remediation.',
+              )}
+            </Content>
+            <Content component={ContentVariants.small}>
+              <Icon status="info">
+                <RhUiInformationFillIcon />
+              </Icon>{' '}
+              {t('Always review AI-generated content prior to use.')}
+            </Content>
+          </>
+        }
+        title={t('Agentic runs')}
+      >
         <Button
-          variant="plain"
           aria-label={t('Configuration')}
           onClick={() => navigate('/lightspeed/configuration')}
+          variant="plain"
         >
           <CogIcon />
         </Button>
