@@ -19,8 +19,12 @@ The core domain of the plugin: displaying and managing runs through a multi-stag
 ### Run List
 
 7. The list page MUST watch all `AgenticRun` CRs across namespaces and display them in a virtualized table.
-8. The list MUST support filtering by phase and text search.
-9. Each row MUST show: name (linked to detail), phase label, request preview (truncated to 80 chars), namespace, and age.
+8. The list MUST support filtering by phase and text search. [PLANNED: OLS-3578] A trigger domain filter is shown alongside the phase filter, populated dynamically from distinct `agentic.openshift.io/source` label values across watched AgenticRun CRs.
+9. Each row MUST show: name (linked to detail), phase label, request preview (truncated to 80 chars), namespace, [PLANNED: OLS-3578] trigger domain, [PLANNED: OLS-3578] tokens consumed, and age.
+9a. [PLANNED: OLS-3578] The trigger domain column reads from the `agentic.openshift.io/source` label on the AgenticRun CR. Shows "—" when the label is absent. Depends on [OLS-3299] for backend population of the label.
+9b. [PLANNED: OLS-3578] The tokens consumed column displays an aggregate token count. The source field does not yet exist on the CRD — the backend must add either a summary field on `AgenticRunStatus` (preferred, avoids per-row result CR fetches on the list page) or token count fields on the individual result CRs. Shows "—" during analyzing or when the data is unavailable.
+9c. [PLANNED: OLS-3578] Each row has a kebab menu with a "Delete" action. Delete calls `k8sDelete` on the AgenticRun CR and is gated by RBAC — the plugin performs a `useAccessReview` check for `delete` verb on `agenticruns` in API group `agentic.openshift.io`. If the user lacks permission, the action is disabled.
+9d. [PLANNED: OLS-3578] The list page title is "Agentic runs". Below the title: description "Speed up incident response with targeted agent investigations, automated evidence collection, and actionable remediation proposals." Advisory text: "Always review AI-generated content prior to use."
 
 ### Run Detail — Layout
 
