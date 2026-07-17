@@ -138,10 +138,28 @@ const RunListPage: React.FC = () => {
   const columns: TableColumn<AgenticRunK8s>[] = React.useMemo(
     () => [
       { id: 'name', sort: 'metadata.name', title: t('Name') },
-      { id: 'phase', title: t('Phase') },
+      {
+        id: 'phase',
+        sort: (data, direction) =>
+          [...data].sort((a, b) => {
+            const pa = derivePhaseFromConditions(a.status?.conditions as AgenticRunCondition[]);
+            const pb = derivePhaseFromConditions(b.status?.conditions as AgenticRunCondition[]);
+            const cmp = pa.localeCompare(pb);
+            return direction === 'desc' ? -cmp : cmp;
+          }),
+        title: t('Phase'),
+      },
       { id: 'request', title: t('Request') },
       { id: 'namespace', sort: 'metadata.namespace', title: t('Namespace') },
-      { id: 'trigger-domain', title: t('Trigger domain') },
+      {
+        id: 'trigger-domain',
+        sort: (data, direction) =>
+          [...data].sort((a, b) => {
+            const cmp = getTriggerDomain(a).localeCompare(getTriggerDomain(b));
+            return direction === 'desc' ? -cmp : cmp;
+          }),
+        title: t('Trigger domain'),
+      },
       { id: 'age', sort: 'metadata.creationTimestamp', title: t('Age') },
     ],
     [t],
