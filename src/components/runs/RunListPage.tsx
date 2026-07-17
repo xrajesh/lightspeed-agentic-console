@@ -34,41 +34,35 @@ import {
   getPhaseDisplay,
   LightspeedAgenticRunGVK,
 } from '../../models/agenticrun';
+import { RUN_LABEL_SOURCE } from '../../constants';
 import AgenticLayout from '../AgenticLayout';
 import PreviewBadge from '../PreviewBadge';
 
-const columns: TableColumn<AgenticRunK8s>[] = [
-  { id: 'name', sort: 'metadata.name', title: 'Name' },
-  { id: 'phase', title: 'Phase' },
-  { id: 'request', title: 'Request' },
-  { id: 'namespace', sort: 'metadata.namespace', title: 'Namespace' },
-  { id: 'age', sort: 'metadata.creationTimestamp', title: 'Age' },
-];
+const getTriggerDomain = (obj: AgenticRunK8s): string =>
+  obj.metadata?.labels?.[RUN_LABEL_SOURCE] || '';
 
-const filters: RowFilter<AgenticRunK8s>[] = [
-  {
-    filter: (filterValue, obj) => {
-      const selected = filterValue?.selected || [];
-      const phase = derivePhaseFromConditions(obj?.status?.conditions as AgenticRunCondition[]);
-      return !selected.length || selected.includes(phase);
-    },
-    filterGroupName: 'Phase',
-    items: [
-      { id: 'Pending', title: 'Pending' },
-      { id: 'Analyzing', title: 'Analyzing' },
-      { id: 'Executing', title: 'Executing' },
-      { id: 'Verifying', title: 'Verifying' },
-      { id: 'Escalating', title: 'Escalating' },
-      { id: 'Completed', title: 'Completed' },
-      { id: 'Failed', title: 'Failed' },
-      { id: 'Denied', title: 'Denied' },
-      { id: 'Escalated', title: 'Escalated' },
-      { id: 'EmergencyStopped', title: 'Emergency Stopped' },
-    ],
-    reducer: (obj) => derivePhaseFromConditions(obj?.status?.conditions as AgenticRunCondition[]),
-    type: 'run-phase',
+const phaseFilter: RowFilter<AgenticRunK8s> = {
+  filter: (filterValue, obj) => {
+    const selected = filterValue?.selected || [];
+    const phase = derivePhaseFromConditions(obj?.status?.conditions as AgenticRunCondition[]);
+    return !selected.length || selected.includes(phase);
   },
-];
+  filterGroupName: 'Phase',
+  items: [
+    { id: 'Pending', title: 'Pending' },
+    { id: 'Analyzing', title: 'Analyzing' },
+    { id: 'Executing', title: 'Executing' },
+    { id: 'Verifying', title: 'Verifying' },
+    { id: 'Escalating', title: 'Escalating' },
+    { id: 'Completed', title: 'Completed' },
+    { id: 'Failed', title: 'Failed' },
+    { id: 'Denied', title: 'Denied' },
+    { id: 'Escalated', title: 'Escalated' },
+    { id: 'EmergencyStopped', title: 'Emergency Stopped' },
+  ],
+  reducer: (obj) => derivePhaseFromConditions(obj?.status?.conditions as AgenticRunCondition[]),
+  type: 'run-phase',
+};
 
 const RunRow: React.FC<RowProps<AgenticRunK8s>> = ({ activeColumnIDs, obj }) => {
   const phase = getPhaseDisplay(
@@ -98,6 +92,9 @@ const RunRow: React.FC<RowProps<AgenticRunK8s>> = ({ activeColumnIDs, obj }) => 
       </TableData>
       <TableData activeColumnIDs={activeColumnIDs} id="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      </TableData>
+      <TableData activeColumnIDs={activeColumnIDs} id="trigger-domain">
+        {getTriggerDomain(obj) || '-'}
       </TableData>
       <TableData activeColumnIDs={activeColumnIDs} id="age">
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
@@ -137,6 +134,37 @@ const RunListPage: React.FC = () => {
     isList: true,
     namespaced: true,
   });
+
+  const columns: TableColumn<AgenticRunK8s>[] = React.useMemo(
+    () => [
+      { id: 'name', sort: 'metadata.name', title: t('Name') },
+      { id: 'phase', title: t('Phase') },
+      { id: 'request', title: t('Request') },
+      { id: 'namespace', sort: 'metadata.namespace', title: t('Namespace') },
+      { id: 'trigger-domain', title: t('Trigger domain') },
+      { id: 'age', sort: 'metadata.creationTimestamp', title: t('Age') },
+    ],
+    [t],
+  );
+
+  const filters: RowFilter<AgenticRunK8s>[] = React.useMemo(() => {
+    const domainItems = Array.from(new Set((runs || []).map(getTriggerDomain).filter(Boolean)))
+      .sort()
+      .map((domain) => ({ id: domain, title: domain }));
+
+    const triggerDomainFilter: RowFilter<AgenticRunK8s> = {
+      filter: (filterValue, obj) => {
+        const selected = filterValue?.selected || [];
+        return !selected.length || selected.includes(getTriggerDomain(obj));
+      },
+      filterGroupName: t('Trigger domain'),
+      items: domainItems,
+      reducer: getTriggerDomain,
+      type: 'trigger-domain',
+    };
+
+    return [phaseFilter, triggerDomainFilter];
+  }, [runs, t]);
 
   const [data, filteredData, onFilterChange] = useListPageFilter(runs, filters);
 
