@@ -1,5 +1,7 @@
+.claude/settings.local.json
 .devcontainer/dev.env
 .DS_Store
+CLAUDE.local.md
 dist/
 gui_test_screenshots/
 integration-tests/.auth/
