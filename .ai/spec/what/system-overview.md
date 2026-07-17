@@ -1,6 +1,6 @@
 # System Overview
 
-The OpenShift Lightspeed Agentic Console Plugin is a dynamic plugin that loads into the OpenShift Console at runtime via webpack module federation. It provides the "AI Hub" — a UI for cluster administrators to view, approve, and monitor AI-driven runs that diagnose and remediate cluster issues. The plugin is read-only with respect to cluster workloads; it only reads `AgenticRun` CRs and patches `AgenticRunApproval` CRs to express human decisions.
+The OpenShift Lightspeed Agentic Console Plugin is a dynamic plugin that loads into the OpenShift Console at runtime via webpack module federation. It provides the "AI Hub" — a UI for cluster administrators to view, approve, and monitor AI-driven runs that diagnose and remediate cluster issues. It reads `AgenticRun` CRs, patches `AgenticRunApproval` CRs to express human decisions, and [PLANNED: OLS-3578] deletes `AgenticRun` CRs via an RBAC-gated action.
 
 ## Behavioral Rules
 
