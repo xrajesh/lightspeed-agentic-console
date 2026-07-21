@@ -147,7 +147,7 @@ const RunListPage: React.FC = () => {
             const cmp = pa.localeCompare(pb);
             return direction === 'desc' ? -cmp : cmp;
           }),
-        title: t('Phase'),
+        title: t('Status'),
       },
       { id: 'request', title: t('Request') },
       { id: 'namespace', sort: 'metadata.namespace', title: t('Namespace') },
@@ -160,7 +160,7 @@ const RunListPage: React.FC = () => {
           }),
         title: t('Trigger domain'),
       },
-      { id: 'age', sort: 'metadata.creationTimestamp', title: t('Age') },
+      { id: 'age', sort: 'metadata.creationTimestamp', title: t('Created') },
     ],
     [t],
   );

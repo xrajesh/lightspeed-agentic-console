@@ -88,7 +88,7 @@ const LLMProvidersTab: React.FC = () => {
           <Tr>
             <Th>{t('Name')}</Th>
             <Th>{t('Type')}</Th>
-            <Th>{t('Age')}</Th>
+            <Th>{t('Created')}</Th>
             <Th />
           </Tr>
         </Thead>
