@@ -7,7 +7,7 @@ The Configuration page (`/lightspeed/configuration`) provides cluster-wide setti
 ### Navigation
 
 1. The Configuration page MUST be reachable from the run list page via a gear icon button.
-2. A breadcrumb MUST link back to the AI Hub (run list).
+2. A breadcrumb MUST link back to the agentic runs list.
 
 ### Approval Policy Tab
 

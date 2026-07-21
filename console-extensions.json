@@ -34,7 +34,7 @@
     "type": "console.navigation/section",
     "properties": {
       "id": "lightspeed-agentic-runs",
-      "name": "%plugin__lightspeed-agentic-console-plugin~AI Hub%",
+      "name": "%plugin__lightspeed-agentic-console-plugin~Agentic Runs%",
       "perspective": "admin",
       "insertAfter": "compute"
     }

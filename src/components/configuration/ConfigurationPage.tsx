@@ -36,7 +36,7 @@ const ConfigurationPage: React.FC = () => {
               navigate('/lightspeed/runs');
             }}
           >
-            {t('AI Hub')}
+            {t('Agentic runs')}
           </BreadcrumbItem>
           <BreadcrumbItem isActive>{t('Configuration')}</BreadcrumbItem>
         </Breadcrumb>

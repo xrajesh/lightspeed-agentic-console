@@ -1,6 +1,6 @@
 # OpenShift Lightspeed Agentic Console Plugin — Specifications
 
-An OpenShift Console dynamic plugin that provides the "AI Hub" UI for managing AI-driven cluster operation runs. Users view, approve/deny, and monitor runs through a multi-stage workflow (Analysis, Execution, Verification, Escalation), configure approval policies, manage LLM providers, and create agent tiers.
+An OpenShift Console dynamic plugin for managing AI-driven cluster operation runs. Users view, approve/deny, and monitor runs through a multi-stage workflow (Analysis, Execution, Verification, Escalation), configure approval policies, manage LLM providers, and create agent tiers.
 
 ## Structure
 

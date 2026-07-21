@@ -1,8 +1,8 @@
 # OpenShift Lightspeed Agentic Console Plugin
 
-An OpenShift Console dynamic plugin that provides the **AI Hub** — a UI for managing AI-driven remediation proposals on OpenShift clusters. It is part of the [OpenShift Lightspeed](https://github.com/openshift/lightspeed-service) ecosystem.
+An OpenShift Console dynamic plugin for managing AI-driven remediation proposals on OpenShift clusters. It is part of the [OpenShift Lightspeed](https://github.com/openshift/lightspeed-service) ecosystem.
 
-The plugin adds an **AI Hub** navigation item under the Administration section in the admin perspective with three pages:
+The plugin adds a navigation section to the admin perspective with the following pages:
 
 - **Proposal List** (`/lightspeed/proposals`) — Filterable table of all `Proposal` custom resources across namespaces
 - **Proposal Detail** (`/lightspeed/proposals/:ns/:name`) — Multi-tab workflow view with approval controls, live sandbox log streaming, and dynamic adapter components

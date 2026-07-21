@@ -1,6 +1,6 @@
 # System Overview
 
-The OpenShift Lightspeed Agentic Console Plugin is a dynamic plugin that loads into the OpenShift Console at runtime via webpack module federation. It provides the "AI Hub" — a UI for cluster administrators to view, approve, and monitor AI-driven runs that diagnose and remediate cluster issues. It reads `AgenticRun` CRs, patches `AgenticRunApproval` CRs to express human decisions, and [PLANNED: OLS-3578] deletes `AgenticRun` CRs via an RBAC-gated action.
+The OpenShift Lightspeed Agentic Console Plugin is a dynamic plugin that loads into the OpenShift Console at runtime via webpack module federation. It provides a UI for cluster administrators to view, approve, and monitor AI-driven runs that diagnose and remediate cluster issues. It reads `AgenticRun` CRs, patches `AgenticRunApproval` CRs to express human decisions, and [PLANNED: OLS-3578] deletes `AgenticRun` CRs via an RBAC-gated action.
 
 ## Behavioral Rules
 
@@ -8,7 +8,7 @@ The OpenShift Lightspeed Agentic Console Plugin is a dynamic plugin that loads i
 
 1. The plugin MUST load into OpenShift Console via the ConsolePlugin CRD and webpack module federation. It does not run standalone.
 2. The plugin MUST register four routes: `/lightspeed/runs` (list), `/lightspeed/runs/:ns/:name` (detail), `/lightspeed/configuration` (settings), and `/lightspeed/audit` (audit & logs).
-3. The plugin MUST add an "AI Hub" navigation section after the Compute section of the admin perspective, containing two subnav items: "Agentic runs" (`/lightspeed/runs`) and "Audit & logs" (`/lightspeed/audit`). The configuration page remains a separate route, not a subnav item.
+3. The plugin MUST add an "Agentic Runs" navigation section after the Compute section of the admin perspective, containing two subnav items: "Agentic runs" (`/lightspeed/runs`) and "Audit & logs" (`/lightspeed/audit`). The configuration page remains a separate route, not a subnav item.
 4. All user-facing strings MUST use the `plugin__lightspeed-agentic-console-plugin` i18n namespace.
 5. All CSS classes MUST be prefixed with `ols-plugin__` to avoid style conflicts with the host console.
 

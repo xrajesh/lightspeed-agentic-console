@@ -1,6 +1,6 @@
 # Architecture
 
-The OpenShift Lightspeed Agentic Console Plugin is a React-based dynamic plugin that extends the OpenShift Console with an "AI Hub" for managing AI-driven cluster operation proposals.
+The OpenShift Lightspeed Agentic Console Plugin is a React-based dynamic plugin that extends the OpenShift Console with a UI for managing AI-driven cluster operation proposals.
 
 ## System Context
 
