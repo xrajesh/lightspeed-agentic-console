@@ -7,7 +7,6 @@ import {
   EmptyStateBody,
   Flex,
   FlexItem,
-  Label,
   Skeleton,
 } from '@patternfly/react-core';
 import type { FC } from 'react';
@@ -87,22 +86,6 @@ export const AnalysisSummary: FC<AnalysisSummaryProps> = ({
             <Content component={ContentVariants.small}>
               <Flex>
                 <FlexItem>{t('DETECTED ROOT CAUSE')}</FlexItem>
-                {rootCause.confidence && (
-                  <FlexItem>
-                    <Label
-                      variant="outline"
-                      color={
-                        rootCause.confidence.toLowerCase() === 'high'
-                          ? 'green'
-                          : rootCause.confidence.toLowerCase() === 'low'
-                            ? 'red'
-                            : 'orange'
-                      }
-                    >
-                      {t('Confidence')}: {rootCause.confidence}
-                    </Label>
-                  </FlexItem>
-                )}
               </Flex>
             </Content>
             <MarkdownContent text={rootCause.cause} />

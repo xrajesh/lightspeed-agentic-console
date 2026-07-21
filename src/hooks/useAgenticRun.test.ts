@@ -153,7 +153,6 @@ describe('mapRootCause', () => {
     expect(result).toEqual({
       cause: 'Memory limit too low',
       detail: 'Pod OOMKilled',
-      confidence: 'High',
     });
   });
 });
