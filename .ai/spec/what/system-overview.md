@@ -43,4 +43,5 @@ The OpenShift Lightspeed Agentic Console Plugin is a dynamic plugin that loads i
 | Ticket | Summary |
 |---|---|
 | OLS-3578 | Run list page enhancements: nav restructure, trigger domain column/filter, tokens consumed column, kebab delete, page title/description |
+| OLS-3688 | Stage approval gates: extend approve/deny buttons to Analysis, Verification, and Escalation stages (currently only Execution has them) |
 | — | Auto-generate CRD types from OpenAPI schema (noted as TODO in `src/models/proposal.ts`) |
