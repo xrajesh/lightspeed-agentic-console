@@ -97,7 +97,7 @@ const AgentsTab: React.FC = () => {
             <Th>{t('LLM Provider')}</Th>
             <Th>{t('Model')}</Th>
             <Th>{t('Max Turns')}</Th>
-            <Th>{t('Age')}</Th>
+            <Th>{t('Created')}</Th>
             <Th />
           </Tr>
         </Thead>

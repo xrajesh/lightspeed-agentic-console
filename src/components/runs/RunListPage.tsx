@@ -84,17 +84,17 @@ const RunRow: React.FC<RowProps<AgenticRunK8s>> = ({ activeColumnIDs, obj }) => 
           />
         </Link>
       </TableData>
-      <TableData activeColumnIDs={activeColumnIDs} id="phase">
-        <Label color={phase.color}>{phase.label}</Label>
-      </TableData>
-      <TableData activeColumnIDs={activeColumnIDs} id="request">
-        {requestPreview}
-      </TableData>
       <TableData activeColumnIDs={activeColumnIDs} id="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData activeColumnIDs={activeColumnIDs} id="trigger-domain">
         {getTriggerDomain(obj) || '-'}
+      </TableData>
+      <TableData activeColumnIDs={activeColumnIDs} id="phase">
+        <Label color={phase.color}>{phase.label}</Label>
+      </TableData>
+      <TableData activeColumnIDs={activeColumnIDs} id="request">
+        {requestPreview}
       </TableData>
       <TableData activeColumnIDs={activeColumnIDs} id="age">
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
@@ -138,11 +138,29 @@ const RunListPage: React.FC = () => {
   const columns: TableColumn<AgenticRunK8s>[] = React.useMemo(
     () => [
       { id: 'name', sort: 'metadata.name', title: t('Name') },
-      { id: 'phase', title: t('Phase') },
-      { id: 'request', title: t('Request') },
       { id: 'namespace', sort: 'metadata.namespace', title: t('Namespace') },
-      { id: 'trigger-domain', title: t('Trigger domain') },
-      { id: 'age', sort: 'metadata.creationTimestamp', title: t('Age') },
+      {
+        id: 'trigger-domain',
+        sort: (data, direction) =>
+          [...data].sort((a, b) => {
+            const cmp = getTriggerDomain(a).localeCompare(getTriggerDomain(b));
+            return direction === 'desc' ? -cmp : cmp;
+          }),
+        title: t('Trigger domain'),
+      },
+      {
+        id: 'phase',
+        sort: (data, direction) =>
+          [...data].sort((a, b) => {
+            const pa = derivePhaseFromConditions(a.status?.conditions as AgenticRunCondition[]);
+            const pb = derivePhaseFromConditions(b.status?.conditions as AgenticRunCondition[]);
+            const cmp = pa.localeCompare(pb);
+            return direction === 'desc' ? -cmp : cmp;
+          }),
+        title: t('Status'),
+      },
+      { id: 'request', title: t('Request') },
+      { id: 'age', sort: 'metadata.creationTimestamp', title: t('Created') },
     ],
     [t],
   );
