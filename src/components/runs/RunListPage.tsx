@@ -5,6 +5,7 @@ import {
   ListPageBody,
   ListPageFilter,
   ListPageHeader,
+  ResourceIcon,
   ResourceLink,
   RowFilter,
   RowProps,
@@ -75,14 +76,8 @@ const RunRow: React.FC<RowProps<AgenticRunK8s>> = ({ activeColumnIDs, obj }) => 
   return (
     <>
       <TableData activeColumnIDs={activeColumnIDs} id="name">
-        <Link to={detailPath}>
-          <ResourceLink
-            groupVersionKind={LightspeedAgenticRunGVK}
-            linkTo={false}
-            name={obj.metadata.name}
-            namespace={obj.metadata.namespace}
-          />
-        </Link>
+        <ResourceIcon groupVersionKind={LightspeedAgenticRunGVK} />{' '}
+        <Link to={detailPath}>{obj.metadata.name}</Link>
       </TableData>
       <TableData activeColumnIDs={activeColumnIDs} id="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
