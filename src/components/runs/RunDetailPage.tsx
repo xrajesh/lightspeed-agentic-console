@@ -278,7 +278,7 @@ const RunDetailPage: FC = () => {
                   navigate('/lightspeed/runs');
                 }}
               >
-                {t('AI Hub')}
+                {t('Agentic runs')}
               </BreadcrumbItem>
               <BreadcrumbItem isActive>{run?.metadata?.name ?? name}</BreadcrumbItem>
             </Breadcrumb>

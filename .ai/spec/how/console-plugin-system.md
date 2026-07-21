@@ -17,7 +17,7 @@
 2. Console loads webpack remote entry from plugin's HTTP server (port 9001 dev, port 80 prod)
 3. Console resolves $codeRef references in console-extensions.json against exposedModules
 4. Route extensions register React components at specified paths
-5. Navigation extension adds "AI Hub" link under Administration section
+5. Navigation extension adds "Agentic Runs" section after Compute section
 ```
 
 ### Extension Registration

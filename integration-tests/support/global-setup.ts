@@ -67,7 +67,7 @@ const globalSetup = async (config: FullConfig) => {
   const LOAD_MAX_POLLS = 36;
   const LOAD_POLL_INTERVAL = 10_000;
   const LOAD_REQUIRED_POLLS = 3;
-  const pluginHeading = page.getByRole('heading', { name: 'AI Hub' });
+  const pluginHeading = page.getByRole('heading', { name: 'Agentic Runs' });
   let stableCount = 0;
   for (let i = 0; i < LOAD_MAX_POLLS; i++) {
     if (await pluginHeading.isVisible({ timeout: 1_000 }).catch(() => false)) {
