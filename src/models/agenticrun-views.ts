@@ -13,7 +13,6 @@ export const TERMINAL_PHASES: AgenticRunPhase[] = [
 export interface RootCauseView {
   cause: string;
   detail: string;
-  confidence?: string;
 }
 
 export interface VerificationStepView {

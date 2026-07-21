@@ -52,7 +52,6 @@ export const mapRootCause = (
   return {
     cause: diagnosis.rootCause,
     detail: diagnosis.summary,
-    confidence: diagnosis.confidence,
   };
 };
 
