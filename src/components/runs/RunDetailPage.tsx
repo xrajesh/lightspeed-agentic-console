@@ -396,7 +396,7 @@ const RunDetailPage: FC = () => {
                 {resultsLoaded && view && view.phase === 'Proposed' && view.options.length > 0 && (
                   <FlexItem>
                     <Label variant="outline">
-                      {t('{{count}} remediation options', { count: view.options.length })}
+                      {t('{{count}} remediation option', { count: view.options.length })}
                     </Label>
                   </FlexItem>
                 )}
