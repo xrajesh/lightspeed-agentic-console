@@ -14,7 +14,8 @@ interface SandboxLogStreamResult {
   error?: string;
 }
 
-const isAuditLine = (line: string) => line.includes('"audit"') || line.includes('audit.agent');
+const isHealthCheckLine = (line: string) =>
+  line.includes('GET /ready') || line.includes('GET /health');
 
 const appendLines = (prev: string[], newLines: string[]): string[] => {
   const next = [...prev, ...newLines];
@@ -26,7 +27,7 @@ export const useSandboxLogStream = (
   active?: boolean,
   streaming?: boolean,
   sinceTime?: string,
-  filterAudit = true,
+  filterHealthChecks = true,
 ): SandboxLogStreamResult => {
   const [rawLines, setRawLines] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,8 +36,8 @@ export const useSandboxLogStream = (
   const abortRef = useRef<AbortController | null>(null);
 
   const lines = useMemo(
-    () => (filterAudit ? rawLines.filter(isAuditLine) : rawLines),
-    [rawLines, filterAudit],
+    () => (filterHealthChecks ? rawLines.filter((line) => !isHealthCheckLine(line)) : rawLines),
+    [rawLines, filterHealthChecks],
   );
 
   const podName = sandbox?.podName;

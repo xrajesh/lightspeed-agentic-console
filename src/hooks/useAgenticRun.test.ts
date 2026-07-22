@@ -22,7 +22,7 @@ const makeOption = (overrides?: Partial<RemediationOption>): RemediationOption =
     confidence: 'High',
     rootCause: 'Memory limit too low',
   },
-  proposal: {
+  remediationPlan: {
     description: 'Increase memory limit',
     actions: [{ type: 'patch', description: 'Patch deployment' }],
     risk: 'Low',
@@ -194,8 +194,8 @@ describe('mapOption', () => {
     });
   });
 
-  test('uses summary as description when proposal is absent', () => {
-    const opt = makeOption({ proposal: undefined, summary: 'Just a summary' });
+  test('uses summary as description when remediationPlan is absent', () => {
+    const opt = makeOption({ remediationPlan: undefined, summary: 'Just a summary' });
     const result = mapOption(opt, 2);
     expect(result.index).toBe(2);
     expect(result.description).toBe('Just a summary');
@@ -203,8 +203,8 @@ describe('mapOption', () => {
     expect(result.actions).toBeUndefined();
   });
 
-  test('falls back to empty string when both proposal and summary are absent', () => {
-    const opt = makeOption({ proposal: undefined, summary: undefined });
+  test('falls back to empty string when both remediationPlan and summary are absent', () => {
+    const opt = makeOption({ remediationPlan: undefined, summary: undefined });
     const result = mapOption(opt, 0);
     expect(result.description).toBe('');
   });

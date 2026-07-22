@@ -20,6 +20,7 @@ import {
   Skeleton,
   Title,
 } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import type { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
@@ -27,10 +28,12 @@ import { useAgenticRun } from '../../hooks/useAgenticRun';
 import { LightspeedAgenticRunGVK } from '../../models/agenticrun';
 import type { AgenticRunView } from '../../models/agenticrun-views';
 import { TERMINAL_PHASES } from '../../models/agenticrun-views';
+import { getReversibilityDescription, getReversibilityText } from '../../utils/agenticrun-utils';
 import AgenticLayout from '../AgenticLayout';
-import PreviewBadge from '../PreviewBadge';
 import { ApprovalGatedButton } from '../ApprovalGatedButton';
 import { ConfirmationModal } from '../ConfirmationModal';
+import { MarkdownContent } from '../MarkdownContent';
+import PreviewBadge from '../PreviewBadge';
 import StatusGuard from '../StatusGuard';
 import { AnalysisSummary } from './detail/AnalysisSummary';
 import { ExecutionSummary } from './detail/ExecutionSummary';
@@ -98,6 +101,9 @@ const RunDetailPage: FC = () => {
     const success = await denyExecution();
     if (success) setIsDenyModalOpen(false);
   }, [denyExecution]);
+
+  const optionData =
+    executeOptionIndex !== null ? (view?.options[executeOptionIndex] ?? undefined) : undefined;
 
   const renderRemediationHub = (v: AgenticRunView): ReactNode => {
     switch (v.phase) {
@@ -178,9 +184,8 @@ const RunDetailPage: FC = () => {
                     mutationInProgress={mutationInProgress}
                     onClick={() => setIsDenyModalOpen(true)}
                     variant="secondary"
-                    isDanger
                   >
-                    {t('Deny')}
+                    {t('Deny Run')}
                   </ApprovalGatedButton>
                 </FlexItem>
               </Flex>
@@ -340,23 +345,33 @@ const RunDetailPage: FC = () => {
                 )}
               </Flex>
             </Content>
-          </PageSection>
 
-          {view?.failureReason && (
-            <PageSection hasBodyWrapper={false}>
-              <Alert variant="danger" isInline title={view.failureReason} />
-            </PageSection>
-          )}
+            {view?.failureReason && <Alert variant="danger" isInline title={view.failureReason} />}
 
-          {resultsError && (
-            <PageSection hasBodyWrapper={false}>
+            {resultsError && (
               <Alert variant="warning" isInline title={t('Unable to load analysis results.')} />
-            </PageSection>
-          )}
+            )}
+          </PageSection>
 
           <Divider />
 
           <PageSection hasBodyWrapper={false}>
+            <Title headingLevel="h3">{t('Agentic run details')}</Title>
+
+            <small>
+              <Flex spaceItems={{ default: 'spaceItemsXs' }}>
+                <FlexItem>
+                  <InfoCircleIcon color="var(--pf-t--global--icon--color--status--info--default)" />
+                </FlexItem>
+                <FlexItem>
+                  {t(
+                    'The autonomous features of OpenShift Lightspeed use AI technology to generate output.',
+                  )}
+                  {t('Always review AI-generated content prior to use.')}
+                </FlexItem>
+              </Flex>
+            </small>
+
             <Title headingLevel="h4">{t('Root cause analysis (RCA)')}</Title>
             {!resultsLoaded ? (
               <Skeleton screenreaderText={t('Loading root cause analysis')} />
@@ -368,11 +383,7 @@ const RunDetailPage: FC = () => {
                 analysisStartedAt={view.analysisStartedAt}
               />
             ) : null}
-          </PageSection>
 
-          <Divider />
-
-          <PageSection hasBodyWrapper={false}>
             <Flex
               spaceItems={{ default: 'spaceItemsXs' }}
               direction={{ default: 'column' }}
@@ -404,17 +415,14 @@ const RunDetailPage: FC = () => {
             ) : view ? (
               renderRemediationHub(view)
             ) : null}
-          </PageSection>
 
-          {resultsLoaded && view && view.timeline.length > 0 && (
-            <>
-              <Divider />
-              <PageSection hasBodyWrapper={false}>
+            {resultsLoaded && view && view.timeline.length > 0 && (
+              <>
                 <Title headingLevel="h4">{t('Timeline')}</Title>
                 <RunTimeline events={view.timeline} />
-              </PageSection>
-            </>
-          )}
+              </>
+            )}
+          </PageSection>
         </PageGroup>
       </StatusGuard>
 
@@ -424,12 +432,51 @@ const RunDetailPage: FC = () => {
           setExecuteOptionIndex(null);
           clearMutationError();
         }}
-        title={t('Execute remediation')}
-        body={t(
-          'Are you sure you want to approve and execute the selected remediation? The agent will apply changes to your cluster.',
-        )}
+        title={t('Execute remediation?')}
+        body={
+          <Flex direction={{ default: 'column' }}>
+            <FlexItem>
+              {t("You're about to run the automated script for Option {{ selectedOptionIndex }}", {
+                selectedOptionIndex: executeOptionIndex !== null ? executeOptionIndex + 1 : 0,
+              })}
+              :{' '}
+              <strong>
+                <MarkdownContent inline text={optionData?.title ?? ''} />
+              </strong>
+            </FlexItem>
+            {optionData?.reversibility && optionData.reversibility !== 'Reversible' && (
+              <FlexItem>
+                <Alert
+                  variant="warning"
+                  title={t('This action is {{ reversibility }}', {
+                    reversibility: getReversibilityText(optionData?.reversibility ?? '', t),
+                  })}
+                >
+                  <p>{getReversibilityDescription(optionData?.reversibility ?? '', t)}</p>
+                </Alert>
+              </FlexItem>
+            )}
+            <FlexItem>
+              <Content component={ContentVariants.small}>
+                {t(
+                  'OpenShift Lightspeed uses AI technology to help generate this remediation plan.',
+                )}
+              </Content>
+            </FlexItem>
+            <FlexItem>
+              <Content component={ContentVariants.small}>
+                <Flex spaceItems={{ default: 'spaceItemsXs' }}>
+                  <FlexItem>
+                    <InfoCircleIcon color="var(--pf-t--global--icon--color--status--info--default)" />
+                  </FlexItem>
+                  <FlexItem>{t('Always review AI-generated content prior to use.')}</FlexItem>
+                </Flex>
+              </Content>
+            </FlexItem>
+          </Flex>
+        }
         actionLabel={t('Execute remediation')}
-        actionVariant="primary"
+        actionVariant="danger"
         onAction={handleApproveExecution}
         isLoading={mutationInProgress}
         error={mutationError}
@@ -441,9 +488,11 @@ const RunDetailPage: FC = () => {
           setIsDenyModalOpen(false);
           clearMutationError();
         }}
-        title={t('Deny Agentic Run')}
-        body={t('Are you sure you want to deny this Agentic Run?')}
-        actionLabel={t('Deny')}
+        title={t('Confirm remediation denial')}
+        body={t(
+          'Denying this run will cancel all proposed automated actions. The associated alerts must then be investigated and resolved manually.',
+        )}
+        actionLabel={t('Deny Run')}
         actionVariant="danger"
         onAction={handleDenyExecution}
         isLoading={mutationInProgress}

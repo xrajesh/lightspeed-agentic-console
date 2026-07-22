@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import {
   Alert,
   Button,
@@ -15,7 +15,7 @@ export interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  body: string;
+  body: ReactNode;
   actionLabel: string;
   actionVariant: 'primary' | 'danger';
   onAction: () => void | Promise<void>;
@@ -39,7 +39,7 @@ export const ConfirmationModal: FC<ConfirmationModalProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} variant="small" aria-label={title}>
       <ModalHeader title={title} />
       <ModalBody>
-        <Content component={ContentVariants.p}>{body}</Content>
+        {typeof body === 'string' ? <Content component={ContentVariants.p}>{body}</Content> : body}
         {error && <Alert variant="danger" isInline title={error} />}
       </ModalBody>
       <ModalFooter>

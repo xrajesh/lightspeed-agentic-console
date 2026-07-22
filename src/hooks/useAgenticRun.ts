@@ -56,15 +56,15 @@ export const mapRootCause = (
 };
 
 export const mapOption = (opt: RemediationOption, index: number): RemediationOptionView => {
-  const rollback = opt.proposal?.rollbackPlan;
+  const rollback = opt.remediationPlan?.rollbackPlan;
   return {
     index,
     title: opt.title,
-    description: opt.proposal?.description ?? opt.summary ?? '',
-    reversibility: opt.proposal?.reversible,
-    risk: opt.proposal?.risk,
-    estimatedImpact: opt.proposal?.estimatedImpact,
-    actions: opt.proposal?.actions,
+    description: opt.remediationPlan?.description ?? opt.summary ?? '',
+    reversibility: opt.remediationPlan?.reversible,
+    risk: opt.remediationPlan?.risk,
+    estimatedImpact: opt.remediationPlan?.estimatedImpact,
+    actions: opt.remediationPlan?.actions,
     rollbackDescription: rollback?.description,
     rollbackCommand: rollback?.command,
     verificationDescription: opt.verification?.description,

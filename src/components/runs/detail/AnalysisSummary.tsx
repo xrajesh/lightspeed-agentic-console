@@ -80,35 +80,44 @@ export const AnalysisSummary: FC<AnalysisSummaryProps> = ({
 
   if (rootCause) {
     return (
-      <>
-        <Card>
-          <CardBody>
-            <Content component={ContentVariants.small}>
-              <Flex>
-                <FlexItem>{t('DETECTED ROOT CAUSE')}</FlexItem>
-              </Flex>
-            </Content>
-            <MarkdownContent text={rootCause.cause} />
-            <MarkdownContent text={rootCause.detail} />
+      <Card>
+        <CardBody>
+          <Content component={ContentVariants.small}>
+            <Flex>
+              <FlexItem>{t('DETECTED ROOT CAUSE')}</FlexItem>
+            </Flex>
+          </Content>
+          <MarkdownContent text={rootCause.cause} />
+          <MarkdownContent text={rootCause.detail} />
 
-            {analysisSandbox && (
-              <SandboxLogViewer
-                title={t('Analysis')}
-                sandbox={analysisSandbox}
-                sinceTime={analysisStartedAt}
-              />
-            )}
-          </CardBody>
-        </Card>
-      </>
+          {analysisSandbox && (
+            <SandboxLogViewer
+              title={t('Analysis')}
+              sandbox={analysisSandbox}
+              sinceTime={analysisStartedAt}
+            />
+          )}
+        </CardBody>
+      </Card>
     );
   }
 
   if (TERMINAL_PHASES.includes(phase)) {
     return (
-      <EmptyState>
-        <EmptyStateBody>{t('Root cause analysis was not completed.')}</EmptyStateBody>
-      </EmptyState>
+      <Card>
+        <CardBody>
+          <EmptyState>
+            <EmptyStateBody>{t('Root cause analysis was not completed.')}</EmptyStateBody>
+          </EmptyState>
+          {analysisSandbox && (
+            <SandboxLogViewer
+              title={t('Analysis')}
+              sandbox={analysisSandbox}
+              sinceTime={analysisStartedAt}
+            />
+          )}
+        </CardBody>
+      </Card>
     );
   }
 
