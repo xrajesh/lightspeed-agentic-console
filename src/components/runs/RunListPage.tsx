@@ -194,7 +194,7 @@ const RunListPage: React.FC = () => {
           }),
         title: t('Status'),
       },
-      { id: 'request', title: t('Request') },
+      { id: 'tokens', sort: 'status.usage.totalTokens', title: t('Tokens consumed') },
       { id: 'age', sort: 'metadata.creationTimestamp', title: t('Created') },
       { id: '', title: '' },
     ],
@@ -207,9 +207,6 @@ const RunListPage: React.FC = () => {
         derivePhaseFromConditions(obj.status?.conditions as AgenticRunCondition[]),
       );
       const detailPath = `/lightspeed/runs/${obj.metadata.namespace}/${obj.metadata.name}`;
-      const requestPreview =
-        obj.spec.request.length > 80 ? `${obj.spec.request.substring(0, 80)}...` : obj.spec.request;
-
       return (
         <>
           <TableData activeColumnIDs={activeColumnIDs} id="name">
@@ -225,8 +222,8 @@ const RunListPage: React.FC = () => {
           <TableData activeColumnIDs={activeColumnIDs} id="phase">
             <Label color={phase.color}>{phase.label}</Label>
           </TableData>
-          <TableData activeColumnIDs={activeColumnIDs} id="request">
-            {requestPreview}
+          <TableData activeColumnIDs={activeColumnIDs} id="tokens">
+            {obj.status?.usage?.totalTokens?.toLocaleString() ?? '-'}
           </TableData>
           <TableData activeColumnIDs={activeColumnIDs} id="age">
             <Timestamp timestamp={obj.metadata.creationTimestamp} />

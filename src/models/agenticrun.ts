@@ -417,9 +417,14 @@ export type VerificationStepStatus = {
   results?: StepResultRef[];
 };
 
+export type TokenUsage = {
+  totalTokens?: number;
+};
+
 export type AgenticRunStatus = {
-  steps?: StepsStatus;
   conditions?: AgenticRunCondition[];
+  steps?: StepsStatus;
+  usage?: TokenUsage;
 };
 
 export type EscalationStepStatus = {
