@@ -437,8 +437,8 @@ const RunDetailPage: FC = () => {
                 <MarkdownContent inline text={optionData?.title ?? ''} />
               </strong>
             </FlexItem>
-            <FlexItem>
-              {optionData?.reversibility !== 'Reversible' && (
+            {optionData?.reversibility && optionData.reversibility !== 'Reversible' && (
+              <FlexItem>
                 <Alert
                   variant="warning"
                   title={t('This action is {{ reversibility }}', {
@@ -447,8 +447,8 @@ const RunDetailPage: FC = () => {
                 >
                   <p>{getReversibilityDescription(optionData?.reversibility ?? '', t)}</p>
                 </Alert>
-              )}
-            </FlexItem>
+              </FlexItem>
+            )}
             <FlexItem>
               <Content component={ContentVariants.small}>
                 {t(

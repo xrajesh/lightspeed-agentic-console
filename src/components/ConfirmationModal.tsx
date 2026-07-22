@@ -39,7 +39,7 @@ export const ConfirmationModal: FC<ConfirmationModalProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} variant="small" aria-label={title}>
       <ModalHeader title={title} />
       <ModalBody>
-        <Content component={ContentVariants.p}>{body}</Content>
+        {typeof body === 'string' ? <Content component={ContentVariants.p}>{body}</Content> : body}
         {error && <Alert variant="danger" isInline title={error} />}
       </ModalBody>
       <ModalFooter>
