@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import {
   AgenticRunCondition,
+  AnalysisResultK8s,
   derivePhaseFromConditions,
   ExecutionResultK8s,
   RemediationOption,
@@ -134,25 +135,44 @@ describe('derivePhase', () => {
 });
 
 describe('mapRootCause', () => {
-  test('returns undefined when options are undefined', () => {
+  test('returns undefined when analysis is undefined', () => {
     expect(mapRootCause(undefined)).toBeUndefined();
   });
 
-  test('returns undefined when options are empty', () => {
-    expect(mapRootCause([])).toBeUndefined();
+  test('returns undefined when analysis has no diagnosis or options', () => {
+    const analysis = { status: {} } as AnalysisResultK8s;
+    expect(mapRootCause(analysis)).toBeUndefined();
   });
 
   test('returns undefined when first option has no diagnosis', () => {
     const opt = makeOption({ diagnosis: undefined });
-    expect(mapRootCause([opt])).toBeUndefined();
+    const analysis = { status: { options: [opt] } } as AnalysisResultK8s;
+    expect(mapRootCause(analysis)).toBeUndefined();
   });
 
   test('extracts root cause from the first option diagnosis', () => {
     const opt = makeOption();
-    const result = mapRootCause([opt]);
+    const analysis = { status: { options: [opt] } } as AnalysisResultK8s;
+    const result = mapRootCause(analysis);
     expect(result).toEqual({
       cause: 'Memory limit too low',
       detail: 'Pod OOMKilled',
+    });
+  });
+
+  test('prefers top-level diagnosis over option diagnosis', () => {
+    const topDiagnosis = {
+      summary: 'Top-level diagnosis',
+      confidence: 'Medium' as const,
+      rootCause: 'Top-level root cause',
+    };
+    const opt = makeOption();
+    const analysis = { status: { diagnosis: topDiagnosis, options: [opt] } } as AnalysisResultK8s;
+    const result = mapRootCause(analysis);
+    expect(result).toEqual({
+      cause: 'Top-level root cause',
+      detail: 'Top-level diagnosis',
+      confidence: 'Medium',
     });
   });
 });

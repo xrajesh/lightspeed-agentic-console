@@ -235,6 +235,7 @@ export type AgenticRunPhase =
   | 'Pending'
   | 'Analyzing'
   | 'Proposed'
+  | 'NoActionRequired'
   | 'Executing'
   | 'Verifying'
   | 'Escalating'
@@ -490,6 +491,7 @@ export type AnalysisResultCR = {
   status?: {
     conditions?: ResultCondition[];
     options?: RemediationOption[];
+    diagnosis?: AgentDiagnosis;
     sandbox?: SandboxInfo;
     failureReason?: string;
   };
@@ -560,6 +562,8 @@ export const getPhaseDisplay = (phase?: AgenticRunPhase | string): PhaseDisplay 
       return { color: 'blue', label: 'Analyzing' };
     case 'Proposed':
       return { color: 'teal', label: 'Proposed' };
+    case 'NoActionRequired':
+      return { color: 'green', label: 'No action required' };
     case 'Executing':
       return { color: 'purple', label: 'Executing' };
     case 'Verifying':
@@ -622,7 +626,10 @@ export const derivePhaseFromConditions = (conditions?: AgenticRunCondition[]): A
 
   const analyzed = get('Analyzed');
   if (analyzed) {
-    if (analyzed.status === 'True') return 'Proposed';
+    if (analyzed.status === 'True') {
+      if (analyzed.reason === 'NoActionRequired') return 'NoActionRequired';
+      return 'Proposed';
+    }
     if (analyzed.status === 'Unknown') return 'Analyzing';
     return 'Failed';
   }

@@ -44,9 +44,9 @@ const mapSandbox = (s?: { claimName?: string; namespace?: string }): SandboxView
   s?.claimName ? { podName: s.claimName, namespace: s.namespace || RUN_NAMESPACE } : undefined;
 
 export const mapRootCause = (
-  options: RemediationOption[] | undefined,
+  analysis: AnalysisResultK8s | undefined,
 ): RootCauseView | undefined => {
-  const diagnosis = options?.[0]?.diagnosis;
+  const diagnosis = analysis?.status?.diagnosis ?? analysis?.status?.options?.[0]?.diagnosis;
   if (!diagnosis) return undefined;
 
   return {
@@ -184,6 +184,19 @@ export const mapTimeline = (
   for (const { conditions, label, currentPhase, failureReason } of conditionSources) {
     for (const cond of conditions ?? []) {
       if (cond.type === 'Completed' && cond.status !== 'True') continue;
+      if (
+        cond.type === 'Completed' &&
+        cond.status === 'True' &&
+        cond.reason === 'NoActionRequired'
+      ) {
+        events.push({
+          label: t('No action required'),
+          description: cond.message || undefined,
+          timestamp: cond.lastTransitionTime,
+          variant: 'success',
+        });
+        continue;
+      }
       events.push({
         label: `${label} ${cond.type === 'Started' ? t('started') : cond.type === 'Completed' ? t('completed') : cond.type.toLowerCase()}`,
         description: cond.message || failureReason || undefined,
@@ -291,7 +304,7 @@ const mapToAgenticRunView = (
     advisory: !run.spec?.execution,
     targetNamespaces: run.spec?.targetNamespaces,
     failureReason,
-    rootCause: mapRootCause(options),
+    rootCause: mapRootCause(analysis),
     analysisCreatedAt: analysis?.metadata?.creationTimestamp,
     analysisStartedAt: (analysis?.status?.conditions ?? []).find((c) => c.type === 'Started')
       ?.lastTransitionTime,

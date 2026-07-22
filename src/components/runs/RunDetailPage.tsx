@@ -126,6 +126,13 @@ const RunDetailPage: FC = () => {
           </Card>
         );
 
+      case 'NoActionRequired':
+        return (
+          <Alert variant="info" isInline title={t('No remediation needed')}>
+            {t('Analysis determined that no action is required for this run.')}
+          </Alert>
+        );
+
       case 'Proposed':
         return (
           <>

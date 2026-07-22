@@ -6,6 +6,7 @@ export const TERMINAL_PHASES: AgenticRunPhase[] = [
   'Completed',
   'Failed',
   'Denied',
+  'NoActionRequired',
   'EmergencyStopped',
   'Escalated',
 ];

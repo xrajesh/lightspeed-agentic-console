@@ -60,6 +60,8 @@ const phaseFilter: RowFilter<AgenticRunK8s> = {
   items: [
     { id: 'Pending', title: 'Pending' },
     { id: 'Analyzing', title: 'Analyzing' },
+    { id: 'Proposed', title: 'Proposed' },
+    { id: 'NoActionRequired', title: 'No action required' },
     { id: 'Executing', title: 'Executing' },
     { id: 'Verifying', title: 'Verifying' },
     { id: 'Escalating', title: 'Escalating' },

@@ -20,6 +20,21 @@ describe('derivePhaseFromConditions', () => {
     expect(derivePhaseFromConditions([cond('Analyzed', 'True')])).toBe('Proposed');
   });
 
+  it('returns NoActionRequired for Analyzed=True with reason NoActionRequired', () => {
+    expect(derivePhaseFromConditions([cond('Analyzed', 'True', 'NoActionRequired')])).toBe(
+      'NoActionRequired',
+    );
+  });
+
+  it('Denied takes priority over NoActionRequired', () => {
+    expect(
+      derivePhaseFromConditions([
+        cond('Denied', 'True'),
+        cond('Analyzed', 'True', 'NoActionRequired'),
+      ]),
+    ).toBe('Denied');
+  });
+
   it('returns Failed for Analyzed=False', () => {
     expect(derivePhaseFromConditions([cond('Analyzed', 'False')])).toBe('Failed');
   });
@@ -134,6 +149,13 @@ describe('getPhaseDisplay', () => {
     expect(getPhaseDisplay('EmergencyStopped')).toEqual({
       color: 'purple',
       label: 'Emergency Stopped',
+    });
+  });
+
+  it('returns green label for NoActionRequired', () => {
+    expect(getPhaseDisplay('NoActionRequired')).toEqual({
+      color: 'green',
+      label: 'No action required',
     });
   });
 });
