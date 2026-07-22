@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import {
   Alert,
   Button,
@@ -15,7 +15,7 @@ export interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  body: string;
+  body: ReactNode;
   actionLabel: string;
   actionVariant: 'primary' | 'danger';
   onAction: () => void | Promise<void>;

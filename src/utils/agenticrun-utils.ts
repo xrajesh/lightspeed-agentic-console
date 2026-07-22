@@ -1,3 +1,5 @@
+import { TFunction } from 'i18next';
+
 export const buildPodLogUrl = (
   namespace: string,
   podName: string,
@@ -36,5 +38,33 @@ export const getReversibilityColor = (
       return 'yellow';
     default:
       return 'grey';
+  }
+};
+
+export const getReversibilityText = (reversibility: string, t: TFunction): string => {
+  switch (reversibility) {
+    case 'Reversible':
+      return t('Reversible');
+    case 'Irreversible':
+      return t('Irreversible');
+    case 'Partial':
+      return t('Partially reversible');
+    default:
+      return '';
+  }
+};
+
+export const getReversibilityDescription = (reversibility: string, t: TFunction): string => {
+  switch (reversibility) {
+    case 'Irreversible':
+      return t(
+        'You will not be able to roll back or automatically undo this remediation once execution begins. Ensure you have taken a full cluster backup if required.',
+      );
+    case 'Partial':
+      return t(
+        'You will be able to partially roll back this remediation once execution begins. Ensure you have taken a full cluster backup if required.',
+      );
+    default:
+      return '';
   }
 };

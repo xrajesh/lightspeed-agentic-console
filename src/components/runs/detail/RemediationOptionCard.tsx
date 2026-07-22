@@ -23,7 +23,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getRiskColor } from '../../../models/agenticrun';
 import { RemediationOptionView } from '../../../models/agenticrun-views';
-import { getReversibilityColor } from '../../../utils/agenticrun-utils';
+import { getReversibilityColor, getReversibilityText } from '../../../utils/agenticrun-utils';
 import { ApprovalGatedButton } from '../../ApprovalGatedButton';
 import { CodeBlockWithClipboard } from '../../CodeBlockWithClipboard';
 import { MarkdownContent } from '../../MarkdownContent';
@@ -125,11 +125,7 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
           {option.reversibility && (
             <FlexItem>
               <Label variant="outline" color={getReversibilityColor(option.reversibility)}>
-                {t(
-                  option.reversibility === 'Partial'
-                    ? 'Partially reversible'
-                    : option.reversibility,
-                )}
+                {getReversibilityText(option.reversibility, t)}
               </Label>
             </FlexItem>
           )}
