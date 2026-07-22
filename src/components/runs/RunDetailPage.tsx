@@ -30,7 +30,6 @@ import type { AgenticRunView } from '../../models/agenticrun-views';
 import { TERMINAL_PHASES } from '../../models/agenticrun-views';
 import { getReversibilityDescription, getReversibilityText } from '../../utils/agenticrun-utils';
 import AgenticLayout from '../AgenticLayout';
-import PreviewBadge from '../PreviewBadge';
 import { ApprovalGatedButton } from '../ApprovalGatedButton';
 import { ConfirmationModal } from '../ConfirmationModal';
 import { MarkdownContent } from '../MarkdownContent';
@@ -339,15 +338,13 @@ const RunDetailPage: FC = () => {
                 )}
               </Flex>
             </Content>
-          </PageSection>
 
             {view?.failureReason && <Alert variant="danger" isInline title={view.failureReason} />}
 
-          {resultsError && (
-            <PageSection hasBodyWrapper={false}>
+            {resultsError && (
               <Alert variant="warning" isInline title={t('Unable to load analysis results.')} />
-            </PageSection>
-          )}
+            )}
+          </PageSection>
 
           <Divider />
 
@@ -379,11 +376,7 @@ const RunDetailPage: FC = () => {
                 analysisStartedAt={view.analysisStartedAt}
               />
             ) : null}
-          </PageSection>
 
-          <Divider />
-
-          <PageSection hasBodyWrapper={false}>
             <Flex
               spaceItems={{ default: 'spaceItemsXs' }}
               direction={{ default: 'column' }}
@@ -415,17 +408,14 @@ const RunDetailPage: FC = () => {
             ) : view ? (
               renderRemediationHub(view)
             ) : null}
-          </PageSection>
 
-          {resultsLoaded && view && view.timeline.length > 0 && (
-            <>
-              <Divider />
-              <PageSection hasBodyWrapper={false}>
+            {resultsLoaded && view && view.timeline.length > 0 && (
+              <>
                 <Title headingLevel="h4">{t('Timeline')}</Title>
                 <RunTimeline events={view.timeline} />
-              </PageSection>
-            </>
-          )}
+              </>
+            )}
+          </PageSection>
         </PageGroup>
       </StatusGuard>
 
