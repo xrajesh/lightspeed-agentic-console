@@ -196,7 +196,7 @@ const RunListPage: React.FC = () => {
       },
       { id: 'tokens', sort: 'status.usage.totalTokens', title: t('Tokens consumed') },
       { id: 'age', sort: 'metadata.creationTimestamp', title: t('Created') },
-      { id: '', title: '' },
+      { id: '', props: { className: 'pf-v6-c-table__action' }, title: '' },
     ],
     [t],
   );
