@@ -30,7 +30,7 @@ export const SandboxLogViewer: FC<SandboxLogViewerProps> = ({
   const { t } = useTranslation('plugin__lightspeed-agentic-console-plugin');
   const [isExpanded, setIsExpanded] = useState(false);
   const [isFollowing, setIsFollowing] = useState(true);
-  const [auditOnly, setAuditOnly] = useState(true);
+  const [hideHealthChecks, setHideHealthChecks] = useState(true);
   const logViewerRef = useRef<{ scrollToItem?: (index: number) => void }>(null);
 
   const { lines, loading, error } = useSandboxLogStream(
@@ -38,7 +38,7 @@ export const SandboxLogViewer: FC<SandboxLogViewerProps> = ({
     isExpanded,
     streaming,
     sinceTime,
-    auditOnly,
+    hideHealthChecks,
   );
 
   const prevLinesLengthRef = useRef(0);
@@ -80,10 +80,10 @@ export const SandboxLogViewer: FC<SandboxLogViewerProps> = ({
         </ToolbarItem>
         <ToolbarItem alignSelf="center">
           <Checkbox
-            id={`audit-filter-${title}`}
-            label={t('Audit events only')}
-            isChecked={auditOnly}
-            onChange={(_e, checked) => setAuditOnly(checked)}
+            id={`health-check-filter-${title}`}
+            label={t('Hide health checks')}
+            isChecked={hideHealthChecks}
+            onChange={(_e, checked) => setHideHealthChecks(checked)}
           />
         </ToolbarItem>
       </ToolbarContent>
