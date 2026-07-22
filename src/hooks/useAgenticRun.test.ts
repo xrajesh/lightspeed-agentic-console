@@ -172,7 +172,6 @@ describe('mapRootCause', () => {
     expect(result).toEqual({
       cause: 'Top-level root cause',
       detail: 'Top-level diagnosis',
-      confidence: 'Medium',
     });
   });
 });
