@@ -265,19 +265,14 @@ const RunListPage: React.FC = () => {
       <ListPageHeader
         badge={<PreviewBadge />}
         helpText={
-          <>
-            <Content component={ContentVariants.p}>
-              {t(
-                'Speed up incident response with automated investigations, evidence collection, and remediation.',
-              )}
-            </Content>
-            <Content component={ContentVariants.small}>
-              <Icon status="info">
-                <RhUiInformationFillIcon />
-              </Icon>{' '}
-              {t('Always review AI-generated content prior to use.')}
-            </Content>
-          </>
+          <Content component={ContentVariants.small}>
+            <Icon status="info">
+              <RhUiInformationFillIcon />
+            </Icon>{' '}
+            {t(
+              'The autonomous features of OpenShift Lightspeed use AI technology to generate output. Always review AI-generated content prior to use.',
+            )}
+          </Content>
         }
         title={t('Agentic runs')}
       >
