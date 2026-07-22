@@ -218,7 +218,7 @@ export const RemediationOptionCard: FC<RemediationOptionCardProps> = ({
                   </FlexItem>
                 )}
                 <FlexItem>
-                  <Button variant="secondary" icon={<DownloadIcon />} onClick={handleDownloadPlan}>
+                  <Button variant="link" icon={<DownloadIcon />} onClick={handleDownloadPlan}>
                     {t('Download plan')}
                   </Button>
                 </FlexItem>
