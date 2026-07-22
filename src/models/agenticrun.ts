@@ -322,7 +322,7 @@ export type AgentAction = {
   description: string;
 };
 
-export type AgentProposal = {
+export type AgentRemediationPlan = {
   description: string;
   actions: AgentAction[];
   risk: 'Low' | 'Medium' | 'High' | 'Critical';
@@ -366,7 +366,7 @@ export type RemediationOption = {
   title: string;
   summary?: string;
   diagnosis?: AgentDiagnosis;
-  proposal?: AgentProposal;
+  remediationPlan?: AgentRemediationPlan;
   verification?: AgentVerification;
   rbac?: AgentRbac;
   components?: unknown;
